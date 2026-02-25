@@ -39,6 +39,7 @@ dependencies:
   animations: ^2.0.11
   flutter_zoom_drawer: ^3.2.0
   flutter_screenutil: ^5.9.0
+  smooth_page_indicator: ^1.1.0
 
   # State Management & Navigation
   flutter_riverpod: ^2.4.9
@@ -73,6 +74,7 @@ dependencies:
   # Utility
   intl: ^0.20.2
   uuid: ^4.2.1
+  carousel_slider: ^5.1.2
 
 dev_dependencies:
   flutter_test:

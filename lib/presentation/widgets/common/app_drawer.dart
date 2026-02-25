@@ -1,324 +1,410 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:anba_moussa/l10n/app_localizations.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_constants.dart';
+import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 
-class AppDrawer extends StatelessWidget {
+import '../../providers/theme_provider.dart';
+import '../../providers/locale_provider.dart';
+
+class AppDrawer extends ConsumerWidget {
   const AppDrawer({super.key});
 
+  void _closeDrawer(BuildContext context) {
+    final zoom = ZoomDrawer.of(context);
+    if (zoom != null) zoom.close();
+  }
+
   void _onNavigationItemTapped(BuildContext context, String route) {
-    Navigator.of(context).pop(); // Close drawer
-    context.go(route);
+    _closeDrawer(context);
+    context.push(route);
   }
 
   @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+    final locale = ref.watch(localeProvider);
+    final accentColor = ref.watch(accentColorProvider);
 
-    return Drawer(
-      backgroundColor: Colors.white,
-      child: Column(
-        children: [
-          // Header with user profile
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(AppConstants.largeSpacing.r),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  const Color(0xFFFF6B35),
-                  const Color(0xFFFF8C42),
+    final isDark = themeMode == ThemeMode.dark;
+
+    final bg = isDark ? const Color(0xFF121212) : Colors.white;
+    final surface = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final divider = isDark ? Colors.white12 : const Color(0xFFE9EDF3);
+
+    return Scaffold(
+      backgroundColor: bg,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // ================= Header =================
+            Container(
+              width: double.infinity,
+              color: surface,
+              padding: EdgeInsetsDirectional.fromSTEB(22.w, 22.h, 22.w, 16.h),
+              child: Row(
+                children: [
+                  Container(
+                    width: 70.r,
+                    height: 70.r,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: accentColor.withValues(alpha: 0.18),
+                      border: Border.all(
+                        color: isDark ? Colors.white12 : const Color(0xFFE6E6E6),
+                        width: 2,
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.person,
+                      size: 32.r,
+                      color: accentColor,
+                    ),
+                  ),
+                  SizedBox(width: 16.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Remon Kamal',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w800,
+                            color:
+                                isDark ? Colors.white : const Color(0xFF1B2430),
+                          ),
+                        ),
+                        SizedBox(height: 6.h),
+                        Text(
+                          'remon@example.com',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            color: isDark
+                                ? Colors.white54
+                                : const Color(0xFF7B8794),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // User avatar
-                CircleAvatar(
-                  radius: 40.r,
-                  backgroundColor: Colors.white.withOpacity(0.2),
-                  child: ClipOval(
-                    child: Image.network(
-                      'https://picsum.photos/seed/user-avatar/100/100',
-                      width: 80.w,
-                      height: 80.w,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Icon(
-                        Icons.person,
-                        size: 40.w,
-                        color: Colors.white,
+
+            Container(height: 1, color: divider),
+
+            // ================= Content =================
+            Expanded(
+              child: Container(
+                color: surface,
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    _settingsTile(
+                      context,
+                      isDark: isDark,
+                      accentColor: accentColor,
+                      icon: Icons.queue_music,
+                      title: 'My Playlists',
+                      onTap: () {},
+                    ),
+
+                    _settingsTile(
+                      context,
+                      isDark: isDark,
+                      accentColor: accentColor,
+                      icon: Icons.translate_rounded,
+                      title: 'Language',
+                      trailingText: locale.languageCode == 'ar' ? 'Arabic' : 'English',
+                      onTap: () {
+                        final newLocale =
+                            locale.languageCode == 'ar' ? 'en' : 'ar';
+                        ref.read(localeProvider.notifier).changeLocale(newLocale);
+                      },
+                    ),
+
+                    _settingsTile(
+                      context,
+                      isDark: isDark,
+                      accentColor: accentColor,
+                      icon: Icons.nights_stay_rounded,
+                      title: 'Dark Mode',
+                      onTap: () => ref.read(themeProvider.notifier).toggleTheme(),
+                    ),
+
+                    // Theme section - Colors below title
+                    _themeSection(
+                      isDark: isDark,
+                      accentColor: accentColor,
+                      ref: ref,
+                    ),
+
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 22.w),
+                      child: Container(height: 1, color: divider),
+                    ),
+
+                    _settingsTile(
+                      context,
+                      isDark: isDark,
+                      accentColor: accentColor,
+                      icon: Icons.favorite_border_rounded,
+                      title: 'Favorites',
+                      onTap: () => _onNavigationItemTapped(context, '/favorites'),
+                    ),
+
+                    _settingsTile(
+                      context,
+                      isDark: isDark,
+                      accentColor: accentColor,
+                      icon: Icons.download_rounded,
+                      title: 'Downloads',
+                      onTap: () {},
+                    ),
+
+                    _settingsTile(
+                      context,
+                      isDark: isDark,
+                      accentColor: accentColor,
+                      icon: Icons.notifications_none_rounded,
+                      title: 'Notifications',
+                      onTap: () => _onNavigationItemTapped(context, '/notifications'),
+                    ),
+                    
+                    Padding(
+                      padding: EdgeInsetsDirectional.symmetric(horizontal: 22.w),
+                      child: Container(height: 1, color: divider),
+                    ),
+
+                    _settingsTile(
+                      context,
+                      isDark: isDark,
+                      accentColor: Colors.red,
+                      icon: Icons.delete_forever_rounded,
+                      title: 'Delete Account',
+                      titleColor: Colors.red,
+                      onTap: () {
+                        // Implement delete account logic
+                      },
+                    ),
+
+                    SizedBox(height: 18.h),
+                  ],
+                ),
+              ),
+            ),
+
+            // ================= Logout Button =================
+            Container(
+              color: surface,
+              padding: EdgeInsetsDirectional.fromSTEB(22.w, 10.h, 22.w, 18.h),
+              child: SizedBox(
+                width: double.infinity,
+                height: 54.h,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    _closeDrawer(context);
+                    context.go('/login');
+                  },
+                  icon: Icon(Icons.logout, size: 20.r),
+                  label: Text(
+                    'Log Out',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: accentColor.withValues(alpha: 0.12),
+                    foregroundColor: accentColor,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(32.r),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ================= Tile =================
+  Widget _settingsTile(
+    BuildContext context, {
+    required bool isDark,
+    required Color accentColor,
+    required IconData icon,
+    required String title,
+    String? trailingText,
+    Color? titleColor,
+    required VoidCallback onTap,
+  }) {
+    final defaultTitleColor = isDark ? Colors.white : const Color(0xFF1B2430);
+    final subColor = isDark ? Colors.white54 : const Color(0xFF8A97A6);
+
+    return ListTile(
+      onTap: onTap,
+      contentPadding: EdgeInsetsDirectional.symmetric(horizontal: 22.w, vertical: 6.h),
+
+      leading: Container(
+        width: 44.r,
+        height: 44.r,
+        decoration: BoxDecoration(
+          color: accentColor.withValues(alpha: 0.12),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: accentColor, size: 22.r),
+      ),
+
+      title: Text(
+        title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontSize: 16.sp,
+          fontWeight: FontWeight.w600,
+          color: titleColor ?? defaultTitleColor,
+        ),
+      ),
+
+      trailing: trailingText != null
+          ? ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 90.w),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Flexible(
+                    child: Text(
+                      trailingText,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: subColor,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-                ).animate().scale(
-                  duration: AppConstants.defaultAnimationDuration,
-                  curve: Curves.easeOut,
-                ),
-
-                SizedBox(height: AppConstants.mediumSpacing.h),
-
-                // User name
-                Text(
-                  'Alex Johnson',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                  SizedBox(width: 6.w),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: subColor,
+                    size: 22.r,
                   ),
-                ).animate().fadeIn(
-                  duration: AppConstants.defaultAnimationDuration,
-                  delay: const Duration(milliseconds: 200),
-                ),
-
-                SizedBox(height: AppConstants.extraSmallSpacing.h),
-
-                // User email
-                Text(
-                  'alex.johnson@example.com',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.white.withOpacity(0.9),
-                  ),
-                ).animate().fadeIn(
-                  duration: AppConstants.defaultAnimationDuration,
-                  delay: const Duration(milliseconds: 400),
-                ),
-              ],
-            ),
-          ),
-
-          // Navigation items
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                // Home
-                _buildDrawerItem(
-                  context,
-                  icon: Icons.home_outlined,
-                  title: 'Home',
-                  route: '/',
-                ).animate().slideX(
-                  duration: AppConstants.defaultAnimationDuration,
-                  delay: const Duration(milliseconds: 600),
-                  begin: -0.2,
-                  curve: Curves.easeOut,
-                ),
-
-                // Library
-                _buildDrawerItem(
-                  context,
-                  icon: Icons.library_music_outlined,
-                  title: 'Library',
-                  route: '/library',
-                ).animate().slideX(
-                  duration: AppConstants.defaultAnimationDuration,
-                  delay: const Duration(milliseconds: 700),
-                  begin: -0.2,
-                  curve: Curves.easeOut,
-                ),
-
-                // Favorites
-                _buildDrawerItem(
-                  context,
-                  icon: Icons.favorite_outline,
-                  title: 'Favorites',
-                  route: '/favorites',
-                ).animate().slideX(
-                  duration: AppConstants.defaultAnimationDuration,
-                  delay: const Duration(milliseconds: 800),
-                  begin: -0.2,
-                  curve: Curves.easeOut,
-                ),
-
-                // All Playlists
-                _buildDrawerItem(
-                  context,
-                  icon: Icons.playlist_play_outlined,
-                  title: 'All Playlists',
-                  route: '/all-playlists',
-                ).animate().slideX(
-                  duration: AppConstants.defaultAnimationDuration,
-                  delay: const Duration(milliseconds: 900),
-                  begin: -0.2,
-                  curve: Curves.easeOut,
-                ),
-
-                // Photo Gallery
-                _buildDrawerItem(
-                  context,
-                  icon: Icons.photo_library_outlined,
-                  title: 'Photo Gallery',
-                  route: '/photo-gallery',
-                ).animate().slideX(
-                  duration: AppConstants.defaultAnimationDuration,
-                  delay: const Duration(milliseconds: 1000),
-                  begin: -0.2,
-                  curve: Curves.easeOut,
-                ),
-
-                // Video Gallery
-                _buildDrawerItem(
-                  context,
-                  icon: Icons.video_library_outlined,
-                  title: 'Video Gallery',
-                  route: '/video-gallery',
-                ).animate().slideX(
-                  duration: AppConstants.defaultAnimationDuration,
-                  delay: const Duration(milliseconds: 1100),
-                  begin: -0.2,
-                  curve: Curves.easeOut,
-                ),
-
-                // Notifications
-                _buildDrawerItem(
-                  context,
-                  icon: Icons.notifications_outlined,
-                  title: 'Notifications',
-                  route: '/notifications',
-                ).animate().slideX(
-                  duration: AppConstants.defaultAnimationDuration,
-                  delay: const Duration(milliseconds: 1200),
-                  begin: -0.2,
-                  curve: Curves.easeOut,
-                ),
-
-                // Divider
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: AppConstants.mediumSpacing.r,
-                    vertical: AppConstants.mediumSpacing.h,
-                  ),
-                  child: Divider(
-                    color: Colors.grey[300],
-                    thickness: 1,
-                  ),
-                ),
-
-                // Profile
-                _buildDrawerItem(
-                  context,
-                  icon: Icons.person_outline,
-                  title: 'Profile',
-                  route: '/profile',
-                ).animate().slideX(
-                  duration: AppConstants.defaultAnimationDuration,
-                  delay: const Duration(milliseconds: 1300),
-                  begin: -0.2,
-                  curve: Curves.easeOut,
-                ),
-
-                // Settings
-                _buildDrawerItem(
-                  context,
-                  icon: Icons.settings_outlined,
-                  title: 'Settings',
-                  route: '/profile/edit',
-                ).animate().slideX(
-                  duration: AppConstants.defaultAnimationDuration,
-                  delay: const Duration(milliseconds: 1400),
-                  begin: -0.2,
-                  curve: Curves.easeOut,
-                ),
-
-                // Divider
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: AppConstants.mediumSpacing.r,
-                    vertical: AppConstants.mediumSpacing.h,
-                  ),
-                  child: Divider(
-                    color: Colors.grey[300],
-                    thickness: 1,
-                  ),
-                ),
-
-                // Help & Support
-                _buildDrawerItem(
-                  context,
-                  icon: Icons.help_outline,
-                  title: 'Help & Support',
-                  route: '/help',
-                ).animate().slideX(
-                  duration: AppConstants.defaultAnimationDuration,
-                  delay: const Duration(milliseconds: 1500),
-                  begin: -0.2,
-                  curve: Curves.easeOut,
-                ),
-
-                // About
-                _buildDrawerItem(
-                  context,
-                  icon: Icons.info_outline,
-                  title: 'About',
-                  route: '/about',
-                ).animate().slideX(
-                  duration: AppConstants.defaultAnimationDuration,
-                  delay: const Duration(milliseconds: 1600),
-                  begin: -0.2,
-                  curve: Curves.easeOut,
-                ),
-              ],
-            ),
-          ),
-
-          // Logout button
-          Container(
-            padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
-            child: ListTile(
-              leading: Icon(
-                Icons.logout,
-                color: Colors.red,
-                size: 24.w,
+                ],
               ),
-              title: Text(
-                'Logout',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.red,
-                  fontWeight: FontWeight.w600,
+            )
+          : Icon(
+              Icons.chevron_right_rounded,
+              color: subColor,
+              size: 22.r,
+            ),
+    );
+  }
+
+  // ================= Theme Section (Colors below title) =================
+  Widget _themeSection({
+    required bool isDark,
+    required Color accentColor,
+    required WidgetRef ref,
+  }) {
+    final titleColor = isDark ? Colors.white : const Color(0xFF1B2430);
+
+    return Padding(
+      padding: EdgeInsetsDirectional.fromSTEB(22.w, 8.h, 22.w, 10.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 44.r,
+                height: 44.r,
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.palette_outlined, color: accentColor, size: 22.r),
+              ),
+              SizedBox(width: 14.w),
+              Expanded(
+                child: Text(
+                  'Theme',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    color: titleColor,
+                  ),
                 ),
               ),
-              onTap: () {
-                Navigator.of(context).pop(); // Close drawer
-                // TODO: Implement logout
-                context.go('/login');
-              },
-            ).animate().slideX(
-              duration: AppConstants.defaultAnimationDuration,
-              delay: const Duration(milliseconds: 1700),
-              begin: -0.2,
-              curve: Curves.easeOut,
-            ),
+            ],
+          ),
+          SizedBox(height: 12.h),
+          Padding(
+            padding: EdgeInsetsDirectional.only(start: 58.w),
+            child: _buildColorDots(ref),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDrawerItem(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required String route,
-  }) {
-    return ListTile(
-      leading: Icon(
-        icon,
-        color: Colors.black,
-        size: 24.w,
+  // ================= Dots =================
+  Widget _buildColorDots(WidgetRef ref) {
+    final colors = [
+      {'name': 'orange', 'color': const Color(0xFFF16122)},
+      {'name': 'blue', 'color': const Color(0xFF2E88FF)},
+      {'name': 'green', 'color': const Color(0xFF00E676)},
+      {'name': 'purple', 'color': const Color(0xFF8A2BE2)},
+      {'name': 'pink', 'color': const Color(0xFFFF1493)},
+    ];
+
+    final currentAccent = ref.watch(accentColorProvider);
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: colors.map((c) {
+          final color = c['color'] as Color;
+          final name = c['name'] as String;
+          final isSelected = currentAccent == color;
+
+          return GestureDetector(
+            onTap: () =>
+                ref.read(accentColorProvider.notifier).changeAccentColor(name),
+            child: Container(
+              margin: EdgeInsetsDirectional.symmetric(horizontal: 5.w),
+              width: 24.r,
+              height: 24.r,
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+              border: isSelected ? Border.all(color: Colors.white, width: 2) : null,
+              boxShadow: [
+                if (isSelected)
+                  BoxShadow(
+                    color: color.withValues(alpha: 0.35),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  ),
+              ],
+            ),
+          ),
+        );
+        }).toList(),
       ),
-      title: Text(
-        title,
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontWeight: FontWeight.w500,
-          color: Colors.black,
-        ),
-      ),
-      onTap: () => _onNavigationItemTapped(context, route),
     );
   }
 }

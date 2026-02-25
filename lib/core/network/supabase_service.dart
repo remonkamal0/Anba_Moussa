@@ -1,5 +1,9 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../domain/entities/category.dart';
+import '../../domain/entities/track.dart';
 import '../constants/app_constants.dart';
+import '../../data/models/category_model.dart';
+import '../../data/models/track_model.dart';
 
 class SupabaseService {
   static SupabaseService? _instance;
@@ -245,6 +249,159 @@ class SupabaseService {
         .eq('user_id', userId);
   }
 
+  Future<void> toggleFavorite({
+    required String trackId,
+    required bool makeFavorite,
+  }) async {
+    final uid = currentUserId;
+    if (uid == null) return;
+
+    if (makeFavorite) {
+      await client.from('favorites').upsert({
+        'user_id': uid,
+        'track_id': trackId,
+      });
+    } else {
+      await client
+          .from('favorites')
+          .delete()
+          .eq('user_id', uid)
+          .eq('track_id', trackId);
+    }
+  }
+
+  // ==================== DATA FETCHING ====================
+
+  Future<Map<String, dynamic>?> fetchMyProfile() async {
+    return await getMyProfile();
+  }
+
+  Future<List<Map<String, dynamic>>> fetchSliders() async {
+    final response = await client
+        .from('sliders')
+        .select()
+        .eq('is_active', true)
+        .order('sort_order', ascending: true)
+        .order('created_at', ascending: false);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<List<Map<String, dynamic>>> fetchCategories() async {
+    final response = await client
+        .from('categories')
+        .select()
+        .eq('is_active', true)
+        .order('sort_order', ascending: true)
+        .order('created_at', ascending: false);
+
+    return List<Map<String, dynamic>>.from(response as List);
+  }
+
+  Future<List<Track>> fetchTopTracks({int limit = 10}) async {
+    final response = await client
+        .from('tracks')
+        .select('''
+          id,
+          title_ar,
+          title_en,
+          subtitle_ar,
+          subtitle_en,
+          description_ar,
+          description_en,
+          speaker_ar,
+          speaker_en,
+          cover_image_url,
+          audio_url,
+          duration_seconds,
+          published_at,
+          is_active,
+          created_at,
+          updated_at,
+          category_id
+        ''')
+        .eq('is_active', true)
+        .order('created_at', ascending: false)
+        .limit(limit);
+
+    return (response as List).map((trackMap) {
+      final model = TrackModel.fromJson(trackMap as Map<String, dynamic>);
+      return Track(
+        id: model.id,
+        categoryId: model.categoryId,
+        title: model.getLocalizedName('en'),
+        subtitle: model.getLocalizedSubtitle('en'),
+        description: model.getLocalizedDescription('en'),
+        speaker: model.getLocalizedSpeaker('en'),
+        coverImageUrl: model.coverImageUrl,
+        audioUrl: model.audioUrl,
+        durationSeconds: model.durationSeconds,
+        publishedAt: model.publishedAt,
+        isActive: model.isActive,
+        createdAt: model.createdAt,
+        updatedAt: model.updatedAt,
+      );
+    }).toList();
+  }
+
+  Future<Set<String>> fetchMyFavoriteTrackIds() async {
+    final uid = currentUserId;
+    if (uid == null) return <String>{};
+
+    final response = await client
+        .from('favorites')
+        .select('track_id')
+        .eq('user_id', uid);
+
+    return Set<String>.from(response.map((fav) => fav['track_id']));
+  }
+
+  Future<List<Map<String, dynamic>>> fetchMyFavoriteTracks() async {
+    final uid = currentUserId;
+    if (uid == null) return [];
+
+    final response = await client
+        .from('favorites')
+        .select('''
+          tracks!id,
+          tracks!title_ar,
+          tracks!title_en,
+          tracks!speaker_ar,
+          tracks!speaker_en,
+          tracks!cover_image_url,
+          tracks!audio_url,
+          tracks!duration_seconds,
+          favorites!created_at
+        ''')
+        .eq('user_id', uid)
+        .order('favorites!created_at', ascending: false);
+
+    return List<Map<String, dynamic>>.from(response as List);
+  }
+
+  Future<List<Map<String, dynamic>>> searchTracks(String query) async {
+    final response = await client
+        .from('tracks')
+        .select('''
+          id,
+          title_ar,
+          title_en,
+          subtitle_ar,
+          subtitle_en,
+          speaker_ar,
+          speaker_en,
+          cover_image_url,
+          audio_url,
+          duration_seconds
+        ''')
+        .or('title_ar.ilike.%$query%,title_en.ilike.%$query%')
+        .eq('is_active', true)
+        .order('created_at', ascending: false)
+        .limit(20);
+
+    return List<Map<String, dynamic>>.from(response as List);
+  }
+
   Future<void> markAllNotificationsAsRead() async {
     final userId = currentUserId;
     if (userId == null) return;
@@ -259,3 +416,4 @@ class SupabaseService {
         .eq('is_read', false);
   }
 }
+

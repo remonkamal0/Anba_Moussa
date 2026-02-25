@@ -34,8 +34,12 @@ class AppConstants {
   static const String logoPath = 'assets/images/logo.png';
   static const String defaultCoverPath = 'assets/images/default_cover.png';
   
-  // Font Family
+  // Font Families
+  static const String interFont = 'Inter';
   static const String cairoFont = 'Cairo';
+  
+  // Default font family (will use Inter for English, Cairo for Arabic)
+  static const String defaultFont = interFont;
   
   // Animation Durations
   static const Duration defaultAnimationDuration = Duration(milliseconds: 300);

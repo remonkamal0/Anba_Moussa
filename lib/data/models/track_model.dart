@@ -5,28 +5,44 @@ part 'track_model.g.dart';
 @JsonSerializable()
 class TrackModel {
   final String id;
+  @JsonKey(name: 'category_id')
   final String categoryId;
-  final String titleAr;
-  final String titleEn;
+  @JsonKey(name: 'title_ar')
+  final String? titleAr; // DB: text
+  @JsonKey(name: 'title_en')
+  final String? titleEn; // DB: text
+  @JsonKey(name: 'subtitle_ar')
   final String? subtitleAr;
+  @JsonKey(name: 'subtitle_en')
   final String? subtitleEn;
+  @JsonKey(name: 'description_ar')
   final String? descriptionAr;
+  @JsonKey(name: 'description_en')
   final String? descriptionEn;
+  @JsonKey(name: 'speaker_ar')
   final String? speakerAr;
+  @JsonKey(name: 'speaker_en')
   final String? speakerEn;
+  @JsonKey(name: 'cover_image_url')
   final String? coverImageUrl;
+  @JsonKey(name: 'audio_url')
   final String audioUrl;
+  @JsonKey(name: 'duration_seconds')
   final int? durationSeconds;
+  @JsonKey(name: 'published_at')
   final DateTime? publishedAt;
+  @JsonKey(name: 'is_active')
   final bool isActive;
+  @JsonKey(name: 'created_at')
   final DateTime createdAt;
+  @JsonKey(name: 'updated_at')
   final DateTime updatedAt;
 
   TrackModel({
     required this.id,
     required this.categoryId,
-    required this.titleAr,
-    required this.titleEn,
+    this.titleAr,
+    this.titleEn,
     this.subtitleAr,
     this.subtitleEn,
     this.descriptionAr,
@@ -45,10 +61,11 @@ class TrackModel {
   factory TrackModel.fromJson(Map<String, dynamic> json) =>
       _$TrackModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$TrackModelToJson(json);
+  Map<String, dynamic> toJson() => _$TrackModelToJson(this);
 
   String getLocalizedName(String locale) {
-    return locale == 'ar' ? titleAr : titleEn;
+    if (locale == 'ar') return titleAr ?? titleEn ?? 'بدون عنوان';
+    return titleEn ?? titleAr ?? 'Untitled';
   }
 
   String? getLocalizedSubtitle(String locale) {

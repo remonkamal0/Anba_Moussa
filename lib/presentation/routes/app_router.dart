@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../screens/splash/splash_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
-import '../screens/home/home_screen.dart';
+import '../screens/home/home_view.dart';
 import '../screens/player/player_screen.dart';
 import '../screens/library/library_screen.dart';
 import '../screens/album/album_details_screen.dart';
@@ -23,9 +23,14 @@ import '../screens/favorites/favorites_screen.dart';
 import '../screens/favorites/all_playlists_screen.dart';
 import '../screens/search/search_screen.dart';
 import '../../core/constants/app_constants.dart';
+import '../widgets/layout/main_layout.dart';
+
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
+    navigatorKey: _rootNavigatorKey,
     initialLocation: '/splash',
     routes: [
       GoRoute(
@@ -71,14 +76,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const NotificationsScreen(),
       ),
       GoRoute(
-        path: '/photo-gallery',
-        builder: (context, state) => const PhotoGalleryScreen(),
-      ),
-      GoRoute(
-        path: '/video-gallery',
-        builder: (context, state) => const VideoGalleryScreen(),
-      ),
-      GoRoute(
         path: '/favorites',
         builder: (context, state) => const FavoritesScreen(),
       ),
@@ -90,13 +87,33 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/settings',
         builder: (context, state) => const SettingsScreen(),
       ),
-      GoRoute(
-        path: AppConstants.homeRoute,
-        builder: (context, state) => const HomeScreen(),
-      ),
-      GoRoute(
-        path: '/library',
-        builder: (context, state) => const LibraryScreen(),
+      ShellRoute(
+        navigatorKey: _shellNavigatorKey,
+        builder: (context, state, child) {
+          return MainLayout(child: child);
+        },
+        routes: [
+          GoRoute(
+            path: AppConstants.homeRoute,
+            builder: (context, state) => const HomeView(),
+          ),
+          GoRoute(
+            path: '/library',
+            builder: (context, state) => const LibraryScreen(),
+          ),
+          GoRoute(
+            path: '/photo-gallery',
+            builder: (context, state) => const PhotoGalleryScreen(),
+          ),
+          GoRoute(
+            path: '/video-gallery',
+            builder: (context, state) => const VideoGalleryScreen(),
+          ),
+          GoRoute(
+            path: '/profile',
+            builder: (context, state) => const ProfileScreen(),
+          ),
+        ],
       ),
       GoRoute(
         path: '/album/:albumId',
@@ -104,10 +121,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final albumId = state.pathParameters['albumId']!;
           return AlbumDetailsScreen();
         },
-      ),
-      GoRoute(
-        path: '/profile',
-        builder: (context, state) => const ProfileScreen(),
       ),
       GoRoute(
         path: '/profile/edit',

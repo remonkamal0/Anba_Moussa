@@ -10,15 +10,21 @@ import 'core/network/supabase_service.dart';
 import 'presentation/routes/app_router.dart';
 import 'presentation/providers/locale_provider.dart';
 import 'presentation/providers/theme_provider.dart';
+import 'presentation/providers/home_provider.dart';
+import 'presentation/screens/home/home_view.dart';
+import 'core/di/service_locator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Initialize Supabase
   await SupabaseService.instance.initialize();
+
+  // Initialize Service Locator
+  sl.init();
   
   runApp(
-    const ProviderScope(
+    ProviderScope(
       child: MelodixApp(),
     ),
   );

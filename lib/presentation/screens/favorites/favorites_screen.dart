@@ -101,12 +101,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     ),
   ];
 
-  void _onBottomNavTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    // TODO: Navigate to different screens
-  }
+  // void _onBottomNavTapped removed
 
   void _onPlayAll() {
     setState(() {
@@ -172,152 +167,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header with play controls
-            Container(
-              padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
-              decoration: BoxDecoration(
-                color: Colors.grey[50],
-                borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    '${_favoriteSongs.length} Songs',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const Spacer(),
-                  // Play All button
-                  ElevatedButton(
-                    onPressed: _onPlayAll,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF6B35),
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
-                      ),
-                    ),
-                    child: Text(
-                      _isPlayingAll ? 'Pause All' : 'Play All',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: AppConstants.smallSpacing.w),
-                  // Shuffle button
-                  IconButton(
-                    onPressed: _onShuffle,
-                    icon: Icon(
-                      Icons.shuffle,
-                      color: _isShuffled ? const Color(0xFFFF6B35) : Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            SizedBox(height: AppConstants.mediumSpacing.h),
-
-            // Songs list
-            Expanded(
-              child: ListView.builder(
-                itemCount: _favoriteSongs.length,
-                itemBuilder: (context, index) {
-                  final song = _favoriteSongs[index];
-                  return FavoriteSongTile(
-                    song: song,
-                    onTap: () => _onSongTapped(song),
-                    onLike: (isLiked) => _onSongLiked(song, isLiked),
-                    onDownload: (isDownloaded) => _onSongDownloaded(song, isDownloaded),
-                    index: index + 1,
-                  ).animate().slideX(
-                    duration: AppConstants.defaultAnimationDuration,
-                    delay: Duration(milliseconds: index * 100),
-                    begin: -0.2,
-                    curve: Curves.easeOut,
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNavigationBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onBottomNavTapped,
-        backgroundColor: Colors.white,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFFFF6B35),
-        unselectedItemColor: Colors.grey[600],
-        selectedLabelStyle: const TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 12,
-        ),
-        unselectedLabelStyle: const TextStyle(
-          fontWeight: FontWeight.normal,
-          fontSize: 12,
-        ),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.library_music_outlined),
-            activeIcon: Icon(Icons.library_music),
-            label: 'Library',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.photo_library_outlined),
-            activeIcon: Icon(Icons.photo_library),
-            label: 'Gallery',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.video_library_outlined),
-            activeIcon: Icon(Icons.video_library),
-            label: 'Videos',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            activeIcon: Icon(Icons.favorite),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-      ),
     );
   }
 }
-
 class FavoriteSongTile extends StatelessWidget {
   final Song song;
   final VoidCallback onTap;

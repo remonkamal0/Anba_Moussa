@@ -33,7 +33,7 @@ class PlaylistModel {
   factory PlaylistModel.fromJson(Map<String, dynamic> json) =>
       _$PlaylistModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$PlaylistModelToJson(json);
+  Map<String, dynamic> toJson() => _$PlaylistModelToJson(this);
 
   String getLocalizedName(String locale) {
     return locale == 'ar' ? titleAr : titleEn;

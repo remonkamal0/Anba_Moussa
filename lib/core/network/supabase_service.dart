@@ -1,0 +1,261 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../constants/app_constants.dart';
+
+class SupabaseService {
+  static SupabaseService? _instance;
+  static SupabaseService get instance => _instance ??= SupabaseService._();
+
+  SupabaseService._();
+
+  DateTime? _lastResetEmailSentAt;
+
+  Future<void> initialize() async {
+    await Supabase.initialize(
+      url: AppConstants.supabaseUrl,
+      anonKey: AppConstants.supabaseAnonKey,
+    );
+  }
+
+  SupabaseClient get client => Supabase.instance.client;
+
+  // ----------------------------
+  // Authentication
+  // ----------------------------
+
+  Future<AuthResponse> signInWithEmail(String email, String password) async {
+    return await client.auth.signInWithPassword(
+      email: email,
+      password: password,
+    );
+  }
+
+  /// Supports metadata via [data] (user_metadata)
+  /// Example:
+  /// data: { "full_name": "...", "phone": "...", "church": "..." }
+  Future<AuthResponse> signUpWithEmail(
+      String email,
+      String password, {
+        Map<String, dynamic>? data,
+      }) async {
+    return await client.auth.signUp(
+      email: email,
+      password: password,
+      data: data,
+    );
+  }
+
+  Future<void> signOut() async {
+    await client.auth.signOut();
+  }
+
+  /// Password reset with local throttle + rate limit friendly messages
+  Future<void> resetPassword(String email) async {
+    // Local throttle (60s) to avoid spamming and 429
+    final now = DateTime.now();
+    if (_lastResetEmailSentAt != null) {
+      final diff = now.difference(_lastResetEmailSentAt!);
+      if (diff.inSeconds < 60) {
+        throw Exception(
+          'Please wait ${60 - diff.inSeconds}s before requesting another reset link.',
+        );
+      }
+    }
+
+    try {
+      await client.auth.resetPasswordForEmail(email);
+      _lastResetEmailSentAt = now;
+    } on AuthException catch (e) {
+      final msg = e.message.toLowerCase();
+      if (e.statusCode == '429' || msg.contains('rate limit')) {
+        throw Exception('Too many requests. Please wait a few minutes and try again.');
+      }
+      rethrow;
+    }
+  }
+
+  // ----------------------------
+  // Profile management (SAFE with RLS)
+  // ----------------------------
+
+  String? get currentUserId => client.auth.currentUser?.id;
+
+  bool get isAuthenticated => client.auth.currentUser != null;
+
+  Stream<AuthState> get authStateChanges => client.auth.onAuthStateChange;
+
+  /// Read my profile (returns null if not exists)
+  Future<Map<String, dynamic>?> getMyProfile() async {
+    final uid = currentUserId;
+    if (uid == null) return null;
+
+    final data = await client
+        .from('profiles')
+        .select()
+        .eq('id', uid)
+        .maybeSingle();
+
+    if (data == null) return null;
+    return Map<String, dynamic>.from(data);
+  }
+
+  /// Insert my profile once (requires authenticated + RLS policy: auth.uid() = id)
+  Future<void> insertMyProfile({
+    required String fullName,
+    String? phone,
+    String? church,
+    String? gender,
+    DateTime? birthDate,
+  }) async {
+    final uid = currentUserId;
+    if (uid == null) throw Exception('Not authenticated');
+
+    final payload = <String, dynamic>{
+      'id': uid,
+      'full_name': fullName.trim().isEmpty ? 'User' : fullName.trim(),
+      'updated_at': DateTime.now().toIso8601String(),
+    };
+
+    if (phone != null && phone.trim().isNotEmpty) payload['phone'] = phone.trim();
+    if (church != null && church.trim().isNotEmpty) payload['church'] = church.trim();
+    if (gender != null && gender.trim().isNotEmpty) payload['gender'] = gender.trim();
+    if (birthDate != null) payload['birth_date'] = birthDate.toIso8601String();
+
+    await client.from('profiles').insert(payload);
+  }
+
+  /// Update my profile (only sends non-empty fields)
+  Future<void> updateMyProfile({
+    String? fullName,
+    String? phone,
+    String? church,
+    String? gender,
+    DateTime? birthDate,
+  }) async {
+    final uid = currentUserId;
+    if (uid == null) throw Exception('Not authenticated');
+
+    final update = <String, dynamic>{
+      'updated_at': DateTime.now().toIso8601String(),
+    };
+
+    if (fullName != null && fullName.trim().isNotEmpty) update['full_name'] = fullName.trim();
+    if (phone != null && phone.trim().isNotEmpty) update['phone'] = phone.trim();
+    if (church != null && church.trim().isNotEmpty) update['church'] = church.trim();
+    if (gender != null && gender.trim().isNotEmpty) update['gender'] = gender.trim();
+    if (birthDate != null) update['birth_date'] = birthDate.toIso8601String();
+
+    // If nothing besides updated_at, skip
+    if (update.length == 1) return;
+
+    await client.from('profiles').update(update).eq('id', uid);
+  }
+
+  /// Call this ONLY after successful login.
+  /// - If profile not found: inserts it using metadata fallback.
+  /// - If found: optionally fills missing fields from metadata.
+  Future<void> ensureMyProfileExists({
+    String? fallbackFullName,
+    String? fallbackPhone,
+    String? fallbackChurch,
+  }) async {
+    final uid = currentUserId;
+    if (uid == null) throw Exception('Not authenticated');
+
+    final user = client.auth.currentUser!;
+    final meta = user.userMetadata ?? {};
+
+    final metaFullName = (meta['full_name'] ?? fallbackFullName ?? '').toString();
+    final metaPhone = (meta['phone'] ?? fallbackPhone ?? '').toString();
+    final metaChurch = (meta['church'] ?? fallbackChurch ?? '').toString();
+
+    final profile = await getMyProfile();
+
+    if (profile == null) {
+      await insertMyProfile(
+        fullName: metaFullName.isNotEmpty ? metaFullName : 'User',
+        phone: metaPhone,
+        church: metaChurch,
+      );
+      return;
+    }
+
+    // Fill missing fields only
+    final currentName = (profile['full_name'] ?? '').toString();
+    final currentPhone = (profile['phone'] ?? '').toString();
+    final currentChurch = (profile['church'] ?? '').toString();
+
+    await updateMyProfile(
+      fullName: currentName.isNotEmpty ? null : metaFullName,
+      phone: currentPhone.isNotEmpty ? null : metaPhone,
+      church: currentChurch.isNotEmpty ? null : metaChurch,
+    );
+  }
+
+  // ----------------------------
+  // Notifications
+  // ----------------------------
+
+  Future<List<Map<String, dynamic>>> getNotifications({int limit = 20}) async {
+    final userId = currentUserId;
+    if (userId == null) return [];
+
+    final response = await client
+        .from('notification_recipients')
+        .select('''
+          notifications!id,
+          notifications!kind,
+          notifications!audience,
+          notifications!title_ar,
+          notifications!title_en,
+          notifications!body_ar,
+          notifications!body_en,
+          notifications!image_url,
+          notifications!action_type,
+          notifications!external_url,
+          notifications!internal_route,
+          notifications!internal_id,
+          notifications!entity_type,
+          notifications!entity_id,
+          notifications!sent_at,
+          notifications!created_at,
+          notifications!updated_at,
+          notification_recipients!is_read,
+          notification_recipients!read_at,
+          notification_recipients!created_at as recipient_created_at
+        ''')
+        .eq('notification_recipients.user_id', userId)
+        .eq('notifications.is_active', true)
+        .order('notification_recipients.created_at', ascending: false)
+        .limit(limit);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<void> markNotificationAsRead(String notificationId) async {
+    final userId = currentUserId;
+    if (userId == null) return;
+
+    await client
+        .from('notification_recipients')
+        .update({
+      'is_read': true,
+      'read_at': DateTime.now().toIso8601String(),
+    })
+        .eq('notification_id', notificationId)
+        .eq('user_id', userId);
+  }
+
+  Future<void> markAllNotificationsAsRead() async {
+    final userId = currentUserId;
+    if (userId == null) return;
+
+    await client
+        .from('notification_recipients')
+        .update({
+      'is_read': true,
+      'read_at': DateTime.now().toIso8601String(),
+    })
+        .eq('user_id', userId)
+        .eq('is_read', false);
+  }
+}

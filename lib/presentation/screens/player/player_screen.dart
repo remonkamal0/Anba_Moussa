@@ -112,34 +112,40 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 child: Column(
                   children: [
                     // Album art with orange ring
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        // Orange ring
-                        Container(
-                          width: 280.w,
-                          height: 280.w,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: const Color(0xFFFF6B35),
-                              width: 4.w,
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: 300,
+                        maxHeight: 300,
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Orange ring
+                          Container(
+                            width: 280.w,
+                            height: 280.w,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: const Color(0xFFFF6B35),
+                                width: 4.w,
+                              ),
                             ),
                           ),
-                        ),
-                        // Album art
-                        Container(
-                          width: 260.w,
-                          height: 260.w,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: CachedNetworkImageProvider(_currentTrack.coverImageUrl),
-                              fit: BoxFit.cover,
+                          // Album art
+                          Container(
+                            width: 260.w,
+                            height: 260.w,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: CachedNetworkImageProvider(_currentTrack.coverImageUrl),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ).animate().scale(
                       duration: AppConstants.defaultAnimationDuration,
                       curve: Curves.easeOut,

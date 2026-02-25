@@ -138,24 +138,31 @@ class _AllPlaylistsScreenState extends State<AllPlaylistsScreen> {
 
             // Playlists grid
             Expanded(
-              child: GridView.builder(
-                padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: AppConstants.mediumSpacing.w,
-                  mainAxisSpacing: AppConstants.mediumSpacing.h,
-                  childAspectRatio: 0.8,
-                ),
-                itemCount: _playlists.length,
-                itemBuilder: (context, index) {
-                  final playlist = _playlists[index];
-                  return PlaylistCard(
-                    playlist: playlist,
-                    onTap: () => _onPlaylistTapped(playlist),
-                  ).animate().scale(
-                    duration: AppConstants.defaultAnimationDuration,
-                    delay: Duration(milliseconds: index * 100),
-                    curve: Curves.easeOut,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  int cols = 2;
+                  if (constraints.maxWidth >= 1024) cols = 4;
+                  else if (constraints.maxWidth >= 600) cols = 3;
+                  return GridView.builder(
+                    padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: cols,
+                      crossAxisSpacing: AppConstants.mediumSpacing.w,
+                      mainAxisSpacing: AppConstants.mediumSpacing.h,
+                      childAspectRatio: 0.8,
+                    ),
+                    itemCount: _playlists.length,
+                    itemBuilder: (context, index) {
+                      final playlist = _playlists[index];
+                      return PlaylistCard(
+                        playlist: playlist,
+                        onTap: () => _onPlaylistTapped(playlist),
+                      ).animate().scale(
+                        duration: AppConstants.defaultAnimationDuration,
+                        delay: Duration(milliseconds: index * 100),
+                        curve: Curves.easeOut,
+                      );
+                    },
                   );
                 },
               ),

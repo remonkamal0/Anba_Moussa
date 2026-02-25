@@ -131,7 +131,7 @@ class _LoginScreenState extends State<_LoginScreen> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(18.r),
-        borderSide: BorderSide(color: _border, width: 1),
+        borderSide: BorderSide(color: _orange, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(18.r),
@@ -197,279 +197,213 @@ class _LoginScreenState extends State<_LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: _bg,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
-            child: Column(
-              children: [
-                SizedBox(height: 70.h),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final h = constraints.maxHeight;
+            final isSmall  = h < 680;
+            final isTablet = constraints.maxWidth >= 600;
+            final hPad     = isTablet ? 64.w : 24.w;
+            final vTop     = isSmall  ? 24.h  : 48.h;
+            final vGap     = isSmall  ? 12.h  : 22.h;
+            final logoSize = isSmall  ? 56.w  : 72.w;
+            final titleSz  = isSmall  ? 26.sp : 34.sp;
 
-                // Logo (rounded square orange + white icon)
-                Container(
-                  width: 72.w,
-                  height: 72.w,
-                  decoration: BoxDecoration(
-                    color: _orange,
-                    borderRadius: BorderRadius.circular(18.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.10),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    Icons.headphones,
-                    color: Colors.white,
-                    size: 34.sp,
-                  ),
-                ).animate().fadeIn(duration: 350.ms).scale(begin: const Offset(0.95, 0.95)),
+            return SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: h),
+                child: IntrinsicHeight(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: hPad),
+                    child: Column(
+                      children: [
+                        SizedBox(height: vTop),
 
-                SizedBox(height: 28.h),
-
-                Text(
-                  'Welcome Back',
-                  style: TextStyle(
-                    color: _navy,
-                    fontSize: 34.sp,
-                    fontWeight: FontWeight.w900,
-                  ),
-                  textAlign: TextAlign.center,
-                ).animate().fadeIn(delay: 120.ms, duration: 350.ms),
-
-                SizedBox(height: 10.h),
-
-                Text(
-                  'Discover and stream your favorite hits',
-                  style: TextStyle(
-                    color: const Color(0xFF7E8798),
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  textAlign: TextAlign.center,
-                ).animate().fadeIn(delay: 220.ms, duration: 350.ms),
-
-                SizedBox(height: 34.h),
-
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _fieldLabel('EMAIL ADDRESS'),
-                      TextFormField(
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: _inputDecoration(
-                          hint: 'hello@example.com',
-                          prefix: Icons.email_outlined,
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) return 'Please enter your email address';
-                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                            return 'Please enter a valid email address';
-                          }
-                          return null;
-                        },
-                      ).animate().slideX(begin: -0.08, duration: 350.ms),
-
-                      SizedBox(height: 22.h),
-
-                      _fieldLabel('PASSWORD'),
-                      TextFormField(
-                        controller: _passwordController,
-                        obscureText: _obscurePassword,
-                        decoration: _inputDecoration(
-                          hint: '••••••••',
-                          prefix: Icons.lock_outline,
-                          suffix: IconButton(
-                            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                            icon: Icon(
-                              _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                              color: const Color(0xFFA7B0C0),
-                            ),
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) return 'Please enter your password';
-                          return null;
-                        },
-                      ).animate().slideX(begin: -0.08, duration: 350.ms, delay: 90.ms),
-
-                      SizedBox(height: 14.h),
-
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: InkWell(
-                          onTap: _onForgotPassword,
-                          borderRadius: BorderRadius.circular(8.r),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
-                            child: Text(
-                              'Forgot Password?',
-                              style: TextStyle(
-                                color: _orange,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w800,
+                        // ── Logo ──────────────────────────────────────────
+                        Container(
+                          width: logoSize,
+                          height: logoSize,
+                          decoration: BoxDecoration(
+                            color: _orange,
+                            borderRadius: BorderRadius.circular(18.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.10),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
                               ),
-                            ),
+                            ],
                           ),
-                        ),
-                      ),
+                          child: Icon(Icons.headphones, color: Colors.white, size: 34.sp),
+                        ).animate().fadeIn(duration: 350.ms).scale(begin: const Offset(0.95, 0.95)),
 
-                      SizedBox(height: 18.h),
+                        SizedBox(height: vGap),
 
-                      // Login button (big orange pill)
-                      SizedBox(
-                        height: 58.h,
-                        child: ElevatedButton(
-                          onPressed: _isLoading ? null : _login,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: _orange,
-                            disabledBackgroundColor: _orange.withOpacity(0.7),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.r),
-                            ),
-                          ).copyWith(
-                            shadowColor: WidgetStatePropertyAll(Colors.black.withOpacity(0.12)),
-                          ),
-                          child: _isLoading
-                              ? SizedBox(
-                            width: 22.w,
-                            height: 22.w,
-                            child: const CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                            ),
-                          )
-                              : Text(
-                            'Login',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ),
-                      ).animate().fadeIn(delay: 220.ms, duration: 350.ms),
+                        Text(
+                          'Welcome Back',
+                          style: TextStyle(color: _navy, fontSize: titleSz, fontWeight: FontWeight.w900),
+                          textAlign: TextAlign.center,
+                        ).animate().fadeIn(delay: 120.ms, duration: 350.ms),
 
-                      SizedBox(height: 20.h),
+                        SizedBox(height: 8.h),
 
-                      // Skip button
-                      Center(
-                        child: InkWell(
-                          onTap: () => context.go('/home'),
-                          borderRadius: BorderRadius.circular(20.r),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                            child: Text(
-                              'Skip',
-                              style: TextStyle(
-                                color: _muted,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ).animate().fadeIn(delay: 200.ms, duration: 300.ms),
+                        Text(
+                          'Discover and stream your favorite hits',
+                          style: TextStyle(color: const Color(0xFF7E8798), fontSize: 15.sp, fontWeight: FontWeight.w500),
+                          textAlign: TextAlign.center,
+                        ).animate().fadeIn(delay: 220.ms, duration: 350.ms),
 
-                      SizedBox(height: 20.h),
+                        SizedBox(height: vGap),
 
-                      // Divider
-                      Row(
-                        children: [
-                          Expanded(child: Container(height: 1.h, color: _border)),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 14.w),
-                            child: Text(
-                              'OR CONTINUE WITH',
-                              style: TextStyle(
-                                color: const Color(0xFFB0B7C4),
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 1.2,
-                              ),
-                            ),
-                          ),
-                          Expanded(child: Container(height: 1.h, color: _border)),
-                        ],
-                      ),
+                        // ── Form ──────────────────────────────────────────
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _fieldLabel('EMAIL ADDRESS'),
+                              TextFormField(
+                                controller: _emailController,
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: _inputDecoration(hint: 'hello@example.com', prefix: Icons.email_outlined),
+                                validator: (v) {
+                                  if (v == null || v.isEmpty) return 'Please enter your email address';
+                                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(v)) return 'Please enter a valid email address';
+                                  return null;
+                                },
+                              ).animate().slideX(begin: -0.08, duration: 350.ms),
 
-                      SizedBox(height: 18.h),
+                              SizedBox(height: vGap),
 
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _socialButton(
-                              onTap: _signInWithGoogle,
-                              leading: Image.asset(
-                                'assets/images/google-color-svgrepo-com.png',
-                                width: 22.w,
-                                height: 22.w,
-                                errorBuilder: (_, __, ___) => Icon(Icons.g_mobiledata, size: 26.sp, color: _navy),
-                              ),
-                              text: 'Google',
-                            ).animate().slideX(begin: -0.08, duration: 350.ms),
-                          ),
-                          SizedBox(width: 14.w),
-                          Expanded(
-                            child: _socialButton(
-                              onTap: _signInWithApple,
-                              leading: Image.asset(
-                                'assets/images/apple-svgrepo-com.png',
-                                width: 22.w,
-                                height: 22.w,
-                                errorBuilder: (_, __, ___) => Icon(Icons.apple, color: Colors.black, size: 22.sp),
-                              ),
-                              text: 'Apple',
-                            ).animate().slideX(begin: 0.08, duration: 350.ms),
-                          ),
-                        ],
-                      ),
+                              _fieldLabel('PASSWORD'),
+                              TextFormField(
+                                controller: _passwordController,
+                                obscureText: _obscurePassword,
+                                decoration: _inputDecoration(
+                                  hint: '••••••••',
+                                  prefix: Icons.lock_outline,
+                                  suffix: IconButton(
+                                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                                    icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility, color: const Color(0xFFA7B0C0)),
+                                  ),
+                                ),
+                                validator: (v) => (v == null || v.isEmpty) ? 'Please enter your password' : null,
+                              ).animate().slideX(begin: -0.08, duration: 350.ms, delay: 90.ms),
 
-                      SizedBox(height: 28.h),
+                              SizedBox(height: 10.h),
 
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Don't have an account? ",
-                            style: TextStyle(
-                              color: const Color(0xFF8A93A3),
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          InkWell(
-                            onTap: _onSignUp,
-                            borderRadius: BorderRadius.circular(8.r),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
-                              child: Text(
-                                'Sign Up',
-                                style: TextStyle(
-                                  color: _orange,
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w900,
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: InkWell(
+                                  onTap: _onForgotPassword,
+                                  borderRadius: BorderRadius.circular(8.r),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+                                    child: Text('Forgot Password?', style: TextStyle(color: _orange, fontSize: 14.sp, fontWeight: FontWeight.w800)),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                        ],
-                      ),
 
-                      SizedBox(height: 30.h),
-                    ],
+                              SizedBox(height: vGap),
+
+                              // Login button
+                              SizedBox(
+                                height: 56.h,
+                                child: ElevatedButton(
+                                  onPressed: _isLoading ? null : _login,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: _orange,
+                                    disabledBackgroundColor: _orange.withOpacity(0.7),
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.r)),
+                                  ).copyWith(shadowColor: WidgetStatePropertyAll(Colors.black.withOpacity(0.12))),
+                                  child: _isLoading
+                                      ? SizedBox(width: 22.w, height: 22.w, child: const CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)))
+                                      : Text('Login', style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.w900)),
+                                ),
+                              ).animate().fadeIn(delay: 220.ms, duration: 350.ms),
+
+                              SizedBox(height: 14.h),
+
+                              // Skip
+                              Center(
+                                child: InkWell(
+                                  onTap: () => context.go('/home'),
+                                  borderRadius: BorderRadius.circular(20.r),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+                                    child: Text('Skip', style: TextStyle(color: _muted, fontSize: 14.sp, fontWeight: FontWeight.w600)),
+                                  ),
+                                ),
+                              ).animate().fadeIn(delay: 200.ms, duration: 300.ms),
+
+                              SizedBox(height: 14.h),
+
+                              // OR divider
+                              Row(
+                                children: [
+                                  Expanded(child: Container(height: 1.h, color: _border)),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 14.w),
+                                    child: Text('OR CONTINUE WITH', style: TextStyle(color: const Color(0xFFB0B7C4), fontSize: 12.sp, fontWeight: FontWeight.w800, letterSpacing: 1.2)),
+                                  ),
+                                  Expanded(child: Container(height: 1.h, color: _border)),
+                                ],
+                              ),
+
+                              SizedBox(height: 14.h),
+
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: _socialButton(
+                                      onTap: _signInWithGoogle,
+                                      leading: Image.asset('assets/images/google-color-svgrepo-com.png', width: 22.w, height: 22.w, errorBuilder: (_, __, ___) => Icon(Icons.g_mobiledata, size: 26.sp, color: _navy)),
+                                      text: 'Google',
+                                    ).animate().slideX(begin: -0.08, duration: 350.ms),
+                                  ),
+                                  SizedBox(width: 14.w),
+                                  Expanded(
+                                    child: _socialButton(
+                                      onTap: _signInWithApple,
+                                      leading: Image.asset('assets/images/apple-svgrepo-com.png', width: 22.w, height: 22.w, errorBuilder: (_, __, ___) => Icon(Icons.apple, color: Colors.black, size: 22.sp)),
+                                      text: 'Apple',
+                                    ).animate().slideX(begin: 0.08, duration: 350.ms),
+                                  ),
+                                ],
+                              ),
+
+                              SizedBox(height: 20.h),
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("Don't have an account? ", style: TextStyle(color: const Color(0xFF8A93A3), fontSize: 14.sp, fontWeight: FontWeight.w600)),
+                                  InkWell(
+                                    onTap: _onSignUp,
+                                    borderRadius: BorderRadius.circular(8.r),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+                                      child: Text('Sign Up', style: TextStyle(color: _orange, fontSize: 14.sp, fontWeight: FontWeight.w900)),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              SizedBox(height: 24.h),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

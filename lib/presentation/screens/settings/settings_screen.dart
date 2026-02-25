@@ -354,7 +354,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
 
-                  SizedBox(height: 22.h),
+                  SizedBox(height: 12.h),
+
+                  // About Developer button
+                  _CardContainer(
+                    child: _RowTile(
+                      icon: Icons.info_outline_rounded,
+                      iconBg: accent.withOpacity(.12),
+                      iconColor: accent,
+                      title: "About Developer",
+                      onTap: () => _showAboutDeveloper(context, accent),
+                    ),
+                  ),
+
+                  SizedBox(height: 18.h),
 
                   // Log out
                   TextButton.icon(
@@ -408,6 +421,171 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   SizedBox(height: 28.h),
                 ],
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+  void _showAboutDeveloper(BuildContext context, Color accent) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.55),
+      builder: (ctx) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(28.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.12),
+                blurRadius: 40,
+                offset: const Offset(0, 16),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // ── Header ────────────────────────────────────
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 28.h),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [accent, accent.withOpacity(0.75)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 64.w,
+                      height: 64.w,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.25),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Icons.headphones_rounded, color: Colors.white, size: 32.sp),
+                    ),
+                    SizedBox(height: 10.h),
+                    Text(
+                      'Anba Moussa',
+                      style: TextStyle(color: Colors.white, fontSize: 20.sp, fontWeight: FontWeight.w900),
+                    ),
+                    SizedBox(height: 4.h),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.20),
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: Text(
+                        'About the Team',
+                        style: TextStyle(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.w600, letterSpacing: 0.8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // ── Team cards ────────────────────────────────
+              Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 22.h, 20.w, 8.h),
+                child: Column(
+                  children: [
+                    _teamCard(
+                      accent: accent,
+                      role: 'UI/UX Designer',
+                      name: 'Louis Samir',
+                      icon: Icons.design_services_rounded,
+                      roleColor: const Color(0xFF7C3AED),
+                      roleBg: const Color(0xFFF3EEFF),
+                    ),
+                    SizedBox(height: 12.h),
+                    _teamCard(
+                      accent: accent,
+                      role: 'Mobile Developer',
+                      name: 'Remon Kamal',
+                      icon: Icons.phone_android_rounded,
+                      roleColor: accent,
+                      roleBg: accent.withOpacity(0.10),
+                    ),
+                  ],
+                ),
+              ),
+
+              // ── Close ─────────────────────────────────────
+              Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 4.h, 20.w, 20.h),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    style: TextButton.styleFrom(
+                      backgroundColor: const Color(0xFFF3F5F7),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.r)),
+                      padding: EdgeInsets.symmetric(vertical: 14.h),
+                    ),
+                    child: Text('Close', style: TextStyle(color: const Color(0xFF6B7280), fontSize: 14.sp, fontWeight: FontWeight.w700)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _teamCard({
+    required Color accent,
+    required String role,
+    required String name,
+    required IconData icon,
+    required Color roleColor,
+    required Color roleBg,
+  }) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7F9FC),
+        borderRadius: BorderRadius.circular(18.r),
+        border: Border.all(color: const Color(0xFFE9EDF3), width: 1),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 46.w,
+            height: 46.w,
+            decoration: BoxDecoration(
+              color: roleBg,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: roleColor, size: 22.sp),
+          ),
+          SizedBox(width: 14.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                  decoration: BoxDecoration(
+                    color: roleBg,
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Text(role, style: TextStyle(color: roleColor, fontSize: 10.sp, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
+                ),
+                SizedBox(height: 5.h),
+                Text(name, style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w800, color: const Color(0xFF111827))),
+              ],
             ),
           ),
         ],
@@ -482,76 +660,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 }
 
-class _TopBar extends StatelessWidget {
-  final String title;
-  final VoidCallback onBack;
-  final VoidCallback onSettings;
-
-  const _TopBar({
-    required this.title,
-    required this.onBack,
-    required this.onSettings,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        _CircleIconButton(
-          icon: Icons.arrow_back,
-          onTap: onBack,
-        ),
-        Expanded(
-          child: Center(
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w900,
-                color: const Color(0xFF111827),
-              ),
-            ),
-          ),
-        ),
-        _CircleIconButton(
-          icon: Icons.settings_outlined,
-          onTap: onSettings,
-        ),
-      ],
-    );
-  }
-}
-
-class _CircleIconButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _CircleIconButton({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(999),
-      onTap: onTap,
-      child: Container(
-        width: 42.w,
-        height: 42.w,
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(.75),
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(.05),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
-            )
-          ],
-        ),
-        child: Icon(icon, size: 20.w, color: const Color(0xFF111827)),
-      ),
-    );
-  }
-}
 
 class _AvatarWithEdit extends StatelessWidget {
   final Color accent;

@@ -304,31 +304,37 @@ class _SliderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 180.h,
-          child: PageView.builder(
-            controller: pageController,
-            itemCount: sliders.length,
-            onPageChanged: (index) => onChanged(index),
-            itemBuilder: (_, i) => _SliderCard(item: sliders[i], orange: orange),
-          ),
-        ),
-        SizedBox(height: 10.h),
-        SmoothPageIndicator(
-          controller: pageController,
-          count: sliders.length,
-          effect: ExpandingDotsEffect(
-            dotHeight: 6.h,
-            dotWidth: 6.w,
-            expansionFactor: 2,
-            spacing: 8.w,
-            dotColor: const Color(0xFFE6E9EF),
-            activeDotColor: orange,
-          ),
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isTablet = constraints.maxWidth >= 600;
+        final sliderHeight = isTablet ? 240.h : 180.h;
+        return Column(
+          children: [
+            SizedBox(
+              height: sliderHeight,
+              child: PageView.builder(
+                controller: pageController,
+                itemCount: sliders.length,
+                onPageChanged: (index) => onChanged(index),
+                itemBuilder: (_, i) => _SliderCard(item: sliders[i], orange: orange),
+              ),
+            ),
+            SizedBox(height: 10.h),
+            SmoothPageIndicator(
+              controller: pageController,
+              count: sliders.length,
+              effect: ExpandingDotsEffect(
+                dotHeight: 6.h,
+                dotWidth: 6.w,
+                expansionFactor: 2,
+                spacing: 8.w,
+                dotColor: const Color(0xFFE6E9EF),
+                activeDotColor: orange,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -479,68 +485,75 @@ class _CategoriesRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 120.h,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: categories.length,
-        separatorBuilder: (_, __) => SizedBox(width: 12.w),
-        itemBuilder: (_, i) {
-          final c = categories[i];
-          return InkWell(
-            onTap: () {},
-            child: Container(
-              width: 120.w,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18.r),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.06),
-                    blurRadius: 18,
-                    offset: const Offset(0, 10),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isTablet = constraints.maxWidth >= 600;
+        final cardW = isTablet ? 160.w : 120.w;
+        final cardH = isTablet ? 160.h : 120.h;
+        return SizedBox(
+          height: cardH,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: categories.length,
+            separatorBuilder: (_, __) => SizedBox(width: 12.w),
+            itemBuilder: (_, i) {
+              final c = categories[i];
+              return InkWell(
+                onTap: () {},
+                child: Container(
+                  width: cardW,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18.r),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.06),
+                        blurRadius: 18,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                    border: Border.all(
+                      color: i == 1 ? orange : const Color(0xFFF0F2F6),
+                      width: 2,
+                    ),
                   ),
-                ],
-                border: Border.all(
-                  color: i == 1 ? orange : const Color(0xFFF0F2F6),
-                  width: 2,
-                ),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(18.r),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.network(c.imageUrl, fit: BoxFit.cover),
-                    Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Padding(
-                        padding: EdgeInsets.all(10.w),
-                        child: Text(
-                          c.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w900,
-                            shadows: [
-                              Shadow(
-                                color: Colors.black.withOpacity(0.45),
-                                blurRadius: 10,
-                              )
-                            ],
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(18.r),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Image.network(c.imageUrl, fit: BoxFit.cover),
+                        Align(
+                          alignment: Alignment.bottomLeft,
+                          child: Padding(
+                            padding: EdgeInsets.all(10.w),
+                            child: Text(
+                              c.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w900,
+                                shadows: [
+                                  Shadow(
+                                    color: Colors.black.withOpacity(0.45),
+                                    blurRadius: 10,
+                                  )
+                                ],
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          );
-        },
-      ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

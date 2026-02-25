@@ -68,65 +68,72 @@ class OnboardingPage extends ConsumerWidget {
                     ),
                   ),
           // Image
-          AspectRatio(
-            aspectRatio: 1,
-            child: Container(
-              width: isSmallScreen ? 200.w : (isLargeScreen ? 320.w : 280.w),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white,
-                  width: isSmallScreen ? 2.w : 4.w,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 20,
-                    spreadRadius: 5,
-                  ),
-                ],
+          Flexible(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: isLargeScreen ? 280.h : 240.h,
+                maxWidth:  isLargeScreen ? 280.h : 240.h,
               ),
-              child: ClipOval(
+              child: AspectRatio(
+                aspectRatio: 1,
                 child: Container(
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        const Color(0xFFE8DDD5),
-                        const Color(0xFFD4C4B5),
-                      ],
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white,
+                      width: isSmallScreen ? 2.w : 4.w,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 20,
+                        spreadRadius: 5,
+                      ),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xFFE8DDD5),
+                            Color(0xFFD4C4B5),
+                          ],
+                        ),
+                      ),
+                      child: pageData.imagePath.startsWith('http')
+                          ? CachedNetworkImage(
+                              imageUrl: pageData.imagePath,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Center(
+                                child: CircularProgressIndicator(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => Icon(
+                                Icons.image,
+                                size: 80.w,
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                              ),
+                            )
+                          : Image.asset(
+                              pageData.imagePath,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => Icon(
+                                Icons.image,
+                                size: 80.w,
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                              ),
+                            ),
                     ),
                   ),
-                  child: pageData.imagePath.startsWith('http')
-                      ? CachedNetworkImage(
-                          imageUrl: pageData.imagePath,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Center(
-                            child: CircularProgressIndicator(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                          errorWidget: (context, url, error) => Icon(
-                            Icons.image,
-                            size: 80.w,
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-                          ),
-                        )
-                      : Image.asset(
-                          pageData.imagePath,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Icon(
-                            Icons.image,
-                            size: 80.w,
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-                          ),
-                        ),
+                ).animate().scale(
+                  duration: AppConstants.defaultAnimationDuration,
+                  curve: Curves.easeOut,
                 ),
               ),
-            ).animate().scale(
-              duration: AppConstants.defaultAnimationDuration,
-              curve: Curves.easeOut,
             ),
           ),
 

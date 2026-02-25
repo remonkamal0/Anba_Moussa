@@ -127,24 +127,31 @@ class _VideoGalleryScreenState extends State<VideoGalleryScreen> {
 
             // Video albums grid
             Expanded(
-              child: GridView.builder(
-                padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: AppConstants.mediumSpacing.w,
-                  mainAxisSpacing: AppConstants.mediumSpacing.h,
-                  childAspectRatio: 0.8,
-                ),
-                itemCount: _videoAlbums.length,
-                itemBuilder: (context, index) {
-                  final album = _videoAlbums[index];
-                  return VideoAlbumCard(
-                    album: album,
-                    onTap: () => _onAlbumTapped(album),
-                  ).animate().scale(
-                    duration: AppConstants.defaultAnimationDuration,
-                    delay: Duration(milliseconds: index * 100),
-                    curve: Curves.easeOut,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  int cols = 2;
+                  if (constraints.maxWidth >= 1024) cols = 4;
+                  else if (constraints.maxWidth >= 600) cols = 3;
+                  return GridView.builder(
+                    padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: cols,
+                      crossAxisSpacing: AppConstants.mediumSpacing.w,
+                      mainAxisSpacing: AppConstants.mediumSpacing.h,
+                      childAspectRatio: 0.8,
+                    ),
+                    itemCount: _videoAlbums.length,
+                    itemBuilder: (context, index) {
+                      final album = _videoAlbums[index];
+                      return VideoAlbumCard(
+                        album: album,
+                        onTap: () => _onAlbumTapped(album),
+                      ).animate().scale(
+                        duration: AppConstants.defaultAnimationDuration,
+                        delay: Duration(milliseconds: index * 100),
+                        curve: Curves.easeOut,
+                      );
+                    },
                   );
                 },
               ),

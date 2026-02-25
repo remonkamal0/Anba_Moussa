@@ -198,6 +198,18 @@ class AppDrawer extends ConsumerWidget {
                       },
                     ),
 
+                    _settingsTile(
+                      context,
+                      isDark: isDark,
+                      accentColor: accentColor,
+                      icon: Icons.info_outline_rounded,
+                      title: 'About Developer',
+                      onTap: () {
+                        _closeDrawer(context);
+                        _showAboutDialog(context, accentColor);
+                      },
+                    ),
+
                     SizedBox(height: 18.h),
                   ],
                 ),
@@ -237,6 +249,197 @@ class AppDrawer extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showAboutDialog(BuildContext context, Color accent) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.55),
+      builder: (ctx) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(28.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.12),
+                blurRadius: 40,
+                offset: const Offset(0, 16),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // ── Gradient header ──────────────────────────
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 28.h),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [accent, accent.withValues(alpha: 0.75)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 64.w,
+                      height: 64.w,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.25),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Icons.headphones_rounded, color: Colors.white, size: 32.sp),
+                    ),
+                    SizedBox(height: 10.h),
+                    Text(
+                      'Anba Moussa',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.20),
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: Text(
+                        'About the Team',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.8,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // ── Team cards ────────────────────────────────
+              Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 22.h, 20.w, 8.h),
+                child: Column(
+                  children: [
+                    _aboutCard(
+                      role: 'UI/UX Designer',
+                      name: 'Louis Samir',
+                      icon: Icons.design_services_rounded,
+                      roleColor: const Color(0xFF7C3AED),
+                      roleBg: const Color(0xFFF3EEFF),
+                    ),
+                    SizedBox(height: 12.h),
+                    _aboutCard(
+                      role: 'Mobile Developer',
+                      name: 'Remon Kamal',
+                      icon: Icons.phone_android_rounded,
+                      roleColor: accent,
+                      roleBg: accent.withValues(alpha: 0.10),
+                    ),
+                  ],
+                ),
+              ),
+
+              // ── Close button ──────────────────────────────
+              Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 4.h, 20.w, 20.h),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    style: TextButton.styleFrom(
+                      backgroundColor: const Color(0xFFF3F5F7),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.r),
+                      ),
+                      padding: EdgeInsets.symmetric(vertical: 14.h),
+                    ),
+                    child: Text(
+                      'Close',
+                      style: TextStyle(
+                        color: const Color(0xFF6B7280),
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _aboutCard({
+    required String role,
+    required String name,
+    required IconData icon,
+    required Color roleColor,
+    required Color roleBg,
+  }) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7F9FC),
+        borderRadius: BorderRadius.circular(18.r),
+        border: Border.all(color: const Color(0xFFE9EDF3), width: 1),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 46.w,
+            height: 46.w,
+            decoration: BoxDecoration(color: roleBg, shape: BoxShape.circle),
+            child: Icon(icon, color: roleColor, size: 22.sp),
+          ),
+          SizedBox(width: 14.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                  decoration: BoxDecoration(
+                    color: roleBg,
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Text(
+                    role,
+                    style: TextStyle(
+                      color: roleColor,
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 5.h),
+                Text(
+                  name,
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w800,
+                    color: const Color(0xFF111827),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

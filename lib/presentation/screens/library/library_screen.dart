@@ -100,28 +100,35 @@ class _LibraryScreenState extends State<LibraryScreen> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
-        child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: AppConstants.mediumSpacing.w,
-            mainAxisSpacing: AppConstants.mediumSpacing.h,
-            childAspectRatio: 0.75,
-          ),
-          itemCount: _items.length,
-          itemBuilder: (context, index) {
-            final item = _items[index];
-            return LibraryCard(
-              item: item,
-              onTap: () => _onItemTapped(item),
-            ).animate().scale(
-              duration: AppConstants.defaultAnimationDuration,
-              delay: Duration(milliseconds: index * 100),
-              curve: Curves.easeOut,
-            );
-          },
-        ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          int cols = 2;
+          if (constraints.maxWidth >= 1024) cols = 4;
+          else if (constraints.maxWidth >= 600) cols = 3;
+          return Padding(
+            padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: cols,
+                crossAxisSpacing: AppConstants.mediumSpacing.w,
+                mainAxisSpacing: AppConstants.mediumSpacing.h,
+                childAspectRatio: 0.75,
+              ),
+              itemCount: _items.length,
+              itemBuilder: (context, index) {
+                final item = _items[index];
+                return LibraryCard(
+                  item: item,
+                  onTap: () => _onItemTapped(item),
+                ).animate().scale(
+                  duration: AppConstants.defaultAnimationDuration,
+                  delay: Duration(milliseconds: index * 100),
+                  curve: Curves.easeOut,
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }

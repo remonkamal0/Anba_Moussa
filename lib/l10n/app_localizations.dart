@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// The title of the application
   ///
   /// In en, this message translates to:
-  /// **'Melodix'**
+  /// **'Anba Moussa'**
   String get appTitle;
 
   /// No description provided for @onboardingWelcome.
@@ -239,7 +239,7 @@ abstract class AppLocalizations {
   /// No description provided for @appVersion.
   ///
   /// In en, this message translates to:
-  /// **'SOULSYNC APP V.1.0'**
+  /// **'ANBA MOUSSA APP V.1.0'**
   String get appVersion;
 
   /// No description provided for @navigationHome.
@@ -260,11 +260,29 @@ abstract class AppLocalizations {
   /// **'Library'**
   String get navigationLibrary;
 
+  /// No description provided for @navigationGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get navigationGallery;
+
+  /// No description provided for @navigationVideos.
+  ///
+  /// In en, this message translates to:
+  /// **'Videos'**
+  String get navigationVideos;
+
   /// No description provided for @navigationProfile.
   ///
   /// In en, this message translates to:
   /// **'Profile'**
   String get navigationProfile;
+
+  /// No description provided for @navigationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get navigationSettings;
 
   /// No description provided for @playerNowPlaying.
   ///
@@ -295,6 +313,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Share'**
   String get playerShare;
+
+  /// No description provided for @drawerMyPlaylists.
+  ///
+  /// In en, this message translates to:
+  /// **'My Playlists'**
+  String get drawerMyPlaylists;
+
+  /// No description provided for @drawerLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get drawerLanguage;
+
+  /// No description provided for @drawerDarkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get drawerDarkMode;
+
+  /// No description provided for @drawerTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get drawerTheme;
+
+  /// No description provided for @drawerFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get drawerFavorites;
+
+  /// No description provided for @drawerDownloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads'**
+  String get drawerDownloads;
+
+  /// No description provided for @drawerNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get drawerNotifications;
+
+  /// No description provided for @drawerDeleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get drawerDeleteAccount;
+
+  /// No description provided for @drawerLogOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Out'**
+  String get drawerLogOut;
+
+  /// No description provided for @drawerArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get drawerArabic;
+
+  /// No description provided for @drawerEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get drawerEnglish;
 }
 
 class _AppLocalizationsDelegate

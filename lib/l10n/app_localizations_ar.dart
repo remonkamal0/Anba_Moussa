@@ -9,14 +9,14 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
-  String get appTitle => 'ميلوديكس';
+  String get appTitle => 'أنبا موسى';
 
   @override
-  String get onboardingWelcome => 'مرحباً بك في سول سينك';
+  String get onboardingWelcome => 'مرحباً بك في أنبا موسى';
 
   @override
   String get onboardingWelcomeSubtitle =>
-      'تواصل من خلال الإيقاع والإيمان. شخصّي مساحتك المقدسة.';
+      'تواصل من خلال الإيقاع والإيمان. شخصّن مساحتك الروحية.';
 
   @override
   String get onboardingDiscover => 'اكتشف الألحان المقدسة';
@@ -82,7 +82,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsCustomizeAnytime => 'تخصيص في أي وقت من الإعدادات';
 
   @override
-  String get appVersion => 'تطبيق سول سينك V.1.0';
+  String get appVersion => 'تطبيق أنبا موسى V.1.0';
 
   @override
   String get navigationHome => 'الرئيسية';
@@ -94,7 +94,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navigationLibrary => 'المكتبة';
 
   @override
+  String get navigationGallery => 'الصور';
+
+  @override
+  String get navigationVideos => 'الفيديوهات';
+
+  @override
   String get navigationProfile => 'الملف الشخصي';
+
+  @override
+  String get navigationSettings => 'الإعدادات';
 
   @override
   String get playerNowPlaying => 'يتم تشغيله الآن';
@@ -110,4 +119,37 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get playerShare => 'مشاركة';
+
+  @override
+  String get drawerMyPlaylists => 'قوائمي';
+
+  @override
+  String get drawerLanguage => 'اللغة';
+
+  @override
+  String get drawerDarkMode => 'الوضع الداكن';
+
+  @override
+  String get drawerTheme => 'السمة';
+
+  @override
+  String get drawerFavorites => 'المفضلة';
+
+  @override
+  String get drawerDownloads => 'التنزيلات';
+
+  @override
+  String get drawerNotifications => 'الإشعارات';
+
+  @override
+  String get drawerDeleteAccount => 'حذف الحساب';
+
+  @override
+  String get drawerLogOut => 'تسجيل الخروج';
+
+  @override
+  String get drawerArabic => 'عربي';
+
+  @override
+  String get drawerEnglish => 'إنجليزي';
 }

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import '../constants/app_constants.dart';
 
 class AppTheme {
-  static ThemeData light({Color? accentColor}) {
+  static ThemeData light({Color? accentColor, Locale? locale}) {
     final primary = accentColor ?? AppConstants.primaryColor;
+    final isArabic = locale?.languageCode == 'ar';
+    final primaryFont = isArabic ? 'Cairo' : 'Inter';
+    final fallbackFont = isArabic ? 'Inter' : 'Cairo';
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.light(
@@ -12,86 +15,8 @@ class AppTheme {
         surface: const Color(0xFFFFFFFF),
         onSurface: Colors.black,
       ),
-      // Font configuration for bilingual support
-      fontFamily: 'Inter',
-      textTheme: TextTheme(
-        // English text styles (Inter)
-        displayLarge: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 32,
-          fontWeight: FontWeight.w900,
-        ),
-        displayMedium: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 28,
-          fontWeight: FontWeight.w900,
-        ),
-        displaySmall: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 24,
-          fontWeight: FontWeight.w900,
-        ),
-        headlineLarge: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 22,
-          fontWeight: FontWeight.w900,
-        ),
-        headlineMedium: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 20,
-          fontWeight: FontWeight.w800,
-        ),
-        headlineSmall: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-        ),
-        titleLarge: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 16,
-          fontWeight: FontWeight.w900,
-        ),
-        titleMedium: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 14,
-          fontWeight: FontWeight.w800,
-        ),
-        titleSmall: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
-        ),
-        bodyLarge: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-        ),
-        bodyMedium: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-        bodySmall: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-        ),
-        labelLarge: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-        ),
-        labelMedium: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
-        labelSmall: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 10,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
+      fontFamily: primaryFont,
+      textTheme: _buildTextTheme(primaryFont, fallbackFont),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius),
@@ -132,8 +57,11 @@ class AppTheme {
     );
   }
 
-  static ThemeData dark({Color? accentColor}) {
+  static ThemeData dark({Color? accentColor, Locale? locale}) {
     final primary = accentColor ?? AppConstants.primaryColor;
+    final isArabic = locale?.languageCode == 'ar';
+    final primaryFont = isArabic ? 'Cairo' : 'Inter';
+    final fallbackFont = isArabic ? 'Inter' : 'Cairo';
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.dark(
@@ -142,86 +70,8 @@ class AppTheme {
         surface: const Color(0xFF121212),
         onSurface: Colors.white,
       ),
-      // Font configuration for bilingual support
-      fontFamily: 'Inter',
-      textTheme: TextTheme(
-        // English text styles (Inter)
-        displayLarge: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 32,
-          fontWeight: FontWeight.w900,
-        ),
-        displayMedium: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 28,
-          fontWeight: FontWeight.w900,
-        ),
-        displaySmall: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 24,
-          fontWeight: FontWeight.w900,
-        ),
-        headlineLarge: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 22,
-          fontWeight: FontWeight.w900,
-        ),
-        headlineMedium: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 20,
-          fontWeight: FontWeight.w800,
-        ),
-        headlineSmall: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-        ),
-        titleLarge: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 16,
-          fontWeight: FontWeight.w900,
-        ),
-        titleMedium: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 14,
-          fontWeight: FontWeight.w800,
-        ),
-        titleSmall: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
-        ),
-        bodyLarge: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-        ),
-        bodyMedium: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-        bodySmall: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-        ),
-        labelLarge: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-        ),
-        labelMedium: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
-        labelSmall: TextStyle(
-          fontFamily: 'Inter',
-          fontSize: 10,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
+      fontFamily: primaryFont,
+      textTheme: _buildTextTheme(primaryFont, fallbackFont),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius),
@@ -262,7 +112,38 @@ class AppTheme {
     );
   }
 
-  // Accent colors
+  // ── Shared text theme builder ──────────────────────────────────────────────
+  static TextTheme _buildTextTheme(String primaryFont, String fallbackFont) {
+    TextStyle ts({
+      required double size,
+      required FontWeight weight,
+    }) => TextStyle(
+      fontFamily: primaryFont,
+      fontFamilyFallback: [fallbackFont],
+      fontSize: size,
+      fontWeight: weight,
+    );
+
+    return TextTheme(
+      displayLarge:  ts(size: 32, weight: FontWeight.w900),
+      displayMedium: ts(size: 28, weight: FontWeight.w900),
+      displaySmall:  ts(size: 24, weight: FontWeight.w900),
+      headlineLarge:  ts(size: 22, weight: FontWeight.w900),
+      headlineMedium: ts(size: 20, weight: FontWeight.w800),
+      headlineSmall:  ts(size: 18, weight: FontWeight.w700),
+      titleLarge:  ts(size: 16, weight: FontWeight.w900),
+      titleMedium: ts(size: 14, weight: FontWeight.w800),
+      titleSmall:  ts(size: 12, weight: FontWeight.w700),
+      bodyLarge:  ts(size: 16, weight: FontWeight.w600),
+      bodyMedium: ts(size: 14, weight: FontWeight.w500),
+      bodySmall:  ts(size: 12, weight: FontWeight.w400),
+      labelLarge:  ts(size: 14, weight: FontWeight.w700),
+      labelMedium: ts(size: 12, weight: FontWeight.w600),
+      labelSmall:  ts(size: 10, weight: FontWeight.w500),
+    );
+  }
+
+  // ── Accent colors ──────────────────────────────────────────────────────────
   static const Map<String, Color> accentColors = {
     'orange': Color(0xFFFF6B35),
     'purple': Color(0xFF9B59B6),

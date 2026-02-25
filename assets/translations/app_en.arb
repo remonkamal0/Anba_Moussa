@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "appTitle": "Melodix",
+  "appTitle": "Anba Moussa",
   "@appTitle": {
     "description": "The title of the application"
   },
@@ -26,14 +26,28 @@
   "accentColorGreen": "Green",
   "accentColorYellow": "Yellow",
   "settingsCustomizeAnytime": "CUSTOMIZE ANYTIME IN SETTINGS",
-  "appVersion": "SOULSYNC APP V.1.0",
+  "appVersion": "ANBA MOUSSA APP V.1.0",
   "navigationHome": "Home",
   "navigationSearch": "Search",
   "navigationLibrary": "Library",
+  "navigationGallery": "Gallery",
+  "navigationVideos": "Videos",
   "navigationProfile": "Profile",
+  "navigationSettings": "Settings",
   "playerNowPlaying": "Now Playing",
   "playerFavorite": "Favorite",
   "playerAddToPlaylist": "Add to Playlist",
   "playerDownload": "Download",
-  "playerShare": "Share"
+  "playerShare": "Share",
+  "drawerMyPlaylists": "My Playlists",
+  "drawerLanguage": "Language",
+  "drawerDarkMode": "Dark Mode",
+  "drawerTheme": "Theme",
+  "drawerFavorites": "Favorites",
+  "drawerDownloads": "Downloads",
+  "drawerNotifications": "Notifications",
+  "drawerDeleteAccount": "Delete Account",
+  "drawerLogOut": "Log Out",
+  "drawerArabic": "Arabic",
+  "drawerEnglish": "English"
 }

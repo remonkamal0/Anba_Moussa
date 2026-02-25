@@ -9,7 +9,6 @@ import '../screens/library/library_screen.dart';
 import '../screens/album/album_details_screen.dart';
 import '../screens/artist/artist_details_screen.dart';
 import '../screens/playlist/playlist_details_screen.dart';
-import '../screens/profile/profile_screen.dart';
 import '../screens/profile/edit_profile_screen.dart';
 import '../screens/settings/settings_screen.dart';
 import '../screens/auth/login_screen.dart';
@@ -83,10 +82,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/all-playlists',
         builder: (context, state) => const AllPlaylistsScreen(),
       ),
-      GoRoute(
-        path: '/settings',
-        builder: (context, state) => const SettingsScreen(),
-      ),
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) {
@@ -110,8 +105,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const VideoGalleryScreen(),
           ),
           GoRoute(
-            path: '/profile',
-            builder: (context, state) => const ProfileScreen(),
+            path: '/settings',
+            builder: (context, state) => const SettingsScreen(),
           ),
         ],
       ),

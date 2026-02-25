@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/locale_provider.dart';
 
@@ -22,6 +23,7 @@ class AppDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final themeMode = ref.watch(themeProvider);
     final locale = ref.watch(localeProvider);
     final accentColor = ref.watch(accentColorProvider);
@@ -110,7 +112,7 @@ class AppDrawer extends ConsumerWidget {
                       isDark: isDark,
                       accentColor: accentColor,
                       icon: Icons.queue_music,
-                      title: 'My Playlists',
+                      title: l10n.drawerMyPlaylists,
                       onTap: () {},
                     ),
 
@@ -119,8 +121,10 @@ class AppDrawer extends ConsumerWidget {
                       isDark: isDark,
                       accentColor: accentColor,
                       icon: Icons.translate_rounded,
-                      title: 'Language',
-                      trailingText: locale.languageCode == 'ar' ? 'Arabic' : 'English',
+                      title: l10n.drawerLanguage,
+                      trailingText: locale.languageCode == 'ar'
+                          ? l10n.drawerArabic
+                          : l10n.drawerEnglish,
                       onTap: () {
                         final newLocale =
                             locale.languageCode == 'ar' ? 'en' : 'ar';
@@ -133,7 +137,7 @@ class AppDrawer extends ConsumerWidget {
                       isDark: isDark,
                       accentColor: accentColor,
                       icon: Icons.nights_stay_rounded,
-                      title: 'Dark Mode',
+                      title: l10n.drawerDarkMode,
                       onTap: () => ref.read(themeProvider.notifier).toggleTheme(),
                     ),
 
@@ -142,6 +146,7 @@ class AppDrawer extends ConsumerWidget {
                       isDark: isDark,
                       accentColor: accentColor,
                       ref: ref,
+                      label: l10n.drawerTheme,
                     ),
 
                     Padding(
@@ -154,7 +159,7 @@ class AppDrawer extends ConsumerWidget {
                       isDark: isDark,
                       accentColor: accentColor,
                       icon: Icons.favorite_border_rounded,
-                      title: 'Favorites',
+                      title: l10n.drawerFavorites,
                       onTap: () => _onNavigationItemTapped(context, '/favorites'),
                     ),
 
@@ -163,7 +168,7 @@ class AppDrawer extends ConsumerWidget {
                       isDark: isDark,
                       accentColor: accentColor,
                       icon: Icons.download_rounded,
-                      title: 'Downloads',
+                      title: l10n.drawerDownloads,
                       onTap: () {},
                     ),
 
@@ -172,10 +177,10 @@ class AppDrawer extends ConsumerWidget {
                       isDark: isDark,
                       accentColor: accentColor,
                       icon: Icons.notifications_none_rounded,
-                      title: 'Notifications',
+                      title: l10n.drawerNotifications,
                       onTap: () => _onNavigationItemTapped(context, '/notifications'),
                     ),
-                    
+
                     Padding(
                       padding: EdgeInsetsDirectional.symmetric(horizontal: 22.w),
                       child: Container(height: 1, color: divider),
@@ -186,7 +191,7 @@ class AppDrawer extends ConsumerWidget {
                       isDark: isDark,
                       accentColor: Colors.red,
                       icon: Icons.delete_forever_rounded,
-                      title: 'Delete Account',
+                      title: l10n.drawerDeleteAccount,
                       titleColor: Colors.red,
                       onTap: () {
                         // Implement delete account logic
@@ -213,7 +218,7 @@ class AppDrawer extends ConsumerWidget {
                   },
                   icon: Icon(Icons.logout, size: 20.r),
                   label: Text(
-                    'Log Out',
+                    l10n.drawerLogOut,
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w700,
@@ -316,6 +321,7 @@ class AppDrawer extends ConsumerWidget {
     required bool isDark,
     required Color accentColor,
     required WidgetRef ref,
+    required String label,
   }) {
     final titleColor = isDark ? Colors.white : const Color(0xFF1B2430);
 
@@ -338,7 +344,7 @@ class AppDrawer extends ConsumerWidget {
               SizedBox(width: 14.w),
               Expanded(
                 child: Text(
-                  'Theme',
+                  label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(

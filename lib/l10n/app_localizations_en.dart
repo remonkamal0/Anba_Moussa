@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Melodix';
+  String get appTitle => 'Anba Moussa';
 
   @override
   String get onboardingWelcome => 'Welcome to SoulSync';
@@ -82,7 +82,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsCustomizeAnytime => 'CUSTOMIZE ANYTIME IN SETTINGS';
 
   @override
-  String get appVersion => 'SOULSYNC APP V.1.0';
+  String get appVersion => 'ANBA MOUSSA APP V.1.0';
 
   @override
   String get navigationHome => 'Home';
@@ -94,7 +94,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navigationLibrary => 'Library';
 
   @override
+  String get navigationGallery => 'Gallery';
+
+  @override
+  String get navigationVideos => 'Videos';
+
+  @override
   String get navigationProfile => 'Profile';
+
+  @override
+  String get navigationSettings => 'Settings';
 
   @override
   String get playerNowPlaying => 'Now Playing';
@@ -110,4 +119,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get playerShare => 'Share';
+
+  @override
+  String get drawerMyPlaylists => 'My Playlists';
+
+  @override
+  String get drawerLanguage => 'Language';
+
+  @override
+  String get drawerDarkMode => 'Dark Mode';
+
+  @override
+  String get drawerTheme => 'Theme';
+
+  @override
+  String get drawerFavorites => 'Favorites';
+
+  @override
+  String get drawerDownloads => 'Downloads';
+
+  @override
+  String get drawerNotifications => 'Notifications';
+
+  @override
+  String get drawerDeleteAccount => 'Delete Account';
+
+  @override
+  String get drawerLogOut => 'Log Out';
+
+  @override
+  String get drawerArabic => 'Arabic';
+
+  @override
+  String get drawerEnglish => 'English';
 }

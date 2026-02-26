@@ -1,432 +1,561 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:anba_moussa/l10n/app_localizations.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../../core/constants/app_constants.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:just_audio/just_audio.dart';
+import '../../providers/mini_player_provider.dart';
+import '../../widgets/common/app_drawer.dart';
 
-class PlayerScreen extends StatefulWidget {
+class PlayerScreen extends ConsumerStatefulWidget {
   final String? trackId;
-
   const PlayerScreen({super.key, this.trackId});
 
   @override
-  State<PlayerScreen> createState() => _PlayerScreenState();
+  ConsumerState<PlayerScreen> createState() => _PlayerScreenState();
 }
 
-class _PlayerScreenState extends State<PlayerScreen> {
-  bool _isPlaying = false;
+class _PlayerScreenState extends ConsumerState<PlayerScreen>
+    with TickerProviderStateMixin {
+  static const Color _accent = Color(0xFFFF6B35);
+  static const _demoUrl =
+      'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+
+  final ZoomDrawerController _drawerController = ZoomDrawerController();
+  late final AudioPlayer _audio;
+
+  // Vinyl rotation controller
+  late final AnimationController _vinylCtrl;
+
+  // EQ bar controllers (5 bars, staggered durations)
+  late final List<AnimationController> _eqCtrls;
+  late final List<Animation<double>> _eqAnims;
+
   bool _isFavorite = false;
   bool _isDownloaded = false;
   bool _isShuffled = false;
   bool _isRepeating = false;
-  double _currentPosition = 45.0; // 00:45 in seconds
-  double _totalDuration = 230.0; // 03:50 in seconds
-  double _volume = 0.7;
+  Duration _position = const Duration(seconds: 45);
+  Duration _duration = const Duration(seconds: 230);
 
-  final Track _currentTrack = Track(
+  final Track _track = const Track(
     id: '1',
     title: 'Have you',
     artist: 'Madihu, Low G',
     album: "Madihu's best songs",
-    coverImageUrl: 'https://picsum.photos/seed/cityscape/400/400',
-    duration: '3:50',
+    coverImageUrl: 'https://picsum.photos/seed/cityscape/800/800',
   );
 
-  void _togglePlayPause() {
-    setState(() {
-      _isPlaying = !_isPlaying;
+  @override
+  void initState() {
+    super.initState();
+
+    // Vinyl — one full rotation every 14 seconds (slow & smooth)
+    _vinylCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 14),
+    )..repeat();
+
+    // 5 EQ bars with different oscillation speeds
+    const durations = [380, 520, 290, 450, 340];
+    _eqCtrls = List.generate(durations.length, (i) {
+      return AnimationController(
+        vsync: this,
+        duration: Duration(milliseconds: durations[i]),
+      )..repeat(reverse: true);
     });
+    _eqAnims = _eqCtrls
+        .map((c) => Tween<double>(begin: 0.15, end: 1.0)
+            .animate(CurvedAnimation(parent: c, curve: Curves.easeInOut)))
+        .toList();
+
+    _audio = AudioPlayer();
+    _initAudio();
   }
 
-  void _toggleFavorite() {
-    setState(() {
-      _isFavorite = !_isFavorite;
-    });
+  Future<void> _initAudio() async {
+    try {
+      await _audio.setUrl(_demoUrl);
+      _audio.durationStream.listen(
+          (d) { if (d != null && mounted) setState(() => _duration = d); });
+      _audio.positionStream.listen(
+          (p) { if (mounted) setState(() => _position = p); });
+      _audio.playingStream.listen((playing) {
+        if (!mounted) return;
+        if (playing) {
+          _vinylCtrl.repeat();
+          for (final c in _eqCtrls) c.repeat(reverse: true);
+        } else {
+          _vinylCtrl.stop();
+          for (final c in _eqCtrls) c.stop();
+        }
+        // Keep mini player icon in sync
+        final mini = ref.read(miniPlayerProvider);
+        if (mini.isPlaying != playing) {
+          ref.read(miniPlayerProvider.notifier).togglePlayPause();
+        }
+        setState(() {});
+      });
+      await _audio.play();
+    } catch (_) {}
   }
 
-  void _toggleDownload() {
-    setState(() {
-      _isDownloaded = !_isDownloaded;
-    });
+  @override
+  void dispose() {
+    _vinylCtrl.dispose();
+    for (final c in _eqCtrls) c.dispose();
+    _audio.dispose();
+    super.dispose();
   }
 
-  void _toggleShuffle() {
-    setState(() {
-      _isShuffled = !_isShuffled;
-    });
+  bool get _isPlaying => _audio.playing;
+
+  void _togglePlay() {
+    _isPlaying ? _audio.pause() : _audio.play();
+    setState(() {});
   }
 
-  void _toggleRepeat() {
-    setState(() {
-      _isRepeating = !_isRepeating;
-    });
+  void _onSeek(double v) {
+    _audio.seek(Duration(seconds: v.round()));
+    setState(() => _position = Duration(seconds: v.round()));
   }
 
-  void _onPrevious() {
-    // TODO: Implement previous track
-    print('Previous track');
-  }
-
-  void _onNext() {
-    // TODO: Implement next track
-    print('Next track');
-  }
-
-  void _onSeek(double value) {
-    setState(() {
-      _currentPosition = value;
-    });
-  }
-
-  void _onVolumeChanged(double value) {
-    setState(() {
-      _volume = value;
-    });
-  }
-
-  String _formatDuration(double seconds) {
-    final duration = Duration(seconds: seconds.round());
-    final minutes = duration.inMinutes;
-    final remainingSeconds = duration.inSeconds % 60;
-    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  String _fmt(Duration d) {
+    final mm = d.inMinutes.toString().padLeft(2, '0');
+    final ss = (d.inSeconds % 60).toString().padLeft(2, '0');
+    return '$mm:$ss';
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+    final sw = MediaQuery.of(context).size.width;
+    final artSize = (sw * 0.72).clamp(180.0, 320.0);
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Top padding
-            SizedBox(height: AppConstants.mediumSpacing.h),
+    return ZoomDrawer(
+      controller: _drawerController,
+      style: DrawerStyle.defaultStyle,
+      menuScreen: const AppDrawer(),
+      isRtl: isRtl,
+      borderRadius: 24,
+      showShadow: true,
+      angle: isRtl ? 12 : -12,
+      drawerShadowsBackgroundColor: Colors.grey[300]!,
+      slideWidth: sw * 0.75,
+      menuBackgroundColor: Colors.white,
+      mainScreen: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: LayoutBuilder(
+            builder: (ctx, box) => SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: box.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 8.h),
 
-            // Album art and info
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: AppConstants.largeSpacing.r),
-                child: Column(
-                  children: [
-                    // Album art with orange ring
-                    ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: 300,
-                        maxHeight: 300,
-                      ),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          // Orange ring
-                          Container(
-                            width: 280.w,
-                            height: 280.w,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: const Color(0xFFFF6B35),
-                                width: 4.w,
-                              ),
-                            ),
-                          ),
-                          // Album art
-                          Container(
-                            width: 260.w,
-                            height: 260.w,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                image: CachedNetworkImageProvider(_currentTrack.coverImageUrl),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ).animate().scale(
-                      duration: AppConstants.defaultAnimationDuration,
-                      curve: Curves.easeOut,
-                    ),
-
-                    SizedBox(height: AppConstants.largeSpacing.h),
-
-                    // Track info
-                    Column(
-                      children: [
-                        Text(
-                          _currentTrack.title,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                          textAlign: TextAlign.center,
-                        ).animate().fadeIn(
-                          duration: AppConstants.defaultAnimationDuration,
-                          delay: const Duration(milliseconds: 200),
-                        ),
-
-                        SizedBox(height: AppConstants.smallSpacing.h),
-
-                        Text(
-                          '${_currentTrack.artist} • ${_currentTrack.album}',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Colors.grey[600],
-                          ),
-                          textAlign: TextAlign.center,
-                        ).animate().fadeIn(
-                          duration: AppConstants.defaultAnimationDuration,
-                          delay: const Duration(milliseconds: 400),
-                        ),
-
-                        SizedBox(height: AppConstants.mediumSpacing.h),
-
-                        // Action buttons
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                      // ── Top row ──────────────────────────────────
+                      // Always: [☰ menu | center | ← back]
+                      // LTR → menu LEFT, back RIGHT  ✓
+                      // RTL → Row reverses → menu RIGHT, back LEFT ✓
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.w),
+                        child: Row(
                           children: [
-                            // Download button
+                            // ☰ Drawer toggle
                             IconButton(
-                              onPressed: _toggleDownload,
-                              icon: Icon(
-                                _isDownloaded ? Icons.download_done : Icons.download,
-                                color: Colors.grey[700],
-                                size: 24.w,
-                              ),
-                            ).animate().fadeIn(
-                              duration: AppConstants.defaultAnimationDuration,
-                              delay: const Duration(milliseconds: 600),
+                              onPressed: () =>
+                                  _drawerController.toggle?.call(),
+                              icon: Icon(Icons.menu_rounded,
+                                  color: Colors.black87, size: 24.sp),
                             ),
-
-                            SizedBox(width: AppConstants.largeSpacing.w),
-
-                            // Favorite button
-                            IconButton(
-                              onPressed: _toggleFavorite,
-                              icon: Icon(
-                                _isFavorite ? Icons.favorite : Icons.favorite_border,
-                                color: _isFavorite ? Colors.red : Colors.grey[700],
-                                size: 24.w,
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'PLAYING FROM',
+                                    style: TextStyle(
+                                      fontSize: 11.sp,
+                                      letterSpacing: 2,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.grey[500],
+                                    ),
+                                  ),
+                                  SizedBox(height: 3.h),
+                                  Text(
+                                    _track.album,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ).animate().fadeIn(
-                              duration: AppConstants.defaultAnimationDuration,
-                              delay: const Duration(milliseconds: 800),
+                            ),
+                            // ← Back
+                            IconButton(
+                              onPressed: () => context.pop(),
+                              icon: Icon(
+                                isRtl
+                                    ? Icons.arrow_back_ios_rounded
+                                    : Icons.arrow_back_ios_rounded,
+                                color: Colors.black87,
+                                size: 20.sp,
+                              ),
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                      ),
 
-            // Progress section
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: AppConstants.largeSpacing.r),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Progress bar
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.volume_down,
-                          color: Colors.grey[600],
-                          size: 20.w,
+                      SizedBox(height: 12.h),
+
+                      // ── Spinning vinyl album art ─────────────────
+                      AnimatedBuilder(
+                        animation: _vinylCtrl,
+                        builder: (_, child) => Transform.rotate(
+                          angle: _vinylCtrl.value * 2 * math.pi,
+                          child: child,
                         ),
-                        SizedBox(width: AppConstants.smallSpacing.w),
-                        Expanded(
-                          child: SliderTheme(
-                            data: SliderTheme.of(context).copyWith(
-                              thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6.r),
-                              trackHeight: 4.h,
-                              activeTrackColor: const Color(0xFFFF6B35),
-                              inactiveTrackColor: Colors.grey[300],
-                              thumbColor: const Color(0xFFFF6B35),
+                        child: SizedBox(
+                          width: artSize,
+                          height: artSize,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Orange ring
+                              Container(
+                                width: artSize,
+                                height: artSize,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      color: _accent, width: 6),
+                                ),
+                              ),
+                              // White gap
+                              Container(
+                                width: artSize * 0.87,
+                                height: artSize * 0.87,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              // Cover image
+                              Container(
+                                width: artSize * 0.75,
+                                height: artSize * 0.75,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    image: CachedNetworkImageProvider(
+                                        _track.coverImageUrl),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              // Centre hole
+                              Container(
+                                width: artSize * 0.08,
+                                height: artSize * 0.08,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white,
+                                  border: Border.all(
+                                      color: _accent, width: 2),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 16.h),
+
+                      // ── Title + artist ───────────────────────────
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        child: Column(
+                          children: [
+                            Text(
+                              _track.title,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize:
+                                    (sw * 0.085).clamp(24, 42).toDouble(),
+                                fontWeight: FontWeight.w900,
+                                color: Colors.black87,
+                              ),
                             ),
-                            child: Slider(
-                              value: _currentPosition,
-                              max: _totalDuration,
-                              onChanged: _onSeek,
+                            SizedBox(height: 6.h),
+                            Text(
+                              _track.artist,
+                              style: TextStyle(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[500],
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
 
-                    SizedBox(height: AppConstants.smallSpacing.h),
+                      SizedBox(height: 10.h),
 
-                    // Time labels
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          _formatDuration(_currentPosition),
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey[600],
+                      // ── 🎚 Equalizer bars ────────────────────────
+                      _EqualizerBars(
+                        eqAnims: _eqAnims,
+                        isPlaying: _isPlaying,
+                      ),
+
+                      SizedBox(height: 10.h),
+
+                      // ── Download + Favourite ─────────────────────
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _IBtn(
+                            icon: _isDownloaded
+                                ? Icons.download_done_rounded
+                                : Icons.download_rounded,
+                            onTap: () => setState(
+                                () => _isDownloaded = !_isDownloaded),
                           ),
-                        ),
-                        Text(
-                          _formatDuration(_totalDuration),
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey[600],
+                          SizedBox(width: 20.w),
+                          _IBtn(
+                            icon: _isFavorite
+                                ? Icons.favorite_rounded
+                                : Icons.favorite_border_rounded,
+                            onTap: () =>
+                                setState(() => _isFavorite = !_isFavorite),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                        ],
+                      ),
 
-            // Control buttons
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: AppConstants.largeSpacing.r),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        // Shuffle
-                        IconButton(
-                          onPressed: _toggleShuffle,
-                          icon: Icon(
-                            Icons.shuffle,
-                            color: _isShuffled ? const Color(0xFFFF6B35) : Colors.grey[600],
-                            size: 24.w,
-                          ),
-                        ),
+                      SizedBox(height: 8.h),
 
-                        // Previous
-                        IconButton(
-                          onPressed: _onPrevious,
-                          icon: Icon(
-                            Icons.skip_previous,
-                            color: Colors.black,
-                            size: 32.w,
-                          ),
+                      // ── Progress slider ──────────────────────────
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: SliderTheme(
+                                    data: SliderTheme.of(context).copyWith(
+                                      trackHeight: 4.h,
+                                      activeTrackColor: _accent,
+                                      inactiveTrackColor: Colors.grey[300],
+                                      thumbColor: _accent,
+                                      overlayColor:
+                                          _accent.withOpacity(0.15),
+                                      thumbShape: RoundSliderThumbShape(
+                                          enabledThumbRadius: 7.r),
+                                    ),
+                                    child: Slider(
+                                      value: _position.inSeconds
+                                          .clamp(0, _duration.inSeconds)
+                                          .toDouble(),
+                                      max: _duration.inSeconds
+                                          .toDouble()
+                                          .clamp(1, double.infinity),
+                                      onChanged: _onSeek,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding:
+                                  EdgeInsets.symmetric(horizontal: 6.w),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(_fmt(_position),
+                                      style: TextStyle(
+                                          fontSize: 13.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.grey[600])),
+                                  Text(_fmt(_duration),
+                                      style: TextStyle(
+                                          fontSize: 13.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.grey[600])),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
+                      ),
 
-                        // Play/Pause
-                        Container(
-                          width: 64.w,
-                          height: 64.w,
+                      SizedBox(height: 14.h),
+
+                      // ── Controls card ────────────────────────────
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: Container(
+                          height: 88.h,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFF6B35),
-                            shape: BoxShape.circle,
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(28.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.07),
+                                blurRadius: 30,
+                                offset: const Offset(0, 16),
+                              ),
+                            ],
                           ),
-                          child: IconButton(
-                            onPressed: _togglePlayPause,
-                            icon: Icon(
-                              _isPlaying ? Icons.pause : Icons.play_arrow,
-                              color: Colors.white,
-                              size: 32.w,
-                            ),
+                          child: Row(
+                            mainAxisAlignment:
+                                MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _IBtn(
+                                icon: Icons.shuffle_rounded,
+                                color: _isShuffled
+                                    ? _accent
+                                    : Colors.grey[400]!,
+                                size: 26.sp,
+                                onTap: () => setState(
+                                    () => _isShuffled = !_isShuffled),
+                              ),
+                              _IBtn(
+                                icon: Icons.skip_previous_rounded,
+                                color: Colors.black87,
+                                size: 34.sp,
+                                onTap: () => _audio.seek(Duration.zero),
+                              ),
+                              // Play/Pause
+                              Container(
+                                width: 62.w,
+                                height: 62.w,
+                                decoration: BoxDecoration(
+                                  color: _accent,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: _accent.withOpacity(0.35),
+                                      blurRadius: 22,
+                                      offset: const Offset(0, 10),
+                                    ),
+                                  ],
+                                ),
+                                child: IconButton(
+                                  onPressed: _togglePlay,
+                                  icon: Icon(
+                                    _isPlaying
+                                        ? Icons.pause_rounded
+                                        : Icons.play_arrow_rounded,
+                                    color: Colors.white,
+                                    size: 32.sp,
+                                  ),
+                                ),
+                              ),
+                              _IBtn(
+                                icon: Icons.skip_next_rounded,
+                                color: Colors.black87,
+                                size: 34.sp,
+                                onTap: () {},
+                              ),
+                              _IBtn(
+                                icon: Icons.repeat_rounded,
+                                color: _isRepeating
+                                    ? _accent
+                                    : Colors.grey[400]!,
+                                size: 26.sp,
+                                onTap: () => setState(
+                                    () => _isRepeating = !_isRepeating),
+                              ),
+                            ],
                           ),
                         ),
+                      ),
 
-                        // Next
-                        IconButton(
-                          onPressed: _onNext,
-                          icon: Icon(
-                            Icons.skip_next,
-                            color: Colors.black,
-                            size: 32.w,
-                          ),
-                        ),
-
-                        // Repeat
-                        IconButton(
-                          onPressed: _toggleRepeat,
-                          icon: Icon(
-                            Icons.repeat,
-                            color: _isRepeating ? const Color(0xFFFF6B35) : Colors.grey[600],
-                            size: 24.w,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                      SizedBox(height: 20.h),
+                      const Spacer(),
+                    ],
+                  ),
                 ),
               ),
             ),
-
-            // Bottom navigation
-            _buildBottomNavigationBar(),
-          ],
+          ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNavigationBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: BottomNavigationBar(
-        currentIndex: 1, // Library is selected
-        onTap: (index) {
-          // TODO: Navigate to different screens
-        },
-        backgroundColor: Colors.white,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFFFF6B35),
-        unselectedItemColor: Colors.grey[600],
-        selectedLabelStyle: const TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 12,
-        ),
-        unselectedLabelStyle: const TextStyle(
-          fontWeight: FontWeight.normal,
-          fontSize: 12,
-        ),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.library_music_outlined),
-            activeIcon: Icon(Icons.library_music),
-            label: 'Library',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.photo_library_outlined),
-            activeIcon: Icon(Icons.photo_library),
-            label: 'Gallery',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.video_library_outlined),
-            activeIcon: Icon(Icons.video_library),
-            label: 'Videos',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
       ),
     );
   }
 }
+
+// ─── Horizontal Equalizer Bars ────────────────────────────────────────────────
+
+class _EqualizerBars extends StatelessWidget {
+  final List<Animation<double>> eqAnims;
+  final bool isPlaying;
+
+  const _EqualizerBars({required this.eqAnims, required this.isPlaying});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 32,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: List.generate(eqAnims.length, (i) {
+          return AnimatedBuilder(
+            animation: eqAnims[i],
+            builder: (_, __) {
+              final h = (32 * eqAnims[i].value).clamp(4.0, 32.0);
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 3),
+                child: Container(
+                  width: 5,
+                  height: h,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFF6B35)
+                        .withOpacity(0.6 + 0.4 * eqAnims[i].value),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+              );
+            },
+          );
+        }),
+      ),
+    );
+  }
+}
+
+// ─── Icon button helper ────────────────────────────────────────────────────────
+
+class _IBtn extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  final Color color;
+  final double size;
+
+  const _IBtn({
+    required this.icon,
+    required this.onTap,
+    this.color = const Color(0xFFFF6B35),
+    this.size = 26,
+  });
+
+  @override
+  Widget build(BuildContext context) =>
+      IconButton(onPressed: onTap, icon: Icon(icon, color: color, size: size));
+}
+
+// ─── Track model ──────────────────────────────────────────────────────────────
 
 class Track {
   final String id;
@@ -434,14 +563,12 @@ class Track {
   final String artist;
   final String album;
   final String coverImageUrl;
-  final String duration;
 
-  Track({
+  const Track({
     required this.id,
     required this.title,
     required this.artist,
     required this.album,
     required this.coverImageUrl,
-    required this.duration,
   });
 }

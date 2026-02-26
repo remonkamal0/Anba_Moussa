@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:anba_moussa/l10n/app_localizations.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../widgets/common/app_drawer.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
@@ -15,7 +15,6 @@ class LibraryScreen extends StatefulWidget {
 }
 
 class _LibraryScreenState extends State<LibraryScreen> {
-  int _selectedIndex = 1; // Library is selected
 
   final List<LibraryItem> _items = [
     LibraryItem(
@@ -63,15 +62,20 @@ class _LibraryScreenState extends State<LibraryScreen> {
   ];
 
   void _onItemTapped(LibraryItem item) {
-    // TODO: Navigate to album details or player
-    print('Tapped on: ${item.title}');
+    final params = Uri.encodeComponent;
+    context.push(
+      '/album/${item.id}'
+      '?title=${params(item.title)}'
+      '&imageUrl=${params(item.imageUrl)}'
+      '&artist=${params("Various Artists")}'
+      '&year=${params(item.year)}',
+    );
   }
 
   // void _onBottomNavTapped removed
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: Colors.white,

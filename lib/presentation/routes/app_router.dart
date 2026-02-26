@@ -114,7 +114,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/album/:albumId',
         builder: (context, state) {
           final albumId = state.pathParameters['albumId']!;
-          return AlbumDetailsScreen();
+          final title = state.uri.queryParameters['title'] ?? 'Album';
+          final imageUrl = state.uri.queryParameters['imageUrl'] ?? '';
+          final artist = state.uri.queryParameters['artist'] ?? '';
+          final year = state.uri.queryParameters['year'] ?? '';
+          return AlbumDetailsScreen(
+            albumId: albumId,
+            title: title,
+            imageUrl: imageUrl,
+            artist: artist,
+            year: year,
+          );
         },
       ),
       GoRoute(

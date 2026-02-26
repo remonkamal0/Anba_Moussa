@@ -108,7 +108,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
                 return Positioned(
                   left: 0,
                   right: 0,
-                  bottom: 76.h,
+                  bottom: 84.h,
                   child: _MiniPlayer(state: miniState),
                 );
               },

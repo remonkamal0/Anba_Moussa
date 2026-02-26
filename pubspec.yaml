@@ -48,6 +48,8 @@ dependencies:
   # Audio & Video
   just_audio: ^0.9.36
   audio_service: ^0.18.12
+  audio_session: ^0.1.18
+  flutter_volume_controller: ^1.0.7
   video_player: ^2.8.2
   chewie: ^1.7.4
 

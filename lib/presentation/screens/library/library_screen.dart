@@ -3,8 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_constants.dart';
-import '../../widgets/common/app_drawer.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 
 class LibraryScreen extends StatefulWidget {
@@ -15,48 +13,40 @@ class LibraryScreen extends StatefulWidget {
 }
 
 class _LibraryScreenState extends State<LibraryScreen> {
-
   final List<LibraryItem> _items = [
     LibraryItem(
       id: '1',
       title: 'Joy',
-      year: '2023',
-      imageUrl: 'https://picsum.photos/seed/joy/200/200',
+      year: '2020',
+      imageUrl: 'https://picsum.photos/seed/joy/400/400',
       type: LibraryItemType.album,
     ),
     LibraryItem(
       id: '2',
       title: 'Chu',
-      year: '2023',
-      imageUrl: 'https://picsum.photos/seed/chu/200/200',
+      year: '2019',
+      imageUrl: 'https://picsum.photos/seed/chu/400/400',
       type: LibraryItemType.album,
     ),
     LibraryItem(
       id: '3',
       title: 'To Y',
       year: '2023',
-      imageUrl: 'https://picsum.photos/seed/toy/200/200',
+      imageUrl: 'https://picsum.photos/seed/toy/400/400',
       type: LibraryItemType.album,
     ),
     LibraryItem(
       id: '4',
       title: 'Salv',
-      year: '2023',
-      imageUrl: 'https://picsum.photos/seed/salv/200/200',
+      year: '2022',
+      imageUrl: 'https://picsum.photos/seed/salv/400/400',
       type: LibraryItemType.album,
     ),
     LibraryItem(
       id: '5',
       title: 'New',
       year: '2024',
-      imageUrl: 'https://picsum.photos/seed/new/200/200',
-      type: LibraryItemType.album,
-    ),
-    LibraryItem(
-      id: '6',
-      title: 'Light',
-      year: '2024',
-      imageUrl: 'https://picsum.photos/seed/light/200/200',
+      imageUrl: 'https://picsum.photos/seed/newalbum/400/400',
       type: LibraryItemType.album,
     ),
   ];
@@ -65,85 +55,83 @@ class _LibraryScreenState extends State<LibraryScreen> {
     final params = Uri.encodeComponent;
     context.push(
       '/album/${item.id}'
-      '?title=${params(item.title)}'
-      '&imageUrl=${params(item.imageUrl)}'
-      '&artist=${params("Various Artists")}'
-      '&year=${params(item.year)}',
+          '?title=${params(item.title)}'
+          '&imageUrl=${params(item.imageUrl)}'
+          '&artist=${params("Various Artists")}'
+          '&year=${params(item.year)}',
     );
   }
 
-  // void _onBottomNavTapped removed
-
   @override
   Widget build(BuildContext context) {
+    final gap = 12.w;
 
     return Scaffold(
       backgroundColor: Colors.white,
-      drawer: AppDrawer(),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: Builder(
-          builder: (context) {
-            return IconButton(
-              icon: const Icon(Icons.menu, color: Colors.black),
-              onPressed: () {
-                if (ZoomDrawer.of(context) != null) {
-                  ZoomDrawer.of(context)!.toggle();
-                }
-              },
-            );
-          }
+        leading: IconButton(
+          icon: const Icon(Icons.menu, color: Colors.black),
+          onPressed: () {
+            final drawer = ZoomDrawer.of(context);
+            if (drawer != null) drawer.toggle();
+          },
         ),
         title: Text(
-          'LIBRARY',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
+          'LIBARY',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w800,
             color: Colors.black,
+            letterSpacing: 1.2,
           ),
         ),
         centerTitle: true,
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          int cols = 2;
-          if (constraints.maxWidth >= 1024) cols = 4;
-          else if (constraints.maxWidth >= 600) cols = 3;
-          return Padding(
-            padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
-            child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: cols,
-                crossAxisSpacing: AppConstants.mediumSpacing.w,
-                mainAxisSpacing: AppConstants.mediumSpacing.h,
-                childAspectRatio: 0.75,
-              ),
-              itemCount: _items.length,
-              itemBuilder: (context, index) {
-                final item = _items[index];
-                return LibraryCard(
-                  item: item,
-                  onTap: () => _onItemTapped(item),
-                ).animate().scale(
-                  duration: AppConstants.defaultAnimationDuration,
-                  delay: Duration(milliseconds: index * 100),
-                  curve: Curves.easeOut,
-                );
-              },
-            ),
-          );
-        },
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+        child: GridView.builder(
+          itemCount: _items.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: gap,
+            mainAxisSpacing: gap,
+            childAspectRatio: 1, // مربع زي الصورة
+          ),
+          itemBuilder: (context, index) {
+            final item = _items[index];
+            return _AlbumCard(
+              item: item,
+              onTap: () => _onItemTapped(item),
+            )
+                .animate()
+                .fadeIn(
+              duration: const Duration(milliseconds: 280),
+              delay: Duration(milliseconds: index * 70),
+              curve: Curves.easeOut,
+            )
+                .slideY(
+              begin: 0.12,
+              end: 0,
+              duration: const Duration(milliseconds: 280),
+              delay: Duration(milliseconds: index * 70),
+              curve: Curves.easeOut,
+            );
+          },
+        ),
       ),
     );
   }
 }
 
-class LibraryCard extends StatelessWidget {
+// ---------------------------------------------------------------------------
+// Album Card (مطابق للشكل المرسل)
+// ---------------------------------------------------------------------------
+class _AlbumCard extends StatelessWidget {
   final LibraryItem item;
   final VoidCallback onTap;
 
-  const LibraryCard({
-    super.key,
+  const _AlbumCard({
     required this.item,
     required this.onTap,
   });
@@ -152,76 +140,90 @@ class LibraryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
-          color: Colors.grey[50],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(22.r),
+        child: Stack(
           children: [
-            // Image container
-            Expanded(
-              flex: 3,
-              child: Stack(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(AppConstants.mediumBorderRadius.r),
-                      ),
-                      image: DecorationImage(
-                        image: CachedNetworkImageProvider(item.imageUrl),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+            // Background image
+            Positioned.fill(
+              child: CachedNetworkImage(
+                imageUrl: item.imageUrl,
+                fit: BoxFit.cover,
+                placeholder: (_, __) => Container(
+                  color: Colors.grey[200],
+                  child: const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
                   ),
-                  // Play button overlay
-                  Positioned(
-                    bottom: 8.h,
-                    right: 8.w,
-                    child: Container(
-                      width: 32.w,
-                      height: 32.w,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFF6B35),
+                ),
+                errorWidget: (_, __, ___) => Container(
+                  color: Colors.grey[200],
+                  child: const Icon(Icons.broken_image, color: Colors.grey),
+                ),
+              ),
+            ),
+
+            // Bottom capsule overlay
+            Positioned(
+              left: 12.w,
+              right: 12.w,
+              bottom: 12.h,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 7.h),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(40.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.18),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    // Play button
+                    Container(
+                      width: 34.w,
+                      height: 34.w,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFFF6B35),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        Icons.play_arrow,
+                        Icons.play_arrow_rounded,
                         color: Colors.white,
-                        size: 16.w,
+                        size: 20.w,
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            
-            // Title and year
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: EdgeInsets.all(AppConstants.smallSpacing.r),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      item.title,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: 2.h),
-                    Text(
-                      item.year,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
+                    SizedBox(width: 8.w),
+
+                    // Title + Year
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            item.title,
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.black,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 1.h),
+                          Text(
+                            item.year,
+                            style: TextStyle(
+                              fontSize: 11.sp,
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -235,6 +237,9 @@ class LibraryCard extends StatelessWidget {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Data models
+// ---------------------------------------------------------------------------
 class LibraryItem {
   final String id;
   final String title;

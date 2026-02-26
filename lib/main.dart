@@ -10,6 +10,7 @@ import 'presentation/routes/app_router.dart';
 import 'presentation/providers/locale_provider.dart';
 import 'presentation/providers/theme_provider.dart';
 import 'core/di/service_locator.dart';
+import 'core/services/permission_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,9 @@ void main() async {
 
   // Initialize Service Locator
   sl.init();
+
+  // Request runtime permissions (internet, photos, videos, audio, camera)
+  await PermissionService.instance.requestAllPermissions();
   
   runApp(
     ProviderScope(

@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:anba_moussa/l10n/app_localizations.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_constants.dart';
 
 class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
@@ -14,299 +10,267 @@ class FavoritesScreen extends StatefulWidget {
 }
 
 class _FavoritesScreenState extends State<FavoritesScreen> {
-  int _selectedIndex = 3; // Profile is selected
-  bool _isShuffled = false;
-  bool _isPlayingAll = false;
-
-  final List<Song> _favoriteSongs = [
-    Song(
+  final List<FavoriteSong> _favoriteSongs = [
+    FavoriteSong(
       id: '1',
-      title: 'Midnight Dreams',
-      artist: 'Luna Rose',
-      album: 'Celestial',
-      duration: '3:45',
-      albumArtUrl: 'https://picsum.photos/seed/midnight-dreams/60/60',
+      title: 'Blinding Lights',
+      artist: 'The Weeknd',
       isLiked: true,
-      isDownloaded: true,
+      albumArtUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&q=80',
     ),
-    Song(
+    FavoriteSong(
       id: '2',
-      title: 'Ocean Waves',
-      artist: 'Blue Horizon',
-      album: 'Serenity',
-      duration: '4:12',
-      albumArtUrl: 'https://picsum.photos/seed/ocean-waves/60/60',
+      title: 'Stay',
+      artist: 'The Kid LAROI & Justin Bieber',
       isLiked: true,
-      isDownloaded: false,
+      albumArtUrl: 'https://images.unsplash.com/photo-1493225457124-b049d107fb7f?w=400&q=80',
     ),
-    Song(
+    FavoriteSong(
       id: '3',
-      title: 'Golden Hour',
-      artist: 'Sunset Boulevard',
-      album: 'Golden Memories',
-      duration: '3:28',
-      albumArtUrl: 'https://picsum.photos/seed/golden-hour/60/60',
-      isLiked: false,
-      isDownloaded: true,
+      title: 'Levitating',
+      artist: 'Dua Lipa',
+      isLiked: true,
+      albumArtUrl: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&q=80',
     ),
-    Song(
+    FavoriteSong(
       id: '4',
-      title: 'City Lights',
-      artist: 'Urban Echo',
-      album: 'Night Life',
-      duration: '4:02',
-      albumArtUrl: 'https://picsum.photos/seed/city-lights/60/60',
+      title: 'Bad Habits',
+      artist: 'Ed Sheeran',
       isLiked: true,
-      isDownloaded: false,
+      albumArtUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&q=80',
     ),
-    Song(
+    FavoriteSong(
       id: '5',
-      title: 'Morning Coffee',
-      artist: 'Cozy Vibes',
-      album: 'Daily Rituals',
-      duration: '3:15',
-      albumArtUrl: 'https://picsum.photos/seed/morning-coffee/60/60',
-      isLiked: false,
-      isDownloaded: true,
+      title: 'Save Your Tears',
+      artist: 'The Weeknd & Ariana Grande',
+      isLiked: true,
+      albumArtUrl: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&q=80',
     ),
-    Song(
+    FavoriteSong(
       id: '6',
-      title: 'Summer Breeze',
-      artist: 'Tropical Winds',
-      album: 'Island Paradise',
-      duration: '3:52',
-      albumArtUrl: 'https://picsum.photos/seed/summer-breeze/60/60',
+      title: 'Good 4 U',
+      artist: 'Olivia Rodrigo',
       isLiked: true,
-      isDownloaded: false,
+      albumArtUrl: 'https://images.unsplash.com/photo-1516280440502-a2fc978b7b20?w=400&q=80',
     ),
-    Song(
+    FavoriteSong(
       id: '7',
-      title: 'Evening Serenade',
-      artist: 'Moonlight Sonata',
-      album: 'Dusk Melodies',
-      duration: '4:18',
-      albumArtUrl: 'https://picsum.photos/seed/evening-serenade/60/60',
-      isLiked: false,
-      isDownloaded: true,
-    ),
-    Song(
-      id: '8',
-      title: 'Sacred Hymns',
-      artist: 'Angel Voices',
-      album: 'Heavenly Choir',
-      duration: '5:30',
-      albumArtUrl: 'https://picsum.photos/seed/sacred-hymns/60/60',
+      title: 'Heat Waves',
+      artist: 'Glass Animals',
       isLiked: true,
-      isDownloaded: false,
+      albumArtUrl: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&q=80',
     ),
   ];
 
-  // void _onBottomNavTapped removed
-
-  void _onPlayAll() {
-    setState(() {
-      _isPlayingAll = !_isPlayingAll;
-    });
-    // TODO: Play all songs
-    print('Play all songs');
-  }
-
-  void _onShuffle() {
-    setState(() {
-      _isShuffled = !_isShuffled;
-    });
-    // TODO: Toggle shuffle mode
-    print('Toggle shuffle: $_isShuffled');
-  }
-
-  void _onSongTapped(Song song) {
-    // TODO: Navigate to player or play song
-    print('Playing song: ${song.title}');
-  }
-
-  void _onSongLiked(Song song, bool isLiked) {
-    // TODO: Toggle favorite status
-    print('${isLiked ? "Liked" : "Unliked"} song: ${song.title}');
-  }
-
-  void _onSongDownloaded(Song song, bool isDownloaded) {
-    // TODO: Toggle download status
-    print('${isDownloaded ? "Downloaded" : "Removed"} song: ${song.title}');
-  }
-
-  void _onSearchTapped() {
-    // TODO: Navigate to search screen
-    print('Search tapped');
-  }
-
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF7F7FA),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFFF7F7FA),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black, size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Favorites',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w900,
             color: Colors.black,
           ),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: _onSearchTapped,
-            icon: const Icon(Icons.search, color: Colors.black),
+            icon: const Icon(Icons.search_rounded, color: Colors.black, size: 24),
+            onPressed: () {},
           ),
         ],
       ),
-    );
-  }
-}
-class FavoriteSongTile extends StatelessWidget {
-  final Song song;
-  final VoidCallback onTap;
-  final Function(bool) onLike;
-  final Function(bool) onDownload;
-  final int index;
-
-  const FavoriteSongTile({
-    super.key,
-    required this.song,
-    required this.onTap,
-    required this.onLike,
-    required this.onDownload,
-    required this.index,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.all(AppConstants.mediumSpacing.r),
-      leading: Container(
-        width: 48.w,
-        height: 48.w,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius.r),
-          image: DecorationImage(
-            image: NetworkImage(song.albumArtUrl),
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
-      title: Text(
-        song.title,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          fontWeight: FontWeight.w600,
-          color: Colors.black,
-        ),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: Text(
-        '${song.artist} • ${song.album}',
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: Colors.grey[600],
-        ),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Rank badge
-          Container(
-            width: 24.w,
-            height: 24.w,
-            decoration: BoxDecoration(
-              color: const Color(0xFFFF6B35),
-              shape: BoxShape.circle,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Action Buttons Row
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
+                      label: Text(
+                        'Play All',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFF6B35),
+                        elevation: 4,
+                        shadowColor: const Color(0xFFFF6B35).withOpacity(0.5),
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24.r),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16.w),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.shuffle_rounded, color: Color(0xFFFF6B35), size: 20),
+                      label: Text(
+                        'Shuffle',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFFFF6B35),
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFFF2EC), // Lighter orange bg
+                        elevation: 0,
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24.r),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            child: Center(
+            
+            // Liked Songs Count
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
               child: Text(
-                '${index + 1}',
+                '${_favoriteSongs.length} LIKED SONGS',
                 style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 10.sp,
+                  fontSize: 11.sp,
                   fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                  color: Colors.grey[500],
                 ),
               ),
             ),
-          ),
-
-          SizedBox(width: AppConstants.smallSpacing.w),
-
-          // Duration
-          Text(
-            song.duration,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Colors.grey[600],
+            
+            // List of Favorite Songs
+            Expanded(
+              child: ListView.separated(
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
+                itemCount: _favoriteSongs.length,
+                separatorBuilder: (context, index) => SizedBox(height: 16.h),
+                itemBuilder: (context, index) {
+                  final song = _favoriteSongs[index];
+                  return Row(
+                    children: [
+                      // Circular Cover Art
+                      Container(
+                        width: 56.w,
+                        height: 56.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ClipOval(
+                          child: CachedNetworkImage(
+                            imageUrl: song.albumArtUrl,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      
+                      SizedBox(width: 16.w),
+                      
+                      // Title and Artist
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              song.title,
+                              style: TextStyle(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF1E293B),
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            SizedBox(height: 4.h),
+                            Text(
+                              song.artist,
+                              style: TextStyle(
+                                fontSize: 13.sp,
+                                color: Colors.grey[500],
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                      // Action Icons (Like, Download, Play)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.favorite_rounded,
+                            color: const Color(0xFFFF6B35),
+                            size: 20.w,
+                          ),
+                          SizedBox(width: 16.w),
+                          Icon(
+                            Icons.arrow_circle_down_rounded,
+                            color: Colors.grey[400],
+                            size: 22.w,
+                          ),
+                          SizedBox(width: 16.w),
+                          Icon(
+                            Icons.play_circle_outline_rounded,
+                            color: const Color(0xFF1E293B),
+                            size: 24.w,
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
-          ),
-
-          SizedBox(width: AppConstants.smallSpacing.w),
-
-          // Like button
-          IconButton(
-            onPressed: () => onLike(!song.isLiked),
-            icon: Icon(
-              song.isLiked ? Icons.favorite : Icons.favorite_border,
-              color: song.isLiked ? Colors.red : Colors.grey[600],
-              size: 20.w,
-            ),
-          ),
-
-          // Download button
-          IconButton(
-            onPressed: () => onDownload(!song.isDownloaded),
-            icon: Icon(
-              song.isDownloaded ? Icons.download_done : Icons.download,
-              color: song.isDownloaded ? Colors.green : Colors.grey[600],
-              size: 20.w,
-            ),
-          ),
-
-          // Play button
-          IconButton(
-            onPressed: () {
-              // TODO: Play song
-              print('Play song: ${song.title}');
-            },
-            icon: const Icon(Icons.play_arrow, color: Colors.black),
-            iconSize: 24.w,
-          ),
-        ],
+          ],
+        ),
       ),
-      onTap: onTap,
     );
   }
 }
 
-class Song {
+class FavoriteSong {
   final String id;
   final String title;
   final String artist;
-  final String album;
-  final String duration;
-  final String albumArtUrl;
   final bool isLiked;
-  final bool isDownloaded;
+  final String albumArtUrl;
 
-  Song({
+  FavoriteSong({
     required this.id,
     required this.title,
     required this.artist,
-    required this.album,
-    required this.duration,
+    required this.isLiked,
     required this.albumArtUrl,
-    this.isLiked = false,
-    this.isDownloaded = false,
   });
 }

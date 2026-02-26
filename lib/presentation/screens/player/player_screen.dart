@@ -5,7 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:flutter_volume_controller/flutter_volume_controller.dart';
+import '../../providers/audio_provider.dart';
 import '../../providers/mini_player_provider.dart';
 import '../../widgets/common/app_drawer.dart';
 
@@ -24,8 +25,6 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
       'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
 
   final ZoomDrawerController _drawerController = ZoomDrawerController();
-  late final AudioPlayer _audio;
-
   // Vinyl rotation controller
   late final AnimationController _vinylCtrl;
 
@@ -37,8 +36,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
   bool _isDownloaded = false;
   bool _isShuffled = false;
   bool _isRepeating = false;
-  Duration _position = const Duration(seconds: 45);
-  Duration _duration = const Duration(seconds: 230);
+  double _volume = 0.7;
+
+  // Cached notifier references — must be set in initState, NOT accessed in dispose().
+  late final MiniPlayerNotifier _miniPlayerNotifier;
+  late final AudioNotifier _audioNotifier;
 
   final Track _track = const Track(
     id: '1',
@@ -71,56 +73,77 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
             .animate(CurvedAnimation(parent: c, curve: Curves.easeInOut)))
         .toList();
 
-    _audio = AudioPlayer();
-    _initAudio();
+    // Cache notifiers while ref is valid (cannot use ref in dispose)
+    _miniPlayerNotifier = ref.read(miniPlayerProvider.notifier);
+    _audioNotifier = ref.read(audioProvider.notifier);
+
+    _initVolume();
+
+    // Load audio only if not already playing this track
+    final currentUrl = ref.read(audioProvider).currentUrl;
+    if (currentUrl != _demoUrl) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _audioNotifier.loadAndPlay(
+          _demoUrl,
+          MiniPlayerTrack(
+            id: _track.id,
+            title: _track.title,
+            artist: _track.artist,
+            coverImageUrl: _track.coverImageUrl,
+          ),
+        );
+      });
+    }
+
+    // Hide MiniPlayer while we're on this screen
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _miniPlayerNotifier.hide();
+    });
   }
 
-  Future<void> _initAudio() async {
+  /// Read the current device media volume and listen to hardware buttons
+  Future<void> _initVolume() async {
     try {
-      await _audio.setUrl(_demoUrl);
-      _audio.durationStream.listen(
-          (d) { if (d != null && mounted) setState(() => _duration = d); });
-      _audio.positionStream.listen(
-          (p) { if (mounted) setState(() => _position = p); });
-      _audio.playingStream.listen((playing) {
-        if (!mounted) return;
-        if (playing) {
-          _vinylCtrl.repeat();
-          for (final c in _eqCtrls) c.repeat(reverse: true);
-        } else {
-          _vinylCtrl.stop();
-          for (final c in _eqCtrls) c.stop();
-        }
-        // Keep mini player icon in sync
-        final mini = ref.read(miniPlayerProvider);
-        if (mini.isPlaying != playing) {
-          ref.read(miniPlayerProvider.notifier).togglePlayPause();
-        }
-        setState(() {});
-      });
-      await _audio.play();
+      FlutterVolumeController.updateShowSystemUI(true);
+    } catch (_) {}
+
+    try {
+      FlutterVolumeController.addListener((vol) {
+        if (mounted) setState(() => _volume = vol);
+      })?.onError((_) {});
+    } catch (_) {}
+
+    try {
+      final vol = await FlutterVolumeController.getVolume();
+      if (mounted && vol != null) setState(() => _volume = vol);
     } catch (_) {}
   }
 
   @override
   void dispose() {
+    // Cancel volume listener safely — flutter_volume_controller may throw
+    // MissingPluginException on some platforms/emulators.
+    try {
+      FlutterVolumeController.removeListener();
+    } catch (_) {}
+
     _vinylCtrl.dispose();
     for (final c in _eqCtrls) c.dispose();
-    _audio.dispose();
+
+    // NOTE: We intentionally do NOT dispose _audioNotifier.player here.
+    // The AudioPlayer lives in the shared audioProvider which persists beyond
+    // this screen, allowing the MiniPlayer to keep controlling playback.
+
+    // Show MiniPlayer when leaving the screen (deferred so Riverpod is happy).
+    Future(() => _miniPlayerNotifier.show());
     super.dispose();
   }
 
-  bool get _isPlaying => _audio.playing;
+  void _togglePlay() => _audioNotifier.togglePlayPause();
 
-  void _togglePlay() {
-    _isPlaying ? _audio.pause() : _audio.play();
-    setState(() {});
-  }
-
-  void _onSeek(double v) {
-    _audio.seek(Duration(seconds: v.round()));
-    setState(() => _position = Duration(seconds: v.round()));
-  }
+  void _onSeek(double v) => _audioNotifier.seek(Duration(seconds: v.round()));
 
   String _fmt(Duration d) {
     final mm = d.inMinutes.toString().padLeft(2, '0');
@@ -130,6 +153,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
 
   @override
   Widget build(BuildContext context) {
+    final audioState = ref.watch(audioProvider);
+    final _position = audioState.position;
+    final _duration = audioState.duration;
+    final _isPlaying = audioState.isPlaying;
+
     final isRtl = Directionality.of(context) == TextDirection.rtl;
     final sw = MediaQuery.of(context).size.width;
     final artSize = (sw * 0.72).clamp(180.0, 320.0);
@@ -308,15 +336,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                         ),
                       ),
 
-                      SizedBox(height: 10.h),
+                      SizedBox(height: 5.h),
 
-                      // ── 🎚 Equalizer bars ────────────────────────
-                      _EqualizerBars(
-                        eqAnims: _eqAnims,
-                        isPlaying: _isPlaying,
-                      ),
-
-                      SizedBox(height: 10.h),
 
                       // ── Download + Favourite ─────────────────────
                       Row(
@@ -433,7 +454,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                 icon: Icons.skip_previous_rounded,
                                 color: Colors.black87,
                                 size: 34.sp,
-                                onTap: () => _audio.seek(Duration.zero),
+                                onTap: () => _audioNotifier.seek(Duration.zero),
                               ),
                               // Play/Pause
                               Container(
@@ -481,8 +502,46 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                         ),
                       ),
 
-                      SizedBox(height: 20.h),
+                      SizedBox(height: 16.h),
+
+                      // ── Volume slider ────────────────────────────
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Row(
+                          children: [
+                            Icon(Icons.volume_down_rounded,
+                                color: Colors.grey[400], size: 20.sp),
+                            Expanded(
+                              child: SliderTheme(
+                                data: SliderTheme.of(context).copyWith(
+                                  trackHeight: 4.h,
+                                  activeTrackColor: _accent,
+                                  inactiveTrackColor: Colors.grey[200],
+                                  thumbColor: _accent,
+                                  overlayColor: _accent.withOpacity(0.15),
+                                  thumbShape: RoundSliderThumbShape(
+                                      enabledThumbRadius: 7.r),
+                                ),
+                                child: Slider(
+                                  value: _volume,
+                                  min: 0,
+                                  max: 1,
+                                  onChanged: (v) {
+                                    setState(() => _volume = v);
+                                    _audioNotifier.setVolume(v);
+                                  },
+                                ),
+                              ),
+                            ),
+                            Icon(Icons.volume_up_rounded,
+                                color: Colors.grey[400], size: 20.sp),
+                          ],
+                        ),
+                      ),
+
                       const Spacer(),
+                      // space so controls don't hide behind MiniPlayer
+                      SizedBox(height: 80.h),
                     ],
                   ),
                 ),

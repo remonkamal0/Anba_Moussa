@@ -20,6 +20,7 @@ import '../screens/gallery/video_gallery_screen.dart';
 import '../screens/notifications/notifications_screen.dart';
 import '../screens/favorites/favorites_screen.dart';
 import '../screens/favorites/all_playlists_screen.dart';
+import '../screens/downloads/downloads_screen.dart';
 import '../screens/search/search_screen.dart';
 import '../../core/constants/app_constants.dart';
 import '../widgets/layout/main_layout.dart';
@@ -76,11 +77,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/favorites',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const FavoritesScreen(),
       ),
       GoRoute(
         path: '/all-playlists',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const AllPlaylistsScreen(),
+      ),
+      GoRoute(
+        path: '/downloads',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const DownloadsScreen(),
       ),
       ShellRoute(
         navigatorKey: _shellNavigatorKey,

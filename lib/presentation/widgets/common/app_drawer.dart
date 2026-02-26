@@ -169,7 +169,7 @@ class AppDrawer extends ConsumerWidget {
                       accentColor: accentColor,
                       icon: Icons.download_rounded,
                       title: l10n.drawerDownloads,
-                      onTap: () {},
+                      onTap: () => _onNavigationItemTapped(context, '/downloads'),
                     ),
 
                     _settingsTile(

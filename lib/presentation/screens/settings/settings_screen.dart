@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:go_router/go_router.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -316,7 +317,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           iconColor: accent,
                           title: "Favorites",
                           onTap: () {
-                            // TODO: go favorites
+                            context.push('/favorites');
                           },
                         ),
                         _DividerIndent(),
@@ -326,7 +327,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           iconColor: accent,
                           title: "Downloads",
                           onTap: () {
-                            // TODO: go downloads
+                            context.push('/downloads');
                           },
                         ),
                       ],

@@ -29,11 +29,11 @@ class AppDrawer extends ConsumerWidget {
     final locale = ref.watch(localeProvider);
     final accentColor = ref.watch(accentColorProvider);
 
-    final isDark = themeMode == ThemeMode.dark;
-
-    final bg = isDark ? const Color(0xFF121212) : Colors.white;
-    final surface = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final divider = isDark ? Colors.white12 : const Color(0xFFE9EDF3);
+    final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bg = cs.surface;
+    final surface = cs.surface;
+    final divider = cs.outlineVariant;
 
     return Scaffold(
       backgroundColor: bg,
@@ -76,8 +76,7 @@ class AppDrawer extends ConsumerWidget {
                           style: TextStyle(
                             fontSize: 20.sp,
                             fontWeight: FontWeight.w800,
-                            color:
-                                isDark ? Colors.white : const Color(0xFF1B2430),
+                            color: cs.onSurface,
                           ),
                         ),
                         SizedBox(height: 6.h),
@@ -87,9 +86,7 @@ class AppDrawer extends ConsumerWidget {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 13.sp,
-                            color: isDark
-                                ? Colors.white54
-                                : const Color(0xFF7B8794),
+                            color: cs.onSurface.withValues(alpha: 0.54),
                           ),
                         ),
                       ],
@@ -110,16 +107,14 @@ class AppDrawer extends ConsumerWidget {
                   children: [
                     _settingsTile(
                       context,
-                      isDark: isDark,
                       accentColor: accentColor,
                       icon: Icons.queue_music,
                       title: l10n.drawerMyPlaylists,
-                      onTap: () {},
+                      onTap: () => _onNavigationItemTapped(context, '/all-playlists'),
                     ),
 
                     _settingsTile(
                       context,
-                      isDark: isDark,
                       accentColor: accentColor,
                       icon: Icons.translate_rounded,
                       title: l10n.drawerLanguage,
@@ -135,16 +130,20 @@ class AppDrawer extends ConsumerWidget {
 
                     _settingsTile(
                       context,
-                      isDark: isDark,
                       accentColor: accentColor,
                       icon: Icons.nights_stay_rounded,
                       title: l10n.drawerDarkMode,
+                      trailing: Switch(
+                        value: isDark,
+                        onChanged: (_) => ref.read(themeProvider.notifier).toggleTheme(),
+                        activeColor: accentColor,
+                      ),
                       onTap: () => ref.read(themeProvider.notifier).toggleTheme(),
                     ),
 
                     // Theme section - Colors below title
                     _themeSection(
-                      isDark: isDark,
+                      context,
                       accentColor: accentColor,
                       ref: ref,
                       label: l10n.drawerTheme,
@@ -157,7 +156,6 @@ class AppDrawer extends ConsumerWidget {
 
                     _settingsTile(
                       context,
-                      isDark: isDark,
                       accentColor: accentColor,
                       icon: Icons.favorite_border_rounded,
                       title: l10n.drawerFavorites,
@@ -166,7 +164,6 @@ class AppDrawer extends ConsumerWidget {
 
                     _settingsTile(
                       context,
-                      isDark: isDark,
                       accentColor: accentColor,
                       icon: Icons.download_rounded,
                       title: l10n.drawerDownloads,
@@ -175,7 +172,6 @@ class AppDrawer extends ConsumerWidget {
 
                     _settingsTile(
                       context,
-                      isDark: isDark,
                       accentColor: accentColor,
                       icon: Icons.notifications_none_rounded,
                       title: l10n.drawerNotifications,
@@ -189,7 +185,6 @@ class AppDrawer extends ConsumerWidget {
 
                     _settingsTile(
                       context,
-                      isDark: isDark,
                       accentColor: Colors.red,
                       icon: Icons.delete_forever_rounded,
                       title: l10n.drawerDeleteAccount,
@@ -214,7 +209,6 @@ class AppDrawer extends ConsumerWidget {
 
                     _settingsTile(
                       context,
-                      isDark: isDark,
                       accentColor: accentColor,
                       icon: Icons.info_outline_rounded,
                       title: 'About Developer',
@@ -279,6 +273,7 @@ class AppDrawer extends ConsumerWidget {
   }
 
   void _showAboutDialog(BuildContext context, Color accent) {
+    final cs = Theme.of(context).colorScheme;
     showDialog(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.55),
@@ -287,7 +282,7 @@ class AppDrawer extends ConsumerWidget {
         insetPadding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: cs.surface,
             borderRadius: BorderRadius.circular(28.r),
             boxShadow: [
               BoxShadow(
@@ -394,7 +389,7 @@ class AppDrawer extends ConsumerWidget {
                     child: Text(
                       'Close',
                       style: TextStyle(
-                        color: const Color(0xFF6B7280),
+                        color: cs.onSurface.withValues(alpha: 0.54),
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w700,
                       ),
@@ -472,16 +467,17 @@ class AppDrawer extends ConsumerWidget {
   // ================= Tile =================
   Widget _settingsTile(
     BuildContext context, {
-    required bool isDark,
     required Color accentColor,
     required IconData icon,
     required String title,
     String? trailingText,
     Color? titleColor,
+    Widget? trailing,
     required VoidCallback onTap,
   }) {
-    final defaultTitleColor = isDark ? Colors.white : const Color(0xFF1B2430);
-    final subColor = isDark ? Colors.white54 : const Color(0xFF8A97A6);
+    final cs = Theme.of(context).colorScheme;
+    final defaultTitleColor = cs.onSurface;
+    final subColor = cs.onSurface.withValues(alpha: 0.54);
 
     return ListTile(
       onTap: onTap,
@@ -508,7 +504,7 @@ class AppDrawer extends ConsumerWidget {
         ),
       ),
 
-      trailing: trailingText != null
+      trailing: trailing ?? (trailingText != null
           ? ConstrainedBox(
               constraints: BoxConstraints(maxWidth: 90.w),
               child: Row(
@@ -540,18 +536,18 @@ class AppDrawer extends ConsumerWidget {
               Icons.chevron_right_rounded,
               color: subColor,
               size: 22.r,
-            ),
+            )),
     );
   }
 
   // ================= Theme Section (Colors below title) =================
-  Widget _themeSection({
-    required bool isDark,
+  Widget _themeSection(
+    BuildContext context, {
     required Color accentColor,
     required WidgetRef ref,
     required String label,
   }) {
-    final titleColor = isDark ? Colors.white : const Color(0xFF1B2430);
+    final cs = Theme.of(context).colorScheme;
 
     return Padding(
       padding: EdgeInsetsDirectional.fromSTEB(22.w, 8.h, 22.w, 10.h),
@@ -578,7 +574,7 @@ class AppDrawer extends ConsumerWidget {
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
-                    color: titleColor,
+                    color: cs.onSurface,
                   ),
                 ),
               ),
@@ -601,7 +597,7 @@ class AppDrawer extends ConsumerWidget {
       {'name': 'blue', 'color': const Color(0xFF2E88FF)},
       {'name': 'green', 'color': const Color(0xFF00E676)},
       {'name': 'purple', 'color': const Color(0xFF8A2BE2)},
-      {'name': 'pink', 'color': const Color(0xFFFF1493)},
+      {'name': 'red', 'color': const Color(0xFFEB5757)},
     ];
 
     final currentAccent = ref.watch(accentColorProvider);
@@ -619,24 +615,33 @@ class AppDrawer extends ConsumerWidget {
             onTap: () =>
                 ref.read(accentColorProvider.notifier).changeAccentColor(name),
             child: Container(
-              margin: EdgeInsetsDirectional.symmetric(horizontal: 5.w),
-              width: 24.r,
-              height: 24.r,
+              margin: EdgeInsetsDirectional.symmetric(horizontal: 6.w),
+              width: 26.r,
+              height: 26.r,
               decoration: BoxDecoration(
                 color: color,
                 shape: BoxShape.circle,
-              border: isSelected ? Border.all(color: Colors.white, width: 2) : null,
-              boxShadow: [
-                if (isSelected)
-                  BoxShadow(
-                    color: color.withValues(alpha: 0.35),
-                    blurRadius: 8,
-                    spreadRadius: 1,
-                  ),
-              ],
+                border: isSelected ? Border.all(color: Colors.white, width: 2) : null,
+                boxShadow: [
+                  if (isSelected)
+                    BoxShadow(
+                      color: color.withValues(alpha: 0.60),
+                      blurRadius: 14,
+                      spreadRadius: 3,
+                    )
+                  else
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                ],
+              ),
+              child: isSelected 
+                ? Icon(Icons.check, color: Colors.white, size: 16.r) 
+                : null,
             ),
-          ),
-        );
+          );
         }).toList(),
       ),
     );

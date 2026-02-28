@@ -349,6 +349,7 @@ class _SignupScreenState extends State<_SignupScreen> {
                       _fieldLabel('Full Name'),
                       TextFormField(
                         controller: _fullNameController,
+                        autofocus: true,
                         decoration: _pillDecoration(
                           hint: 'John Doe',
                           prefix: Icons.person_outline,

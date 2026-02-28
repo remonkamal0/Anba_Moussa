@@ -166,6 +166,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   controller: _nameController,
                   label: 'Full Name',
                   icon: Icons.person,
+                  autofocus: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your full name';
@@ -530,6 +531,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     TextInputType? keyboardType,
     String? Function(String?)? validator,
     bool obscureText = false,
+    bool autofocus = false,
     Widget? suffixIcon,
     Duration? delay,
   }) {
@@ -549,6 +551,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           keyboardType: keyboardType,
           obscureText: obscureText,
           validator: validator,
+          autofocus: autofocus,
           decoration: InputDecoration(
             prefixIcon: Icon(
               icon,

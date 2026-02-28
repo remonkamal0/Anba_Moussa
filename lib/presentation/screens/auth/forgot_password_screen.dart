@@ -199,6 +199,7 @@ class _ForgotPasswordScreenState extends State<_ForgotPasswordScreen> {
                       _fieldLabel('EMAIL ADDRESS'),
                       TextFormField(
                         controller: _emailController,
+                        autofocus: true,
                         keyboardType: TextInputType.emailAddress,
                         decoration: _inputDecoration(),
                         validator: (value) {

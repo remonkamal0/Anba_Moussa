@@ -219,9 +219,10 @@ class AppTheme {
   // ── Accent colors ──────────────────────────────────────────────────────────
   static const Map<String, Color> accentColors = {
     'orange': Color(0xFFFF6B35),
-    'purple': Color(0xFF9B59B6),
+    'blue': Color(0xFF2F80ED),
     'green': Color(0xFF27AE60),
-    'blue': Color(0xFF3498DB),
+    'purple': Color(0xFF9B51E0),
+    'red': Color(0xFFEB5757),
   };
 
   static Color getAccentColor(String colorName) {

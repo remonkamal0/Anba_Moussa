@@ -14,10 +14,10 @@ class AccentColorSelector extends ConsumerWidget {
     final accentColorNotifier = ref.read(accentColorProvider.notifier);
 
     final List<({String name, Color color})> accentColors = [
-      (name: 'orange', color: const Color(0xFFFF6B35)),
-      (name: 'purple', color: const Color(0xFF9B59B6)),
-      (name: 'green', color: const Color(0xFF27AE60)),
-      (name: 'blue', color: const Color(0xFF3498DB)),
+      (name: 'orange', color: AppTheme.accentColors['orange']!),
+      (name: 'purple', color: AppTheme.accentColors['purple']!),
+      (name: 'green', color: AppTheme.accentColors['green']!),
+      (name: 'blue', color: AppTheme.accentColors['blue']!),
     ];
 
     return Column(

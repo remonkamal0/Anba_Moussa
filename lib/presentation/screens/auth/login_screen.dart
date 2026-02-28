@@ -267,6 +267,7 @@ class _LoginScreenState extends State<_LoginScreen> {
                               _fieldLabel('EMAIL ADDRESS'),
                               TextFormField(
                                 controller: _emailController,
+                                autofocus: true,
                                 keyboardType: TextInputType.emailAddress,
                                 decoration: _inputDecoration(hint: 'hello@example.com', prefix: Icons.email_outlined),
                                 validator: (v) {

@@ -9,6 +9,7 @@ import '../../providers/locale_provider.dart';
 import '../../widgets/common/confirm_dialog.dart';
 import '../playlist/create_playlist_screen.dart';
 import '../../providers/theme_provider.dart';
+import '../../../core/theme/app_theme.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -41,12 +42,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     ),
   ];
 
-  final List<Color> themeColors = const [
-    Color(0xFFFF6B35), // orange
-    Color(0xFF2F80ED), // blue
-    Color(0xFF27AE60), // green
-    Color(0xFF9B51E0), // purple
-    Color(0xFFEB5757), // red
+  final List<String> themeColorKeys = const [
+    'orange',
+    'blue',
+    'green',
+    'purple',
+    'red',
   ];
 
   Color get accent => Theme.of(context).colorScheme.primary;
@@ -57,6 +58,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final isDark = cs.brightness == Brightness.dark;
     final themeMode = ref.watch(themeProvider);
     final darkMode = themeMode == ThemeMode.dark;
+    final currentAccent = ref.watch(accentColorProvider);
+    final accentName = _getAccentName(currentAccent);
 
     return Scaffold(
       body: Stack(
@@ -270,7 +273,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 ),
                               ),
                               Text(
-                                _themeName(selectedThemeIndex),
+                                accentName,
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w700,
@@ -287,11 +290,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             bottom: 14.h,
                           ),
                           child: Row(
-                            children: List.generate(themeColors.length, (i) {
-                              final c = themeColors[i];
-                              final selected = i == selectedThemeIndex;
+                            children: List.generate(themeColorKeys.length, (i) {
+                              final key = themeColorKeys[i];
+                              final c = AppTheme.accentColors[key]!;
+                              final selected = currentAccent.value == c.value;
                               return GestureDetector(
-                                onTap: () => setState(() => selectedThemeIndex = i),
+                                onTap: () => ref.read(accentColorProvider.notifier).changeAccentColor(key),
                                 child: Container(
                                   margin: EdgeInsets.only(right: 10.w),
                                   width: 26.w,
@@ -300,17 +304,27 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                     color: c,
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: selected ? cs.onSurface : Colors.transparent,
+                                      color: selected ? Colors.white : Colors.transparent,
                                       width: 2,
                                     ),
                                     boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(.06),
-                                        blurRadius: 10,
-                                        offset: const Offset(0, 3),
-                                      )
+                                      if (selected)
+                                        BoxShadow(
+                                          color: c.withOpacity(0.60),
+                                          blurRadius: 14,
+                                          spreadRadius: 3,
+                                        )
+                                      else
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(.05),
+                                          blurRadius: 6,
+                                          offset: const Offset(0, 2),
+                                        )
                                     ],
                                   ),
+                                  child: selected 
+                                    ? Icon(Icons.check, color: Colors.white, size: 16.w) 
+                                    : null,
                                 ),
                               );
                             }),
@@ -638,21 +652,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  String _themeName(int i) {
-    switch (i) {
-      case 0:
-        return "Orange";
-      case 1:
-        return "Blue";
-      case 2:
-        return "Green";
-      case 3:
-        return "Purple";
-      case 4:
-        return "Red";
-      default:
-        return "Custom";
+  String _getAccentName(Color color) {
+    for (var entry in AppTheme.accentColors.entries) {
+      if (entry.value.value == color.value) {
+        return entry.key[0].toUpperCase() + entry.key.substring(1);
+      }
     }
+    return "Custom";
   }
 
 }

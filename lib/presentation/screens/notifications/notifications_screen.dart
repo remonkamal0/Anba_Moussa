@@ -43,85 +43,89 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Today's notifications
-            _buildNotificationSection(
-              title: 'TODAY',
-              notifications: [
-                NotificationItem(
-                  id: '1',
-                  type: NotificationType.newRelease,
-                  title: 'New Release: "After Hours" by The Weeknd',
-                  time: '2h ago',
-                  hasImage: true,
-                  imageUrl: 'https://picsum.photos/seed/album-cover/100/100',
-                  isRead: false,
-                ),
-                NotificationItem(
-                  id: '2',
-                  type: NotificationType.likedPlaylist,
-                  title: 'Sarah L. liked your Summer Vibes playlist',
-                  time: '5h ago',
-                  hasImage: true,
-                  imageUrl: 'https://picsum.photos/seed/profile-sarah/100/100',
-                  isRead: false,
-                ),
-                NotificationItem(
-                  id: '3',
-                  type: NotificationType.discoverWeekly,
-                  title: 'Your Discover Weekly is ready! Dive into your personalized mix for the week.',
-                  time: '8h ago',
-                  hasImage: true,
-                  imageUrl: 'https://picsum.photos/seed/discover-mix/100/100',
-                  isRead: false,
-                ),
-              ],
-            ),
-
-            // Orange separator line
-            Container(
-              height: 1.h,
-              color: cs.primary,
-              margin: EdgeInsets.symmetric(horizontal: AppConstants.mediumSpacing.r),
-            ),
-
-            // Earlier notifications
-            _buildNotificationSection(
-              title: 'EARLIER',
-              notifications: [
-                NotificationItem(
-                  id: '4',
-                  type: NotificationType.tourAnnouncement,
-                  title: 'Arctic Monkeys just announced a new tour date in your city!',
-                  time: 'Yesterday',
-                  hasImage: true,
-                  imageUrl: 'https://picsum.photos/seed/band-performing/100/100',
-                  isRead: true,
-                  actionText: 'Get Tickets',
-                  actionColor: cs.primary,
-                ),
-                NotificationItem(
-                  id: '5',
-                  type: NotificationType.newFollower,
-                  title: 'David Chen followed you. Check out their shared playlists.',
-                  time: '2 days ago',
-                  hasImage: true,
-                  imageUrl: 'https://picsum.photos/seed/david-chen/100/100',
-                  isRead: false,
-                ),
-                NotificationItem(
-                  id: '6',
-                  type: NotificationType.playlistMilestone,
-                  title: 'Your playlist Midnight Jazz reached 100 followers! 🎉',
-                  time: '3 days ago',
-                  hasImage: true,
-                  imageUrl: 'https://picsum.photos/seed/playlist-milestone/100/100',
-                  isRead: false,
-                ),
-              ],
-            ),
-          ],
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: Column(
+            children: [
+              // Today's notifications
+              _buildNotificationSection(
+                title: 'TODAY',
+                notifications: [
+                  NotificationItem(
+                    id: '1',
+                    type: NotificationType.newRelease,
+                    title: 'New Release: "After Hours" by The Weeknd',
+                    time: '2h ago',
+                    hasImage: true,
+                    imageUrl: 'https://picsum.photos/seed/album-cover/100/100',
+                    isRead: false,
+                  ),
+                  NotificationItem(
+                    id: '2',
+                    type: NotificationType.likedPlaylist,
+                    title: 'Sarah L. liked your Summer Vibes playlist',
+                    time: '5h ago',
+                    hasImage: true,
+                    imageUrl: 'https://picsum.photos/seed/profile-sarah/100/100',
+                    isRead: false,
+                  ),
+                  NotificationItem(
+                    id: '3',
+                    type: NotificationType.discoverWeekly,
+                    title: 'Your Discover Weekly is ready! Dive into your personalized mix for the week.',
+                    time: '8h ago',
+                    hasImage: true,
+                    imageUrl: 'https://picsum.photos/seed/discover-mix/100/100',
+                    isRead: false,
+                  ),
+                ],
+              ),
+  
+              // Orange separator line
+              Container(
+                height: 1.h,
+                color: cs.primary,
+                margin: EdgeInsets.symmetric(vertical: 8.h),
+              ),
+  
+              // Earlier notifications
+              _buildNotificationSection(
+                title: 'EARLIER',
+                notifications: [
+                  NotificationItem(
+                    id: '4',
+                    type: NotificationType.tourAnnouncement,
+                    title: 'Arctic Monkeys just announced a new tour date in your city!',
+                    time: 'Yesterday',
+                    hasImage: true,
+                    imageUrl: 'https://picsum.photos/seed/band-performing/100/100',
+                    isRead: true,
+                    actionText: 'Get Tickets',
+                    actionColor: cs.primary,
+                  ),
+                  NotificationItem(
+                    id: '5',
+                    type: NotificationType.newFollower,
+                    title: 'David Chen followed you. Check out their shared playlists.',
+                    time: '2 days ago',
+                    hasImage: true,
+                    imageUrl: 'https://picsum.photos/seed/david-chen/100/100',
+                    isRead: false,
+                  ),
+                  NotificationItem(
+                    id: '6',
+                    type: NotificationType.playlistMilestone,
+                    title: 'Your playlist Midnight Jazz reached 100 followers! 🎉',
+                    time: '3 days ago',
+                    hasImage: true,
+                    imageUrl: 'https://picsum.photos/seed/playlist-milestone/100/100',
+                    isRead: false,
+                  ),
+                ],
+              ),
+              SizedBox(height: 20.h),
+            ],
+          ),
         ),
       ),
     );

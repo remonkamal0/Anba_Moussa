@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:go_router/go_router.dart';
 import '../../../domain/entities/track.dart';
 import '../../../domain/entities/category.dart';
 import '../../../domain/entities/slider.dart' as entity_slider;
@@ -70,8 +71,8 @@ class _HomeViewContentState extends State<_HomeViewContent> {
                     children: [
                       _TopBar(
                         userName: 'Guest',
-                        onSearch: () {},
-                        onNotifications: () {},
+                        onSearch: () => context.push('/search'),
+                        onNotifications: () => context.push('/notifications'),
                       ),
                       Expanded(
                         child: SingleChildScrollView(
@@ -94,7 +95,7 @@ class _HomeViewContentState extends State<_HomeViewContent> {
                                 _SectionHeader(
                                   title: "Categories",
                                   actionText: "VIEW ALL",
-                                  onAction: () {},
+                                  onAction: () => context.push('/library'),
                                 ).animate().fadeIn(delay: 120.ms, duration: 250.ms),
                                 SizedBox(height: 8.h),
                                 _CategoriesRow(
@@ -465,7 +466,15 @@ class _CategoriesRow extends StatelessWidget {
               final category = categories[i];
               final isSecond = i == 1;
               return InkWell(
-                onTap: () {},
+                onTap: () => context.push(
+                  Uri(
+                    path: '/album/${category.id}',
+                    queryParameters: {
+                      'title': category.title,
+                      'imageUrl': category.imageUrl ?? '',
+                    },
+                  ).toString(),
+                ),
                 child: Container(
                   width: cardW,
                   decoration: BoxDecoration(

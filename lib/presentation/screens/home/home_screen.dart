@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import '../../../core/theme/app_text_styles.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,9 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Timer? _autoPlayTimer;
 
   // Colors like screenshot
-  final Color _orange = const Color(0xFFFF6B35);
-  final Color _navy = const Color(0xFF0B1320);
-  final Color _muted = const Color(0xFF7E8798);
+  Color get _orange => Theme.of(context).colorScheme.primary;
 
   // Mock UI data
   final String userName = "Alex Johnson";
@@ -91,9 +87,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Colors.white,
-
+      backgroundColor: cs.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -103,7 +99,6 @@ class _HomeScreenState extends State<HomeScreen> {
               onSearch: () {},
               onNotifications: () {},
               orange: _orange,
-              navy: _navy,
             ).animate().fadeIn(duration: 250.ms),
 
             Expanded(
@@ -118,10 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         pageController: _pageController,
                         sliders: sliders,
                         sliderIndex: _sliderIndex,
-                        onChanged: (i) {
-                          setState(() => _sliderIndex = i);
-                          _startAutoPlay(); // Restart timer when user manually changes page
-                        },
+                        onChanged: (i) => setState(() => _sliderIndex = i),
                         orange: _orange,
                       ).animate().slideY(begin: 0.05, duration: 300.ms),
 
@@ -134,7 +126,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         trailingIcon: null,
                         onTrailing: null,
                         orange: _orange,
-                        navy: _navy,
                       ).animate().fadeIn(delay: 120.ms, duration: 250.ms),
 
                       SizedBox(height: 8.h),
@@ -153,7 +144,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         trailingIcon: Icons.tune,
                         onTrailing: () {},
                         orange: _orange,
-                        navy: _navy,
                       ).animate().fadeIn(delay: 180.ms, duration: 250.ms),
 
                       SizedBox(height: 8.h),
@@ -161,8 +151,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       _TopSongsList(
                         songs: topSongs,
                         orange: _orange,
-                        navy: _navy,
-                        muted: _muted,
                       ),
 
                       SizedBox(height: 18.h),
@@ -192,26 +180,24 @@ class _TopBar extends StatelessWidget {
   final VoidCallback onSearch;
   final VoidCallback onNotifications;
   final Color orange;
-  final Color navy;
-
   const _TopBar({
     required this.name,
     required this.onMenu,
     required this.onSearch,
     required this.onNotifications,
     required this.orange,
-    required this.navy,
   });
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
       child: Row(
         children: [
           IconButton(
             onPressed: onMenu,
-            icon: const Icon(Icons.menu, color: Colors.black),
+            icon: Icon(Icons.menu, color: cs.onSurface),
           ),
           SizedBox(width: 6.w),
 
@@ -238,7 +224,7 @@ class _TopBar extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF8A93A3),
+                    color: cs.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
                 SizedBox(height: 2.h),
@@ -249,7 +235,7 @@ class _TopBar extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 28.sp,
                     fontWeight: FontWeight.w900,
-                    color: navy,
+                    color: cs.onSurface,
                   ),
                 ),
               ],
@@ -258,14 +244,14 @@ class _TopBar extends StatelessWidget {
 
           IconButton(
             onPressed: onSearch,
-            icon: const Icon(Icons.search, color: Colors.black),
+            icon: Icon(Icons.search, color: cs.onSurface),
           ),
 
           Stack(
             children: [
               IconButton(
                 onPressed: onNotifications,
-                icon: const Icon(Icons.notifications_none, color: Colors.black),
+                icon: Icon(Icons.notifications_none, color: cs.onSurface),
               ),
               Positioned(
                 right: 12,
@@ -304,37 +290,32 @@ class _SliderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isTablet = constraints.maxWidth >= 600;
-        final sliderHeight = isTablet ? 240.h : 180.h;
-        return Column(
-          children: [
-            SizedBox(
-              height: sliderHeight,
-              child: PageView.builder(
-                controller: pageController,
-                itemCount: sliders.length,
-                onPageChanged: (index) => onChanged(index),
-                itemBuilder: (_, i) => _SliderCard(item: sliders[i], orange: orange),
-              ),
-            ),
-            SizedBox(height: 10.h),
-            SmoothPageIndicator(
-              controller: pageController,
-              count: sliders.length,
-              effect: ExpandingDotsEffect(
-                dotHeight: 6.h,
-                dotWidth: 6.w,
-                expansionFactor: 2,
-                spacing: 8.w,
-                dotColor: const Color(0xFFE6E9EF),
-                activeDotColor: orange,
-              ),
-            ),
-          ],
-        );
-      },
+    final cs = Theme.of(context).colorScheme;
+    return Column(
+      children: [
+        SizedBox(
+          height: 180.h,
+          child: PageView.builder(
+            controller: pageController,
+            itemCount: sliders.length,
+            onPageChanged: (index) => onChanged(index),
+            itemBuilder: (_, i) => _SliderCard(item: sliders[i], orange: orange),
+          ),
+        ),
+        SizedBox(height: 10.h),
+        SmoothPageIndicator(
+          controller: pageController,
+          count: sliders.length,
+          effect: ExpandingDotsEffect(
+            dotHeight: 6.h,
+            dotWidth: 6.w,
+            expansionFactor: 2,
+            spacing: 8.w,
+            dotColor: cs.onSurface.withValues(alpha: 0.1),
+            activeDotColor: orange,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -428,7 +409,6 @@ class _SectionHeader extends StatelessWidget {
   final IconData? trailingIcon;
   final VoidCallback? onTrailing;
   final Color orange;
-  final Color navy;
 
   const _SectionHeader({
     required this.title,
@@ -437,11 +417,11 @@ class _SectionHeader extends StatelessWidget {
     required this.trailingIcon,
     required this.onTrailing,
     required this.orange,
-    required this.navy,
   });
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Row(
       children: [
         Text(
@@ -449,14 +429,14 @@ class _SectionHeader extends StatelessWidget {
           style: TextStyle(
             fontSize: 22.sp,
             fontWeight: FontWeight.w900,
-            color: navy,
+            color: cs.onSurface,
           ),
         ),
         const Spacer(),
         if (trailingIcon != null)
           IconButton(
             onPressed: onTrailing,
-            icon: Icon(trailingIcon, color: const Color(0xFF9AA3B2)),
+            icon: Icon(trailingIcon, color: cs.onSurface.withValues(alpha: 0.4)),
           )
         else if (actionText.isNotEmpty)
           TextButton(
@@ -485,75 +465,69 @@ class _CategoriesRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isTablet = constraints.maxWidth >= 600;
-        final cardW = isTablet ? 160.w : 120.w;
-        final cardH = isTablet ? 160.h : 120.h;
-        return SizedBox(
-          height: cardH,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: categories.length,
-            separatorBuilder: (_, __) => SizedBox(width: 12.w),
-            itemBuilder: (_, i) {
-              final c = categories[i];
-              return InkWell(
-                onTap: () {},
-                child: Container(
-                  width: cardW,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18.r),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.06),
-                        blurRadius: 18,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
-                    border: Border.all(
-                      color: i == 1 ? orange : const Color(0xFFF0F2F6),
-                      width: 2,
-                    ),
+    final cs = Theme.of(context).colorScheme;
+    return SizedBox(
+      height: 120.h,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: categories.length,
+        separatorBuilder: (_, __) => SizedBox(width: 12.w),
+        itemBuilder: (_, i) {
+          final c = categories[i];
+          return InkWell(
+            onTap: () {},
+            child: Container(
+              width: 120.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18.r),
+                color: Theme.of(context).colorScheme.surface,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.06),
+                    blurRadius: 18,
+                    offset: const Offset(0, 10),
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(18.r),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Image.network(c.imageUrl, fit: BoxFit.cover),
-                        Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Padding(
-                            padding: EdgeInsets.all(10.w),
-                            child: Text(
-                              c.title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w900,
-                                shadows: [
-                                  Shadow(
-                                    color: Colors.black.withOpacity(0.45),
-                                    blurRadius: 10,
-                                  )
-                                ],
-                              ),
-                            ),
+                ],
+                border: Border.all(
+                  color: i == 1 ? orange : cs.outlineVariant,
+                  width: 2,
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(18.r),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.network(c.imageUrl, fit: BoxFit.cover),
+                    Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Padding(
+                        padding: EdgeInsets.all(10.w),
+                        child: Text(
+                          c.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w900,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withOpacity(0.45),
+                                blurRadius: 10,
+                              )
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              );
-            },
-          ),
-        );
-      },
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
@@ -561,18 +535,15 @@ class _CategoriesRow extends StatelessWidget {
 class _TopSongsList extends StatelessWidget {
   final List<_SongItem> songs;
   final Color orange;
-  final Color navy;
-  final Color muted;
 
   const _TopSongsList({
     required this.songs,
     required this.orange,
-    required this.navy,
-    required this.muted,
   });
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Column(
       children: List.generate(songs.length, (i) {
         final s = songs[i];
@@ -583,7 +554,7 @@ class _TopSongsList extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: cs.surface,
               borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(
@@ -598,7 +569,7 @@ class _TopSongsList extends StatelessWidget {
                 Text(
                   s.rank.toString().padLeft(2, '0'),
                   style: TextStyle(
-                    color: const Color(0xFFC7CEDA),
+                    color: cs.onSurface.withValues(alpha: 0.2),
                     fontSize: 18.sp,
                     fontWeight: FontWeight.w900,
                   ),
@@ -610,7 +581,7 @@ class _TopSongsList extends StatelessWidget {
                   height: 44.w,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(14.r),
-                    color: const Color(0xFFF3F5F7),
+                    color: cs.surfaceVariant,
                     image: DecorationImage(
                       image: NetworkImage(s.coverUrl),
                       fit: BoxFit.cover,
@@ -629,7 +600,7 @@ class _TopSongsList extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: navy,
+                          color: cs.onSurface,
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w900,
                         ),
@@ -640,7 +611,7 @@ class _TopSongsList extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: muted,
+                          color: cs.onSurface.withOpacity(0.5),
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w600,
                         ),
@@ -660,14 +631,14 @@ class _TopSongsList extends StatelessWidget {
 
                 Icon(
                   s.liked ? Icons.favorite : Icons.favorite_border,
-                  color: s.liked ? orange : const Color(0xFFB8C0CF),
+                  color: s.liked ? orange : cs.onSurface.withValues(alpha: 0.3),
                 ),
 
                 SizedBox(width: 8.w),
 
                 Icon(
                   s.downloaded ? Icons.download_done : Icons.download_outlined,
-                  color: const Color(0xFFB8C0CF),
+                  color: cs.onSurface.withValues(alpha: 0.3),
                 ),
 
                 SizedBox(width: 10.w),
@@ -676,7 +647,7 @@ class _TopSongsList extends StatelessWidget {
                   width: 44.w,
                   height: 44.w,
                   decoration: BoxDecoration(
-                    color: first ? orange : const Color(0xFFF0F2F6),
+                    color: first ? orange : cs.surfaceVariant,
                     borderRadius: BorderRadius.circular(18.r),
                     boxShadow: [
                       if (first)
@@ -689,7 +660,7 @@ class _TopSongsList extends StatelessWidget {
                   ),
                   child: Icon(
                     Icons.play_arrow_rounded,
-                    color: first ? Colors.white : const Color(0xFF97A0B0),
+                    color: first ? Colors.white : cs.onSurface.withValues(alpha: 0.4),
                     size: 30.sp,
                   ),
                 ),
@@ -715,24 +686,25 @@ class _BottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       padding: EdgeInsets.only(top: 6.h),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cs.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 18,
             offset: const Offset(0, -8),
           )
         ],
       ),
       child: BottomNavigationBar(
+        backgroundColor: cs.surface,
         currentIndex: currentIndex,
-        onTap: onTap,
         type: BottomNavigationBarType.fixed,
         selectedItemColor: orange,
-        unselectedItemColor: const Color(0xFFB0B7C4),
+        unselectedItemColor: cs.onSurface.withValues(alpha: 0.4),
         showUnselectedLabels: true,
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w800),
         items: const [

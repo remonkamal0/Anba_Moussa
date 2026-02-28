@@ -70,6 +70,8 @@ class _PhotoGalleryScreenState extends State<PhotoGalleryScreen> {
   Widget build(BuildContext context) {
     final isRtl = Directionality.of(context) == TextDirection.rtl;
 
+    final cs = Theme.of(context).colorScheme;
+
     return ZoomDrawer(
       controller: _drawerController,
       style: DrawerStyle.defaultStyle,
@@ -78,23 +80,23 @@ class _PhotoGalleryScreenState extends State<PhotoGalleryScreen> {
       borderRadius: 24.0,
       showShadow: true,
       angle: isRtl ? 10.0 : -10.0,
-      drawerShadowsBackgroundColor: Colors.grey[300]!,
+      drawerShadowsBackgroundColor: cs.onSurface.withOpacity(0.1),
       slideWidth: MediaQuery.of(context).size.width * 0.75,
-      menuBackgroundColor: Colors.white,
+      menuBackgroundColor: cs.surface,
       mainScreen: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: cs.background,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: cs.background,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.menu_rounded, color: Colors.black),
+            icon: Icon(Icons.menu_rounded, color: cs.onSurface),
             onPressed: () => _drawerController.toggle?.call(),
           ),
           title: Text(
             'Photo Gallery',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w800,
-              color: Colors.black,
+              color: cs.onSurface,
             ),
           ),
           centerTitle: true,
@@ -115,7 +117,7 @@ class _PhotoGalleryScreenState extends State<PhotoGalleryScreen> {
                 Text(
                   'Browse Albums',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
+                    color: cs.onSurface.withValues(alpha: 0.6),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -196,6 +198,7 @@ class PhotoAlbumCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -239,7 +242,7 @@ class PhotoAlbumCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w800,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
 
@@ -250,7 +253,7 @@ class PhotoAlbumCard extends StatelessWidget {
             '${album.photoCount} Photos',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.w800,
-              color: const Color(0xFFFF6B35),
+              color: cs.primary,
             ),
           ),
         ],

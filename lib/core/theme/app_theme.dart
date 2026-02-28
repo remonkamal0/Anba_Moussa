@@ -7,16 +7,36 @@ class AppTheme {
     final isArabic = locale?.languageCode == 'ar';
     final primaryFont = isArabic ? 'Cairo' : 'Inter';
     final fallbackFont = isArabic ? 'Inter' : 'Cairo';
+    const surface = Color(0xFFFFFFFF);
+    const onSurface = Color(0xFF0D0D0D);
     return ThemeData(
       useMaterial3: true,
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: surface,
       colorScheme: ColorScheme.light(
         primary: primary,
         secondary: primary,
-        surface: const Color(0xFFFFFFFF),
-        onSurface: Colors.black,
+        surface: surface,
+        onSurface: onSurface,
+        outline: const Color(0xFFE0E0E0),
+        outlineVariant: const Color(0xFFF0F0F0),
       ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: surface,
+        foregroundColor: onSurface,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: onSurface),
+        titleTextStyle: TextStyle(
+          fontFamily: primaryFont,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: onSurface,
+        ),
+      ),
+      iconTheme: const IconThemeData(color: onSurface),
+      dividerColor: const Color(0xFFEEEEEE),
       fontFamily: primaryFont,
-      textTheme: _buildTextTheme(primaryFont, fallbackFont),
+      textTheme: _buildTextTheme(primaryFont, fallbackFont, onSurface),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius),
@@ -51,8 +71,23 @@ class AppTheme {
           ),
         ),
       ),
-      cardTheme: const CardThemeData(
-        elevation: 4,
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: onSurface,
+          side: const BorderSide(color: Color(0xFFE0E0E0)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius),
+          ),
+        ),
+      ),
+      listTileTheme: const ListTileThemeData(
+        iconColor: onSurface,
+        textColor: onSurface,
+      ),
+      cardTheme: CardThemeData(
+        elevation: 2,
+        color: surface,
+        surfaceTintColor: Colors.transparent,
       ),
     );
   }
@@ -62,31 +97,53 @@ class AppTheme {
     final isArabic = locale?.languageCode == 'ar';
     final primaryFont = isArabic ? 'Cairo' : 'Inter';
     final fallbackFont = isArabic ? 'Inter' : 'Cairo';
+    const surface = Color(0xFF121212);
+    const surfaceContainer = Color(0xFF1E1E1E);
+    const onSurface = Color(0xFFF5F5F5);
     return ThemeData(
       useMaterial3: true,
+      brightness: Brightness.dark,
+      scaffoldBackgroundColor: surface,
       colorScheme: ColorScheme.dark(
         primary: primary,
         secondary: primary,
-        surface: const Color(0xFF121212),
-        onSurface: Colors.white,
+        surface: surface,
+        onSurface: onSurface,
+        outline: const Color(0xFF424242),
+        outlineVariant: const Color(0xFF2C2C2C),
+        surfaceContainerHighest: surfaceContainer,
       ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: surface,
+        foregroundColor: onSurface,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: onSurface),
+        titleTextStyle: TextStyle(
+          fontFamily: primaryFont,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: onSurface,
+        ),
+      ),
+      iconTheme: const IconThemeData(color: onSurface),
+      dividerColor: const Color(0xFF333333),
       fontFamily: primaryFont,
-      textTheme: _buildTextTheme(primaryFont, fallbackFont),
+      textTheme: _buildTextTheme(primaryFont, fallbackFont, onSurface),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius),
-          borderSide: const BorderSide(color: Color(0xFF757575)),
+          borderSide: const BorderSide(color: Color(0xFF555555)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius),
-          borderSide: const BorderSide(color: Color(0xFF757575)),
+          borderSide: const BorderSide(color: Color(0xFF555555)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius),
           borderSide: BorderSide(color: primary, width: 2),
         ),
         filled: true,
-        fillColor: const Color(0xFF424242),
+        fillColor: surfaceContainer,
         contentPadding: EdgeInsets.symmetric(
           horizontal: AppConstants.mediumSpacing,
           vertical: AppConstants.smallSpacing,
@@ -106,14 +163,29 @@ class AppTheme {
           ),
         ),
       ),
-      cardTheme: const CardThemeData(
-        elevation: 4,
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: onSurface,
+          side: const BorderSide(color: Color(0xFF555555)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius),
+          ),
+        ),
+      ),
+      listTileTheme: const ListTileThemeData(
+        iconColor: onSurface,
+        textColor: onSurface,
+      ),
+      cardTheme: CardThemeData(
+        elevation: 2,
+        color: surfaceContainer,
+        surfaceTintColor: Colors.transparent,
       ),
     );
   }
 
   // ── Shared text theme builder ──────────────────────────────────────────────
-  static TextTheme _buildTextTheme(String primaryFont, String fallbackFont) {
+  static TextTheme _buildTextTheme(String primaryFont, String fallbackFont, Color onSurface) {
     TextStyle ts({
       required double size,
       required FontWeight weight,
@@ -122,6 +194,7 @@ class AppTheme {
       fontFamilyFallback: [fallbackFont],
       fontSize: size,
       fontWeight: weight,
+      color: onSurface,
     );
 
     return TextTheme(

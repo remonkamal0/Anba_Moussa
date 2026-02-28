@@ -63,7 +63,7 @@ class _HomeViewContentState extends State<_HomeViewContent> {
             error: (message) => _ErrorView(message: message),
             loaded: (tracks, categories, sliders, favoriteIds, currentIndex) {
               return Scaffold(
-                backgroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.surface,
                 drawer: AppDrawer(),
                 body: SafeArea(
                   child: Column(
@@ -144,8 +144,8 @@ class _TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final orange = const Color(0xFFFF6B35);
-    final navy = const Color(0xFF0B1320);
+    final cs = Theme.of(context).colorScheme;
+    final orange = cs.primary;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
@@ -157,15 +157,15 @@ class _TopBar extends StatelessWidget {
                 ZoomDrawer.of(context)!.toggle();
               }
             },
-            icon: const Icon(Icons.menu, color: Colors.black),
+            icon: Icon(Icons.menu, color: cs.onSurface),
           ),
           SizedBox(width: 6.w),
           Container(
             width: 42.w,
             height: 42.w,
             decoration: BoxDecoration(
-              color: const Color(0xFFFFE0D6),
-              border: Border.all(color: const Color(0xFFFFC7B3), width: 2),
+              color: cs.primary.withValues(alpha: 0.15),
+              border: Border.all(color: cs.primary.withValues(alpha: 0.3), width: 2),
               borderRadius: BorderRadius.circular(21.r),
             ),
             child: Icon(Icons.person, color: orange),
@@ -178,7 +178,7 @@ class _TopBar extends StatelessWidget {
                 Text(
                   'WELCOME BACK,',
                   style: AppTextStyles.getBodySmall(context).copyWith(
-                    color: const Color(0xFF8A93A3),
+                    color: cs.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
                 SizedBox(height: 2.h),
@@ -187,7 +187,7 @@ class _TopBar extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.getDisplayMedium(context).copyWith(
-                    color: navy,
+                    color: cs.onSurface,
                   ),
                 ),
               ],
@@ -195,13 +195,13 @@ class _TopBar extends StatelessWidget {
           ),
           IconButton(
             onPressed: onSearch,
-            icon: const Icon(Icons.search, color: Colors.black),
+            icon: Icon(Icons.search, color: cs.onSurface),
           ),
           Stack(
             children: [
               IconButton(
                 onPressed: onNotifications,
-                icon: const Icon(Icons.notifications_outlined, color: Colors.black),
+                icon: Icon(Icons.notifications_outlined, color: cs.onSurface),
               ),
               Positioned(
                 right: 8,
@@ -209,8 +209,8 @@ class _TopBar extends StatelessWidget {
                 child: Container(
                   width: 8,
                   height: 8,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFFF6B35),
+                  decoration: BoxDecoration(
+                    color: cs.primary,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -238,7 +238,8 @@ class _SliderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final orange = const Color(0xFFFF6B35);
+    final cs = Theme.of(context).colorScheme;
+    final orange = cs.primary;
 
     if (sliders.isEmpty) return const SizedBox.shrink();
 
@@ -279,7 +280,7 @@ class _SliderSection extends StatelessWidget {
                 height: 6.w,
                 margin: EdgeInsets.symmetric(horizontal: 4.w),
                 decoration: BoxDecoration(
-                  color: i == currentIndex ? orange : const Color(0xFFE6E9EF),
+                  color: i == currentIndex ? orange : cs.onSurface.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10.r),
                 ),
               )),
@@ -302,13 +303,14 @@ class _SliderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 4.w),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: cs.onSurface.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -408,22 +410,22 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final orange = const Color(0xFFFF6B35);
-    final navy = const Color(0xFF0B1320);
+    final cs = Theme.of(context).colorScheme;
+    final orange = cs.primary;
 
     return Row(
       children: [
         Text(
           title,
           style: AppTextStyles.getHeadlineLarge(context).copyWith(
-            color: navy,
+            color: cs.onSurface,
           ),
         ),
         const Spacer(),
         if (trailingIcon != null)
           IconButton(
             onPressed: onTrailing,
-            icon: Icon(trailingIcon, color: const Color(0xFF9AA3B2)),
+            icon: Icon(trailingIcon, color: cs.onSurface.withValues(alpha: 0.4)),
           )
         else if (actionText.isNotEmpty)
           TextButton(
@@ -447,6 +449,7 @@ class _CategoriesRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return LayoutBuilder(
       builder: (context, constraints) {
         final isTablet = constraints.maxWidth >= 600;
@@ -469,13 +472,13 @@ class _CategoriesRow extends StatelessWidget {
                     borderRadius: BorderRadius.circular(24.r),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        color: cs.onSurface.withValues(alpha: 0.08),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
                     ],
                     border: Border.all(
-                      color: isSecond ? const Color(0xFFFF6B35) : Colors.transparent,
+                      color: isSecond ? cs.primary : cs.outlineVariant,
                       width: 2,
                     ),
                   ),
@@ -489,8 +492,8 @@ class _CategoriesRow extends StatelessWidget {
                             category.imageUrl!,
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) => Container(
-                              color: const Color(0xFFE8ECEF),
-                              child: Icon(Icons.category, color: Colors.grey[400]),
+                              color: cs.surfaceVariant,
+                              child: Icon(Icons.category, color: cs.onSurface.withValues(alpha: 0.3)),
                             ),
                           )
                         else
@@ -502,7 +505,7 @@ class _CategoriesRow extends StatelessWidget {
                               end: Alignment.bottomCenter,
                               colors: [
                                 Colors.transparent,
-                                Colors.black.withOpacity(0.7),
+                                cs.onSurface.withValues(alpha: 0.7),
                               ],
                               stops: const [0.5, 1.0],
                             ),
@@ -551,9 +554,8 @@ class _TopTracksList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final orange = const Color(0xFFFF6B35);
-    final navy = const Color(0xFF0B1320);
-    final muted = const Color(0xFF7E8798);
+    final cs = Theme.of(context).colorScheme;
+    final orange = cs.primary;
 
     return Column(
       children: List.generate(tracks.length, (i) {
@@ -566,11 +568,11 @@ class _TopTracksList extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: cs.surface,
               borderRadius: BorderRadius.circular(24.r),
               boxShadow: isFirst ? [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: cs.onSurface.withValues(alpha: 0.05),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -583,9 +585,9 @@ class _TopTracksList extends StatelessWidget {
                   child: Text(
                     (i + 1).toString().padLeft(2, '0'),
                     style: AppTextStyles.getHeadlineSmall(context).copyWith(
-                      color: isFirst ? orange : const Color(0xFFC7CEDA),
-                      fontWeight: FontWeight.w600,
-                    ),
+                    color: isFirst ? orange : cs.onSurface.withValues(alpha: 0.2),
+                    fontWeight: FontWeight.w600,
+                  ),
                   ),
                 ),
                 SizedBox(width: 8.w),
@@ -594,7 +596,7 @@ class _TopTracksList extends StatelessWidget {
                   height: 48.w,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16.r),
-                    color: const Color(0xFFF3F5F7),
+                    color: cs.surfaceVariant,
                     image: track.coverImageUrl != null
                         ? DecorationImage(
                             image: NetworkImage(track.coverImageUrl!),
@@ -613,7 +615,7 @@ class _TopTracksList extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.getTitleMedium(context).copyWith(
-                          color: navy,
+                          color: cs.onSurface,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -623,7 +625,7 @@ class _TopTracksList extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.getBodyMedium(context).copyWith(
-                          color: muted,
+                          color: cs.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                       SizedBox(height: 4.h),
@@ -643,7 +645,7 @@ class _TopTracksList extends StatelessWidget {
                     IconButton(
                       icon: Icon(
                         isFavorite ? Icons.favorite : Icons.favorite_border,
-                        color: isFavorite ? orange : const Color(0xFFB0BAC9),
+                        color: isFavorite ? orange : cs.onSurface.withValues(alpha: 0.3),
                         size: 20.w,
                       ),
                       onPressed: () => onToggleFavorite(track.id),
@@ -651,7 +653,7 @@ class _TopTracksList extends StatelessWidget {
                     IconButton(
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
-                      icon: Icon(Icons.download_outlined, color: const Color(0xFFB0BAC9), size: 20.w),
+                      icon: Icon(Icons.download_outlined, color: cs.onSurface.withValues(alpha: 0.3), size: 20.w),
                       onPressed: () {},
                     ),
                     SizedBox(width: 12.w),
@@ -660,7 +662,7 @@ class _TopTracksList extends StatelessWidget {
                       child: Container(
                         padding: EdgeInsets.all(10.w),
                         decoration: BoxDecoration(
-                          color: isFirst ? orange : const Color(0xFFF3F5F7),
+                          color: isFirst ? orange : cs.surfaceVariant,
                           borderRadius: BorderRadius.circular(14.r),
                           boxShadow: isFirst ? [
                             BoxShadow(
@@ -672,7 +674,7 @@ class _TopTracksList extends StatelessWidget {
                         ),
                         child: Icon(
                           Icons.play_arrow_rounded,
-                          color: isFirst ? Colors.white : const Color(0xFF97A0B0),
+                          color: isFirst ? Colors.white : cs.onSurface.withValues(alpha: 0.4),
                           size: 24.w,
                         ),
                       ),
@@ -701,6 +703,7 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Center(
       child: Padding(
         padding: EdgeInsets.all(16.w),
@@ -710,17 +713,17 @@ class _ErrorView extends StatelessWidget {
             Icon(
               Icons.error_outline,
               size: 64.sp,
-              color: Colors.grey[400],
+              color: cs.onSurface.withValues(alpha: 0.3),
             ),
             SizedBox(height: 16.h),
             Text(
               'Something went wrong',
-              style: AppTextStyles.getHeadlineMedium(context),
+              style: AppTextStyles.getHeadlineMedium(context).copyWith(color: cs.onSurface),
             ),
             SizedBox(height: 8.h),
             Text(
               message,
-              style: AppTextStyles.getBodyMedium(context),
+              style: AppTextStyles.getBodyMedium(context).copyWith(color: cs.onSurface.withValues(alpha: 0.7)),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 16.h),

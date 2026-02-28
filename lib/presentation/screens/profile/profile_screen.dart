@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:anba_moussa/l10n/app_localizations.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_constants.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/theme_provider.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  bool _isDarkMode = false;
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   String _selectedLanguage = 'EN';
   String _selectedAccentColor = 'orange';
 
@@ -88,9 +87,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
+    final themeMode = ref.watch(themeProvider);
+    final isDark = themeMode == ThemeMode.dark;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
@@ -100,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Container(
                 padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
                 decoration: BoxDecoration(
-                  color: Colors.grey[50],
+                  color: cs.onSurface.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
                 ),
                 child: Column(
@@ -108,7 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // User avatar
                     CircleAvatar(
                       radius: 40.r,
-                      backgroundColor: const Color(0xFFFF6B35),
+                      backgroundColor: cs.primary,
                       child: Text(
                         _user.name.split(' ').map((name) => name[0]).join(''),
                         style: TextStyle(
@@ -129,7 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _user.name,
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: cs.onSurface,
                       ),
                     ).animate().fadeIn(
                       duration: AppConstants.defaultAnimationDuration,
@@ -142,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Text(
                       _user.email,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[600],
+                        color: cs.onSurface.withValues(alpha: 0.6),
                       ),
                     ).animate().fadeIn(
                       duration: AppConstants.defaultAnimationDuration,
@@ -172,13 +173,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       delay: const Duration(milliseconds: 800),
                     ),
                     _buildMenuItem(
-                      icon: _isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                      icon: isDark ? Icons.dark_mode : Icons.light_mode,
                       title: 'Dark Mode',
                       onTap: () {
-                        setState(() {
-                          _isDarkMode = !_isDarkMode;
-                        });
-                        // TODO: Apply theme
+                        ref.read(themeProvider.notifier).toggleTheme();
                       },
                       delay: const Duration(milliseconds: 1000),
                     ),
@@ -258,12 +256,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           width: 40.w,
           height: 40.w,
           decoration: BoxDecoration(
-            color: Colors.grey[100],
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius.r),
           ),
           child: Icon(
             icon,
-            color: Colors.grey[700],
+            color: Theme.of(context).colorScheme.onSurface,
             size: 20.w,
           ),
         ),
@@ -271,18 +269,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
             fontWeight: FontWeight.w600,
-            color: Colors.black,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         subtitle: subtitle != null
             ? Text(
                 subtitle!,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600],
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               )
             : customWidget,
-        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey),
+        trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3), size: 16.w),
         onTap: onTap,
       ).animate().slideX(
         duration: AppConstants.defaultAnimationDuration,
@@ -316,7 +314,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               color: color,
               shape: BoxShape.circle,
               border: isSelected
-                  ? Border.all(color: Colors.black, width: 2.w)
+                  ? Border.all(color: Theme.of(context).colorScheme.onSurface, width: 2.w)
                   : null,
             ),
           ),

@@ -19,13 +19,11 @@ class PhotoAlbumDetailsScreen extends StatelessWidget {
       (index) => 'https://picsum.photos/seed/${album.title.replaceAll(' ', '')}-$index/400/400',
     );
 
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: const Color(0xFFFF6B35), size: 20.w),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.primary, size: 20.w),
           onPressed: () => Navigator.pop(context),
         ),
         title: Column(
@@ -34,7 +32,7 @@ class PhotoAlbumDetailsScreen extends StatelessWidget {
               album.title,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w900,
-                color: Colors.black,
+                color: cs.onSurface,
               ),
             ),
             Text(
@@ -43,18 +41,18 @@ class PhotoAlbumDetailsScreen extends StatelessWidget {
                 fontSize: 10.sp,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1.2,
-                color: Colors.grey[400],
+                color: cs.onSurface.withValues(alpha: 0.4),
               ),
             ),
           ],
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_horiz_rounded, color: Colors.black),
-            onPressed: () {},
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.more_horiz_rounded, color: Colors.black),
+        //     onPressed: () {},
+        //   ),
+        // ],
       ),
       body: SafeArea(
         child: Column(
@@ -72,7 +70,7 @@ class PhotoAlbumDetailsScreen extends StatelessWidget {
                       fontSize: 11.sp,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.1,
-                      color: const Color(0xFFFF6B35),
+                      color: cs.primary,
                     ),
                   ),
                   SizedBox(height: 4.h),
@@ -81,7 +79,7 @@ class PhotoAlbumDetailsScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 26.sp,
                       fontWeight: FontWeight.w900,
-                      color: const Color(0xFF1A1D28),
+                      color: cs.onSurface,
                     ),
                   ),
                   SizedBox(height: 16.h),

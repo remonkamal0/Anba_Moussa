@@ -75,6 +75,7 @@ class _VideoGalleryScreenState extends State<VideoGalleryScreen> {
   @override
   Widget build(BuildContext context) {
     final isRtl = Directionality.of(context) == TextDirection.rtl;
+    final cs = Theme.of(context).colorScheme;
 
     return ZoomDrawer(
       controller: _drawerController,
@@ -84,23 +85,23 @@ class _VideoGalleryScreenState extends State<VideoGalleryScreen> {
       borderRadius: 24.0,
       showShadow: true,
       angle: isRtl ? 10.0 : -10.0,
-      drawerShadowsBackgroundColor: Colors.grey[300]!,
+      drawerShadowsBackgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
       slideWidth: MediaQuery.of(context).size.width * 0.75,
-      menuBackgroundColor: Colors.white,
+      menuBackgroundColor: Theme.of(context).colorScheme.surface,
       mainScreen: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: cs.surface,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: cs.surface,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.menu_rounded, color: Colors.black),
+            icon: Icon(Icons.menu_rounded, color: cs.onSurface),
             onPressed: () => _drawerController.toggle?.call(),
           ),
           title: Text(
             'Video Gallery',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w800,
-              color: Colors.black,
+              color: cs.onSurface,
             ),
           ),
           centerTitle: true,
@@ -119,7 +120,7 @@ class _VideoGalleryScreenState extends State<VideoGalleryScreen> {
                     fontSize: 11.sp,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.1,
-                    color: const Color(0xFFFF6B35),
+                    color: cs.primary,
                   ),
                 ),
                 SizedBox(height: 6.h),
@@ -133,7 +134,7 @@ class _VideoGalleryScreenState extends State<VideoGalleryScreen> {
                         style: TextStyle(
                           fontSize: 24.sp,
                           fontWeight: FontWeight.w900,
-                          color: Colors.black,
+                          color: cs.onSurface,
                         ),
                       ),
                     ),
@@ -144,12 +145,12 @@ class _VideoGalleryScreenState extends State<VideoGalleryScreen> {
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: cs.surface,
                           borderRadius: BorderRadius.circular(18.r),
-                          border: Border.all(color: const Color(0xFFEFEFEF)),
+                          border: Border.all(color: cs.outlineVariant),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
+                              color: cs.onSurface.withValues(alpha: 0.05),
                               blurRadius: 10,
                               offset: const Offset(0, 5),
                             ),
@@ -157,14 +158,14 @@ class _VideoGalleryScreenState extends State<VideoGalleryScreen> {
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.tune_rounded, size: 16.w, color: const Color(0xFFFF6B35)),
+                            Icon(Icons.tune_rounded, size: 16.w, color: cs.primary),
                             SizedBox(width: 6.w),
                             Text(
                               'Sort',
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w800,
-                                color: Colors.black87,
+                                color: cs.onSurface.withValues(alpha: 0.87),
                               ),
                             ),
                           ],
@@ -250,6 +251,7 @@ class VideoAlbumCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -300,7 +302,7 @@ class VideoAlbumCard extends StatelessWidget {
                         ),
                         child: Icon(
                           Icons.play_arrow_rounded,
-                          color: const Color(0xFFFF6B35),
+                          color: cs.primary,
                           size: 26.w,
                         ),
                       ),
@@ -321,7 +323,7 @@ class VideoAlbumCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 13.sp,
               fontWeight: FontWeight.w900,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
 
@@ -333,7 +335,7 @@ class VideoAlbumCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 12.sp,
               fontWeight: FontWeight.w900,
-              color: const Color(0xFFFF6B35),
+              color: cs.primary,
             ),
           ),
         ],

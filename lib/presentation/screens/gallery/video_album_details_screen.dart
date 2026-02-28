@@ -30,13 +30,11 @@ class VideoAlbumDetailsScreen extends StatelessWidget {
     if (videos.length > 1) videos[1]['title'] = 'Walking Together';
     if (videos.length > 2) videos[2]['title'] = 'Songs of Praise 2024';
 
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: const Color(0xFFFF6B35), size: 20.w),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.primary, size: 20.w),
           onPressed: () => Navigator.pop(context),
         ),
         title: Column(
@@ -45,7 +43,7 @@ class VideoAlbumDetailsScreen extends StatelessWidget {
               album.title,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w900,
-                color: Colors.black,
+                color: cs.onSurface,
               ),
             ),
             Text(
@@ -54,18 +52,18 @@ class VideoAlbumDetailsScreen extends StatelessWidget {
                 fontSize: 10.sp,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1.2,
-                color: Colors.grey[400],
+                color: cs.onSurface.withValues(alpha: 0.4),
               ),
             ),
           ],
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_horiz_rounded, color: Colors.black),
-            onPressed: () {},
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.more_horiz_rounded, color: Colors.black),
+        //     onPressed: () {},
+        //   ),
+        // ],
       ),
       body: SafeArea(
         child: Column(
@@ -83,7 +81,7 @@ class VideoAlbumDetailsScreen extends StatelessWidget {
                       fontSize: 11.sp,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.1,
-                      color: const Color(0xFFFF6B35),
+                      color: cs.primary,
                     ),
                   ),
                   SizedBox(height: 4.h),
@@ -96,7 +94,7 @@ class VideoAlbumDetailsScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 26.sp,
                             fontWeight: FontWeight.w900,
-                            color: const Color(0xFF1A1D28),
+                            color: cs.onSurface,
                           ),
                         ),
                       ),
@@ -106,12 +104,12 @@ class VideoAlbumDetailsScreen extends StatelessWidget {
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: cs.surface,
                             borderRadius: BorderRadius.circular(18.r),
-                            border: Border.all(color: const Color(0xFFEFEFEF)),
+                            border: Border.all(color: cs.outlineVariant),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
+                                color: cs.onSurface.withValues(alpha: 0.05),
                                 blurRadius: 10,
                                 offset: const Offset(0, 5),
                               ),
@@ -119,14 +117,14 @@ class VideoAlbumDetailsScreen extends StatelessWidget {
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.swap_vert_rounded, size: 16.w, color: const Color(0xFFFF6B35)),
+                              Icon(Icons.swap_vert_rounded, size: 16.w, color: cs.primary),
                               SizedBox(width: 6.w),
                               Text(
                                 'Sort',
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w800,
-                                  color: const Color(0xFFFF6B35),
+                                color: cs.primary,
                                 ),
                               ),
                             ],
@@ -203,7 +201,7 @@ class VideoAlbumDetailsScreen extends StatelessWidget {
                                   ),
                                   child: Icon(
                                     Icons.play_arrow_rounded,
-                                    color: const Color(0xFFFF6B35),
+                                    color: cs.primary,
                                     size: 32.w,
                                   ),
                                 ),
@@ -242,7 +240,7 @@ class VideoAlbumDetailsScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w900,
-                          color: const Color(0xFF1A1D28),
+                          color: cs.onSurface,
                         ),
                       ),
                       
@@ -254,7 +252,7 @@ class VideoAlbumDetailsScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w600,
-                          color: Colors.grey[600],
+                          color: cs.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                     ],
@@ -300,6 +298,7 @@ class _VideoPlaybackMockScreenState extends State<VideoPlaybackMockScreen> {
   }
 
   Future<void> _initPlayer() async {
+    final cs = Theme.of(context).colorScheme;
     // using a reliable sample video URL
     _videoPlayerController = VideoPlayerController.networkUrl(
       Uri.parse('https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'),
@@ -314,13 +313,13 @@ class _VideoPlaybackMockScreenState extends State<VideoPlaybackMockScreen> {
       aspectRatio: _videoPlayerController.value.aspectRatio,
       placeholder: Container(
         color: Colors.black,
-        child: const Center(
-          child: CircularProgressIndicator(color: Color(0xFFFF6B35)),
+        child: Center(
+          child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
         ),
       ),
       materialProgressColors: ChewieProgressColors(
-        playedColor: const Color(0xFFFF6B35),
-        handleColor: const Color(0xFFFF6B35),
+        playedColor: cs.primary,
+        handleColor: cs.primary,
         backgroundColor: Colors.white24,
         bufferedColor: Colors.white54,
       ),
@@ -340,13 +339,11 @@ class _VideoPlaybackMockScreenState extends State<VideoPlaybackMockScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-        title: Text(widget.video['title'], style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        iconTheme: IconThemeData(color: cs.onSurface),
+        title: Text(widget.video['title'], style: TextStyle(color: cs.onSurface, fontWeight: FontWeight.bold)),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,8 +354,8 @@ class _VideoPlaybackMockScreenState extends State<VideoPlaybackMockScreen> {
             color: Colors.black,
             child: _isInit && _chewieController != null
                 ? Chewie(controller: _chewieController!)
-                : const Center(
-                    child: CircularProgressIndicator(color: Color(0xFFFF6B35)),
+                : Center(
+                    child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary),
                   ),
           ),
           Padding(
@@ -371,7 +368,7 @@ class _VideoPlaybackMockScreenState extends State<VideoPlaybackMockScreen> {
                   style: TextStyle(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w900,
-                    color: const Color(0xFF1A1D28),
+                    color: cs.onSurface,
                   ),
                 ),
                 SizedBox(height: 8.h),
@@ -380,7 +377,7 @@ class _VideoPlaybackMockScreenState extends State<VideoPlaybackMockScreen> {
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey[600],
+                    color: cs.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
                 SizedBox(height: 24.h),
@@ -389,7 +386,7 @@ class _VideoPlaybackMockScreenState extends State<VideoPlaybackMockScreen> {
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w800,
-                    color: const Color(0xFF1A1D28),
+                    color: cs.onSurface,
                   ),
                 ),
                 SizedBox(height: 8.h),
@@ -397,7 +394,7 @@ class _VideoPlaybackMockScreenState extends State<VideoPlaybackMockScreen> {
                   'This is a placeholder description for the video. In a real application, this space would contain details about the sermon, hymns, or event shown in the video, providing more context or links to related material.',
                   style: TextStyle(
                     fontSize: 14.sp,
-                    color: Colors.grey[800],
+                    color: cs.onSurface.withValues(alpha: 0.8),
                     height: 1.5,
                   ),
                 ),

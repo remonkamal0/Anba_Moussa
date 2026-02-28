@@ -76,21 +76,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: cs.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Edit Profile',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: cs.onSurface,
           ),
         ),
         centerTitle: true,
@@ -133,7 +131,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             width: 32.w,
                             height: 32.w,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFFF6B35),
+                              color: cs.primary,
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
@@ -154,7 +152,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     Text(
                       'CHANGE PHOTO',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: const Color(0xFFFF6B35),
+                          color: cs.primary,
                         fontWeight: FontWeight.w600,
                       ),
                     ).animate().fadeIn(
@@ -239,7 +237,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _saveChanges,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF6B35),
+                      backgroundColor: cs.primary,
                       foregroundColor: Colors.white,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -311,26 +309,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           decoration: InputDecoration(
             prefixIcon: Icon(
               icon,
-              color: Colors.grey[600],
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
-              borderSide: BorderSide(color: Colors.grey[300]!),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
-              borderSide: BorderSide(color: Colors.grey[300]!),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
-              borderSide: const BorderSide(color: Color(0xFFFF6B35), width: 2),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
               borderSide: const BorderSide(color: Colors.red, width: 2),
             ),
             filled: true,
-            fillColor: Colors.grey[50],
+            fillColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
           ),
         ).animate().slideX(
           duration: AppConstants.defaultAnimationDuration,

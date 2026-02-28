@@ -16,27 +16,25 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: cs.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Notifications',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: cs.onSurface,
           ),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.black),
+            icon: Icon(Icons.more_vert, color: cs.onSurface),
             onPressed: () {
               // TODO: Show more options
               print('More options');
@@ -84,7 +82,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             // Orange separator line
             Container(
               height: 1.h,
-              color: const Color(0xFFFF6B35),
+              color: cs.primary,
               margin: EdgeInsets.symmetric(horizontal: AppConstants.mediumSpacing.r),
             ),
 
@@ -101,7 +99,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   imageUrl: 'https://picsum.photos/seed/band-performing/100/100',
                   isRead: true,
                   actionText: 'Get Tickets',
-                  actionColor: const Color(0xFFFF6B35),
+                  actionColor: cs.primary,
                 ),
                 NotificationItem(
                   id: '5',
@@ -133,6 +131,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     required String title,
     required List<NotificationItem> notifications,
   }) {
+    final cs = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -144,13 +143,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               title,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             Text(
               'View all',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: const Color(0xFFFF6B35),
+                color: cs.primary,
               ),
             ),
           ],
@@ -225,7 +224,7 @@ class NotificationTile extends StatelessWidget {
         notification.title,
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
           fontWeight: FontWeight.w600,
-          color: Colors.black,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
@@ -233,7 +232,7 @@ class NotificationTile extends StatelessWidget {
       subtitle: Text(
         notification.time,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: Colors.grey[600],
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
         ),
       ),
       trailing: Row(
@@ -272,7 +271,7 @@ class NotificationTile extends StatelessWidget {
                       notification.type == NotificationType.discoverWeekly
                   ? Icons.close
                   : Icons.chevron_right,
-              color: Colors.grey[600],
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
             ),
             iconSize: 20.w,
           ),

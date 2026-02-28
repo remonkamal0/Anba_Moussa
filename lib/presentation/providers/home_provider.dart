@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart' hide Slider;
+import 'package:flutter/material.dart';
 import '../../../core/utils/logger.dart';
-import '../../domain/entities/track.dart';
-import '../../domain/entities/category.dart';
-import '../../domain/entities/slider.dart';
-import '../../domain/usecases/get_top_tracks_usecase.dart';
-import '../../domain/usecases/get_categories_usecase.dart';
-import '../../domain/usecases/get_sliders_usecase.dart';
-import '../../domain/usecases/get_favorite_track_ids_usecase.dart';
-import '../../domain/usecases/toggle_favorite_track_usecase.dart';
+import '../../../domain/entities/track.dart';
+import '../../../domain/entities/category.dart';
+import '../../../domain/entities/slider.dart' as entity;
+import '../../../domain/usecases/get_top_tracks_usecase.dart';
+import '../../../domain/usecases/get_categories_usecase.dart';
+import '../../../domain/usecases/get_sliders_usecase.dart';
+import '../../../domain/usecases/get_favorite_track_ids_usecase.dart';
+import '../../../domain/usecases/toggle_favorite_track_usecase.dart';
 
 class HomeProvider extends ChangeNotifier {
   final GetTopTracksUseCase _getTopTracksUseCase;
@@ -33,15 +33,13 @@ class HomeProvider extends ChangeNotifier {
         _toggleFavoriteTrackUseCase = toggleFavoriteTrackUseCase,
         _logger = logger;
 
-  // State
   HomeState get state => _state;
 
-  // Initialization
   Future<void> initialize() async {
     try {
       _setState(const HomeState.loading());
-      
-      final tracks = await _getTopTracksUseCase.execute(); // Or pass limit if added to use case
+
+      final tracks = await _getTopTracksUseCase.execute();
       final categories = await _getCategoriesUseCase.execute();
       final sliders = await _getSlidersUseCase.execute();
       final favoriteIds = await _getFavoriteTrackIdsUseCase.execute();
@@ -50,78 +48,42 @@ class HomeProvider extends ChangeNotifier {
         tracks: tracks,
         categories: categories,
         sliders: sliders,
-        favoriteTrackIds: favoriteIds,
+        favoriteTrackIds: Set<String>.from(favoriteIds),
       ));
-    } catch (e) {
-      _logger.log('Failed to load home data: $e', level: 'ERROR');
+    } catch (e, st) {
+      _logger.error('Failed to load home data', e, st);
       _setState(HomeState.error(e.toString()));
     }
   }
 
-  // Track actions
   Future<void> toggleFavorite(String trackId) async {
+    final currentState = _state;
     try {
-      // First let's find if it was a favorite to toggle it.
-      // Or we wait, ToggleFavoriteTrackUseCase expects isFavorite boolean now.
-      // So we need to check current state.
-      bool isCurrentlyFavorite = false;
-      _state.when(
-        loading: () {},
-        loaded: (tracks, categories, sliders, favoriteIds, currentIndex) {
-          isCurrentlyFavorite = favoriteIds.contains(trackId);
-        },
-        error: (message) {},
-      );
+      final isFavorite = currentState.favoriteTrackIds.contains(trackId);
+      await _toggleFavoriteTrackUseCase.execute(trackId, !isFavorite);
 
-      await _toggleFavoriteTrackUseCase.execute(trackId, !isCurrentlyFavorite);
       final newFavoriteIds = await _getFavoriteTrackIdsUseCase.execute();
-      
-      _state.when(
-        loading: () {},
-        loaded: (tracks, categories, sliders, favoriteIds, currentIndex) {
-          _setState(HomeState.loaded(
-            tracks: tracks,
-            categories: categories,
-            sliders: sliders,
-            favoriteTrackIds: newFavoriteIds,
-            currentIndex: currentIndex,
-          ));
-        },
-        error: (message) {},
-      );
+      _setState(currentState.copyWith(
+        favoriteTrackIds: Set<String>.from(newFavoriteIds),
+      ));
     } catch (e) {
-      _logger.log('Failed to toggle favorite: $e', level: 'ERROR');
+      _logger.error('Failed to toggle favorite: $e');
     }
   }
 
   Future<void> playTrack(String trackId) async {
     try {
-      // Original code was toggling favorite when playing. Assuming that's what was intended.
-      await _toggleFavoriteTrackUseCase.execute(trackId, true);
-      _logger.log('Playing track: $trackId', level: 'INFO');
+      _logger.info('Playing track: $trackId');
+      // Play logic handled by the player provider
     } catch (e) {
-      _logger.log('Failed to play track: $e', level: 'ERROR');
+      _logger.error('Failed to play track: $e');
     }
   }
 
-  // Slider actions
   void onSliderChanged(int index) {
-    _state.when(
-      loading: () {},
-      loaded: (tracks, categories, sliders, favoriteIds, currentIndex) {
-        _setState(HomeState.loaded(
-          tracks: tracks,
-          categories: categories,
-          sliders: sliders,
-          favoriteTrackIds: favoriteIds,
-          currentIndex: index,
-        ));
-      },
-      error: (message) {},
-    );
+    _setState(_state.copyWith(currentIndex: index));
   }
 
-  // Refresh data
   Future<void> refresh() async {
     await initialize();
   }
@@ -132,12 +94,18 @@ class HomeProvider extends ChangeNotifier {
   }
 }
 
-// Home state
+// ---------------------------------------------------------------------------
+// Home State
+// ---------------------------------------------------------------------------
+
+enum HomeStatus { loading, loaded, error }
+
+@immutable
 class HomeState {
   final HomeStatus status;
   final List<Track> tracks;
   final List<Category> categories;
-  final List<Slider> sliders;
+  final List<entity.Slider> sliders;
   final Set<String> favoriteTrackIds;
   final int currentIndex;
   final String? message;
@@ -152,7 +120,7 @@ class HomeState {
     this.message,
   });
 
-  const HomeState.loading() 
+  const HomeState.loading()
       : status = HomeStatus.loading,
         tracks = const [],
         categories = const [],
@@ -167,9 +135,10 @@ class HomeState {
     required this.sliders,
     required this.favoriteTrackIds,
     this.currentIndex = 0,
-  }) : status = HomeStatus.loaded, message = null;
+  })  : status = HomeStatus.loaded,
+        message = null;
 
-  const HomeState.error(this.message) 
+  const HomeState.error(this.message)
       : status = HomeStatus.error,
         tracks = const [],
         categories = const [],
@@ -177,9 +146,31 @@ class HomeState {
         favoriteTrackIds = const {},
         currentIndex = 0;
 
+  HomeState copyWith({
+    HomeStatus? status,
+    List<Track>? tracks,
+    List<Category>? categories,
+    List<entity.Slider>? sliders,
+    Set<String>? favoriteTrackIds,
+    int? currentIndex,
+    String? message,
+  }) {
+    return HomeState(
+      status: status ?? this.status,
+      tracks: tracks ?? this.tracks,
+      categories: categories ?? this.categories,
+      sliders: sliders ?? this.sliders,
+      favoriteTrackIds: favoriteTrackIds ?? this.favoriteTrackIds,
+      currentIndex: currentIndex ?? this.currentIndex,
+      message: message ?? this.message,
+    );
+  }
+
   T when<T>({
     required T Function() loading,
-    required T Function(List<Track>, List<Category>, List<Slider>, Set<String>, int) loaded,
+    required T Function(List<Track>, List<Category>, List<entity.Slider>,
+            Set<String>, int)
+        loaded,
     required T Function(String) error,
   }) {
     switch (status) {
@@ -192,6 +183,3 @@ class HomeState {
     }
   }
 }
-
-enum HomeStatus { loading, loaded, error }
-

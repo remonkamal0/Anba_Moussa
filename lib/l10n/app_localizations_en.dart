@@ -152,4 +152,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get drawerEnglish => 'English';
+
+  @override
+  String get dialogLogoutTitle => 'Log Out';
+
+  @override
+  String get dialogLogoutContent => 'Are you sure you want to log out?';
+
+  @override
+  String get dialogDeleteTitle => 'Delete Account';
+
+  @override
+  String get dialogDeleteContent =>
+      'Are you sure you want to delete your account? This action cannot be undone.';
+
+  @override
+  String get dialogCancel => 'Cancel';
+
+  @override
+  String get dialogConfirm => 'Confirm';
+
+  @override
+  String get playlistCreateTitle => 'New Playlist';
+
+  @override
+  String get playlistAddCover => 'ADD COVER';
+
+  @override
+  String get playlistNameLabel => 'PLAYLIST NAME';
+
+  @override
+  String get playlistNameHint => 'Give your playlist a name';
+
+  @override
+  String get playlistSearchTracksHint => 'Search tracks to add';
+
+  @override
+  String get playlistSuggestedTracks => 'SUGGESTED TRACKS';
+
+  @override
+  String get playlistCreateButton => 'Create Playlist';
 }

@@ -152,4 +152,44 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get drawerEnglish => 'إنجليزي';
+
+  @override
+  String get dialogLogoutTitle => 'تسجيل الخروج';
+
+  @override
+  String get dialogLogoutContent => 'هل أنت متأكد أنك تريد الخروج؟';
+
+  @override
+  String get dialogDeleteTitle => 'حذف الحساب';
+
+  @override
+  String get dialogDeleteContent =>
+      'هل أنت متأكد أنك تريد حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get dialogCancel => 'إلغاء';
+
+  @override
+  String get dialogConfirm => 'تأكيد';
+
+  @override
+  String get playlistCreateTitle => 'قائمة تشغيل جديدة';
+
+  @override
+  String get playlistAddCover => 'إضافة غلاف';
+
+  @override
+  String get playlistNameLabel => 'اسم القائمة';
+
+  @override
+  String get playlistNameHint => 'أعط قائمة التشغيل اسماً';
+
+  @override
+  String get playlistSearchTracksHint => 'ابحث عن مقاطع لإضافتها';
+
+  @override
+  String get playlistSuggestedTracks => 'المقاطع المقترحة';
+
+  @override
+  String get playlistCreateButton => 'إنشاء قائمة تشغيل';
 }

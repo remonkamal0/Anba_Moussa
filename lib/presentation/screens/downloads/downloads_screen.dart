@@ -50,20 +50,19 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F7FA),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF7F7FA),
-        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.onSurface, size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Downloads',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w900,
-            color: Colors.black,
+            color: cs.onSurface,
           ),
         ),
         centerTitle: true,
@@ -77,7 +76,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
             child: Text(
               'Delete All',
               style: TextStyle(
-                color: const Color(0xFFFF6B35),
+                color: cs.primary,
                 fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -95,11 +94,11 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: cs.surface,
                   borderRadius: BorderRadius.circular(24.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: Colors.black.withValues(alpha: 0.04),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -117,7 +116,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                             fontSize: 10.sp,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.5,
-                            color: Colors.grey[400],
+                            color: cs.onSurface.withValues(alpha: 0.4),
                           ),
                         ),
                         SizedBox(height: 4.h),
@@ -130,7 +129,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                               style: TextStyle(
                                 fontSize: 24.sp,
                                 fontWeight: FontWeight.w900,
-                                color: Colors.black,
+                                color: cs.onSurface,
                               ),
                             ),
                             SizedBox(width: 4.w),
@@ -139,7 +138,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.normal,
-                                color: Colors.grey[500],
+                                color: cs.onSurface.withValues(alpha: 0.5),
                               ),
                             ),
                           ],
@@ -157,8 +156,8 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                           CircularProgressIndicator(
                             value: 0.65, // 65% used example
                             strokeWidth: 6.w,
-                            backgroundColor: const Color(0xFFFF6B35).withOpacity(0.15),
-                            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFFF6B35)),
+                            backgroundColor: cs.primary.withValues(alpha: 0.15),
+                            valueColor: AlwaysStoppedAnimation<Color>(cs.primary),
                           ),
                         ],
                       ),
@@ -188,7 +187,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                           borderRadius: BorderRadius.circular(14.r),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFFF6B35).withOpacity(0.4),
+                              color: cs.primary.withValues(alpha: 0.4),
                               blurRadius: 15,
                               offset: const Offset(0, 8),
                             ),
@@ -215,7 +214,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                               style: TextStyle(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.bold,
-                                color: const Color(0xFF1E293B),
+                                color: cs.onSurface,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -225,7 +224,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                               song.artist,
                               style: TextStyle(
                                 fontSize: 13.sp,
-                                color: Colors.grey[500],
+                                color: cs.onSurface.withValues(alpha: 0.5),
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -233,14 +232,14 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                             SizedBox(height: 4.h),
                             Row(
                               children: [
-                                Icon(Icons.check_circle_rounded, color: const Color(0xFFFF6B35), size: 14.w),
+                                Icon(Icons.check_circle_rounded, color: cs.primary, size: 14.w),
                                 SizedBox(width: 4.w),
                                 Text(
                                   song.size,
                                   style: TextStyle(
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.w600,
-                                    color: const Color(0xFFFF6B35),
+                                    color: cs.primary,
                                   ),
                                 ),
                               ],
@@ -256,11 +255,11 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                           width: 44.w,
                           height: 44.w,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFF6B35),
+                            color: cs.primary,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFF6B35).withOpacity(0.3),
+                                color: cs.primary.withValues(alpha: 0.3),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
@@ -279,7 +278,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                             _downloadedSongs.removeAt(index);
                           });
                         },
-                        child: Icon(Icons.delete_outline_rounded, color: Colors.grey[400], size: 28.w),
+                        child: Icon(Icons.delete_outline_rounded, color: cs.onSurface.withValues(alpha: 0.3), size: 28.w),
                       ),
                     ],
                   );

@@ -46,5 +46,18 @@
   "drawerDeleteAccount": "حذف الحساب",
   "drawerLogOut": "تسجيل الخروج",
   "drawerArabic": "عربي",
-  "drawerEnglish": "إنجليزي"
+  "drawerEnglish": "إنجليزي",
+  "dialogLogoutTitle": "تسجيل الخروج",
+  "dialogLogoutContent": "هل أنت متأكد أنك تريد الخروج؟",
+  "dialogDeleteTitle": "حذف الحساب",
+  "dialogDeleteContent": "هل أنت متأكد أنك تريد حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.",
+  "dialogCancel": "إلغاء",
+  "dialogConfirm": "تأكيد",
+  "playlistCreateTitle": "قائمة تشغيل جديدة",
+  "playlistAddCover": "إضافة غلاف",
+  "playlistNameLabel": "اسم القائمة",
+  "playlistNameHint": "أعط قائمة التشغيل اسماً",
+  "playlistSearchTracksHint": "ابحث عن مقاطع لإضافتها",
+  "playlistSuggestedTracks": "المقاطع المقترحة",
+  "playlistCreateButton": "إنشاء قائمة تشغيل"
 }

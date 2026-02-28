@@ -128,6 +128,8 @@ class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
   Widget build(BuildContext context) {
     final isRtl = Directionality.of(context) == TextDirection.rtl;
 
+    final cs = Theme.of(context).colorScheme;
+
     return ZoomDrawer(
       controller: _drawerController,
       style: DrawerStyle.defaultStyle,
@@ -136,16 +138,16 @@ class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
       borderRadius: 24.0,
       showShadow: true,
       angle: isRtl ? 10.0 : -10.0,
-      drawerShadowsBackgroundColor: Colors.grey[300]!,
+      drawerShadowsBackgroundColor: cs.onSurface.withValues(alpha: 0.1),
       slideWidth: MediaQuery.of(context).size.width * 0.75,
-      menuBackgroundColor: Colors.white,
+      menuBackgroundColor: cs.surface,
       mainScreen: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: cs.surface,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: cs.surface,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black),
+            icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.onSurface),
             onPressed: () => context.pop(),
           ),
           title: Text(
@@ -154,16 +156,16 @@ class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
               fontSize: 12.sp,
               letterSpacing: 1.2,
               fontWeight: FontWeight.w800,
-              color: Colors.grey[700],
+              color: cs.onSurface.withValues(alpha: 0.7),
             ),
           ),
           centerTitle: true,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.more_horiz_rounded, color: Colors.black),
-              onPressed: () {},
-            ),
-          ],
+          // actions: [
+          //   IconButton(
+          //     icon: const Icon(Icons.more_horiz_rounded, color: Colors.black),
+          //     onPressed: () {},
+          //   ),
+          // ],
         ),
         body: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
@@ -193,7 +195,7 @@ class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w800,
-                      color: Colors.black,
+                      color: cs.onSurface,
                     ),
                   ),
                   TextButton(
@@ -203,7 +205,7 @@ class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFFFF6B35),
+                        color: cs.primary,
                       ),
                     ),
                   ),
@@ -228,7 +230,7 @@ class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
                         duration: const Duration(milliseconds: 220),
                         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                         decoration: BoxDecoration(
-                          color: isSelected ? const Color(0xFFFF6B35) : const Color(0xFFF3F3F3),
+                          color: isSelected ? cs.primary : cs.onSurface.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(22.r),
                         ),
                         child: Center(
@@ -237,7 +239,7 @@ class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w800,
-                              color: isSelected ? Colors.white : Colors.black87,
+                              color: isSelected ? Colors.white : cs.onSurface.withValues(alpha: 0.87),
                             ),
                           ),
                         ),
@@ -258,7 +260,7 @@ class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w800,
-                      color: Colors.black,
+                      color: cs.onSurface,
                     ),
                   ),
                   // ممكن تشيل السطرين دول لو مش عايز يظهر عدد التراكات هنا
@@ -267,7 +269,7 @@ class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w600,
-                      color: Colors.grey[600],
+                      color: cs.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -330,6 +332,7 @@ class _HeroAlbumHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -352,10 +355,10 @@ class _HeroAlbumHeader extends StatelessWidget {
             child: CachedNetworkImage(
               imageUrl: imageUrl,
               fit: BoxFit.cover,
-              placeholder: (_, __) => Container(color: Colors.grey[200]),
+              placeholder: (_, __) => Container(color: Theme.of(context).colorScheme.surfaceVariant),
               errorWidget: (_, __, ___) => Container(
-                color: Colors.grey[200],
-                child: const Icon(Icons.broken_image, color: Colors.grey),
+                color: Theme.of(context).colorScheme.surfaceVariant,
+                child: Icon(Icons.broken_image, color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
             ),
           ),
@@ -422,17 +425,17 @@ class _HeroAlbumHeader extends StatelessWidget {
                 child: Container(
                   width: 60.w,
                   height: 60.w,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFFF6B35),
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color(0x55FF6B35),
-                        blurRadius: 16,
-                        offset: Offset(0, 6),
-                      ),
-                    ],
-                  ),
+                    decoration: BoxDecoration(
+                      color: cs.primary,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: cs.primary.withOpacity(0.3),
+                          blurRadius: 16,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
                   child: Icon(
                     Icons.play_arrow_rounded,
                     color: Colors.white,
@@ -472,8 +475,9 @@ class TrackCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Material(
-      color: Colors.white,
+      color: cs.surface,
       borderRadius: BorderRadius.circular(16.r),
       child: InkWell(
         borderRadius: BorderRadius.circular(16.r),
@@ -482,7 +486,7 @@ class TrackCard extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.r),
-            border: Border.all(color: const Color(0xFFEFEFEF)),
+            border: Border.all(color: cs.outlineVariant),
           ),
           child: Row(
             children: [
@@ -517,7 +521,7 @@ class TrackCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 13.sp,
                         fontWeight: FontWeight.w900,
-                        color: Colors.black87,
+                        color: cs.onSurface.withValues(alpha: 0.87),
                       ),
                     ),
                     SizedBox(height: 2.h),
@@ -531,7 +535,7 @@ class TrackCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 11.sp,
                               fontWeight: FontWeight.w600,
-                              color: Colors.grey[600],
+                              color: cs.onSurface.withValues(alpha: 0.6),
                             ),
                           ),
                         ),
@@ -540,7 +544,7 @@ class TrackCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 11.sp,
                             fontWeight: FontWeight.w700,
-                            color: Colors.grey[600],
+                            color: cs.onSurface.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -554,21 +558,21 @@ class TrackCard extends StatelessWidget {
               // actions
               _IconAction(
                 icon: Icons.play_circle_fill_rounded,
-                color: const Color(0xFFFF6B35),
+                color: cs.primary,
                 onTap: onTap,
               ),
               SizedBox(width: 10.w),
 
               _IconAction(
                 icon: isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                color: isLiked ? const Color(0xFFFF6B35) : Colors.grey[500]!,
+                color: isLiked ? cs.primary : cs.onSurface.withValues(alpha: 0.5),
                 onTap: onLike,
               ),
               SizedBox(width: 10.w),
 
               _IconAction(
                 icon: isDownloaded ? Icons.download_done_rounded : Icons.file_download_outlined,
-                color: isDownloaded ? const Color(0xFFFF6B35) : Colors.grey[500]!,
+                color: isDownloaded ? cs.primary : cs.onSurface.withValues(alpha: 0.5),
                 onTap: onDownload,
               ),
             ],

@@ -5,7 +5,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
-
+import '../playlist/create_playlist_screen.dart';
+import '../playlist/playlist_details_screen.dart';
 class AllPlaylistsScreen extends StatefulWidget {
   const AllPlaylistsScreen({super.key});
 
@@ -19,49 +20,49 @@ class _AllPlaylistsScreenState extends State<AllPlaylistsScreen> {
   final List<Playlist> _playlists = [
     Playlist(
       id: '1',
-      title: 'My Favorites',
+      title: 'Vibe Check',
       songCount: 24,
-      coverImage: 'https://picsum.photos/seed/favorites-playlist/200/200',
+      coverImage: 'https://picsum.photos/seed/favorites-playlist/400/400',
       isPublic: false,
       date: 'Updated today',
     ),
     Playlist(
       id: '2',
-      title: 'Workout Mix',
+      title: 'Sunset Beats',
       songCount: 18,
-      coverImage: 'https://picsum.photos/seed/workout-mix/200/200',
+      coverImage: 'https://picsum.photos/seed/workout-mix/400/400',
       isPublic: true,
       date: '2 days ago',
     ),
     Playlist(
       id: '3',
-      title: 'Sunday Chill',
-      songCount: 32,
-      coverImage: 'https://picsum.photos/seed/sunday-chill/200/200',
+      title: 'Deep Focus',
+      songCount: 42,
+      coverImage: 'https://picsum.photos/seed/sunday-chill/400/400',
       isPublic: false,
       date: '1 week ago',
     ),
     Playlist(
       id: '4',
-      title: 'Road Trip',
-      songCount: 45,
-      coverImage: 'https://picsum.photos/seed/road-trip/200/200',
+      title: 'Morning Coffee',
+      songCount: 12,
+      coverImage: 'https://picsum.photos/seed/road-trip/400/400',
       isPublic: true,
       date: '2 weeks ago',
     ),
     Playlist(
       id: '5',
-      title: 'Study Session',
-      songCount: 12,
-      coverImage: 'https://picsum.photos/seed/study-session/200/200',
+      title: 'Road Trip',
+      songCount: 56,
+      coverImage: 'https://picsum.photos/seed/study-session/400/400',
       isPublic: false,
       date: '3 weeks ago',
     ),
     Playlist(
       id: '6',
-      title: 'Party Hits',
-      songCount: 67,
-      coverImage: 'https://picsum.photos/seed/party-hits/200/200',
+      title: 'Chill Mix',
+      songCount: 31,
+      coverImage: 'https://picsum.photos/seed/party-hits/400/400',
       isPublic: true,
       date: '1 month ago',
     ),
@@ -74,41 +75,50 @@ class _AllPlaylistsScreenState extends State<AllPlaylistsScreen> {
     print('Search tapped');
   }
 
-  void _onCreatePlaylistTapped() {
-    // TODO: Navigate to create playlist screen
-    print('Create playlist tapped');
+  void _onCreatePlaylistTapped() async {
+    final newPlaylist = await Navigator.of(context).push<Playlist>(
+      MaterialPageRoute(
+        builder: (context) => const CreatePlaylistScreen(),
+      ),
+    );
+    
+    if (newPlaylist != null) {
+      setState(() {
+        _playlists.insert(0, newPlaylist);
+      });
+    }
   }
 
   void _onPlaylistTapped(Playlist playlist) {
-    // TODO: Navigate to playlist details
-    print('Tapped playlist: ${playlist.title}');
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PlaylistDetailsScreen(
+          playlistId: playlist.id,
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: cs.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'All Playlists',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
-            color: Colors.black,
           ),
         ),
         centerTitle: true,
         actions: [
           IconButton(
             onPressed: _onSearchTapped,
-            icon: const Icon(Icons.search, color: Colors.black),
+            icon: Icon(Icons.search, color: cs.onSurface),
           ),
         ],
       ),
@@ -117,24 +127,30 @@ class _AllPlaylistsScreenState extends State<AllPlaylistsScreen> {
           children: [
             // Search bar
             Padding(
-              padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
+                  color: cs.brightness == Brightness.dark
+                      ? const Color(0xFF1E1E1E)
+                      : const Color(0xFFF9FAFB),
+                  borderRadius: BorderRadius.circular(30.r),
                 ),
                 child: TextField(
                   decoration: InputDecoration(
-                    hintText: 'Search playlists...',
-                    prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
+                    hintText: 'Search your playlists',
+                    hintStyle: TextStyle(
+                      color: cs.onSurface.withValues(alpha: 0.4),
+                      fontSize: 14.sp,
+                    ),
+                    prefixIcon: Icon(Icons.search, color: cs.onSurface.withValues(alpha: 0.4), size: 20.sp),
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.all(AppConstants.mediumSpacing.r),
+                    contentPadding: EdgeInsets.symmetric(vertical: 14.h),
                   ),
                 ),
               ),
             ),
 
-            SizedBox(height: AppConstants.mediumSpacing.h),
+            SizedBox(height: 12.h),
 
             // Playlists grid
             Expanded(
@@ -144,12 +160,12 @@ class _AllPlaylistsScreenState extends State<AllPlaylistsScreen> {
                   if (constraints.maxWidth >= 1024) cols = 4;
                   else if (constraints.maxWidth >= 600) cols = 3;
                   return GridView.builder(
-                    padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: cols,
-                      crossAxisSpacing: AppConstants.mediumSpacing.w,
-                      mainAxisSpacing: AppConstants.mediumSpacing.h,
-                      childAspectRatio: 0.8,
+                      crossAxisSpacing: 16.w,
+                      mainAxisSpacing: 24.h,
+                      childAspectRatio: 0.75, // Adjust for image taking more space
                     ),
                     itemCount: _playlists.length,
                     itemBuilder: (context, index) {
@@ -169,6 +185,13 @@ class _AllPlaylistsScreenState extends State<AllPlaylistsScreen> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _onCreatePlaylistTapped,
+        backgroundColor: const Color(0xFFF36A31), // Orange from design
+        elevation: 4,
+        shape: const CircleBorder(),
+        child: const Icon(Icons.add, color: Colors.white, size: 28),
       ),
     );
   }
@@ -205,112 +228,48 @@ class PlaylistCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Cover image
-            Expanded(
-              flex: 3,
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(AppConstants.mediumBorderRadius.r),
-                  ),
-                  image: DecorationImage(
-                    image: NetworkImage(playlist.coverImage),
-                    fit: BoxFit.cover,
-                  ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Cover image
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24.r), // Highly rounded corners
+                image: DecorationImage(
+                  image: NetworkImage(playlist.coverImage),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
+          ),
 
-            SizedBox(height: AppConstants.smallSpacing.h),
+          SizedBox(height: 12.h),
 
-            // Playlist info
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      playlist.title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: AppConstants.extraSmallSpacing.h),
-                    Row(
-                      children: [
-                        Text(
-                          '${playlist.songCount} songs',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        const Spacer(),
-                        if (playlist.isPublic)
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: AppConstants.smallSpacing.w,
-                              vertical: AppConstants.extraSmallSpacing.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF4CAF50),
-                              borderRadius: BorderRadius.circular(
-                                AppConstants.smallBorderRadius.r,
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.public,
-                                  color: Colors.white,
-                                  size: 16.w,
-                                ),
-                                SizedBox(width: AppConstants.extraSmallSpacing.w),
-                                Text(
-                                  'Public',
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                      ],
-                    ),
-                    SizedBox(height: AppConstants.mediumSpacing.h),
-                    Text(
-                      playlist.date,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[500],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+          // Playlist info (Title strictly, song count slightly lighter)
+          Text(
+            playlist.title,
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
-          ],
-        ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          
+          SizedBox(height: 4.h),
+          
+          Text(
+            '${playlist.songCount} songs',
+            style: TextStyle(
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -64,26 +64,24 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F7FA),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF7F7FA),
-        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.black, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.onSurface, size: 20),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Favorites',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w900,
-            color: Colors.black,
+            color: cs.onSurface,
           ),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.search_rounded, color: Colors.black, size: 24),
+            icon: Icon(Icons.search_rounded, color: cs.onSurface, size: 24),
             onPressed: () {},
           ),
         ],
@@ -110,9 +108,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFF6B35),
+                        backgroundColor: cs.primary,
                         elevation: 4,
-                        shadowColor: const Color(0xFFFF6B35).withOpacity(0.5),
+                        shadowColor: cs.primary.withOpacity(0.5),
                         padding: EdgeInsets.symmetric(vertical: 14.h),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24.r),
@@ -124,17 +122,17 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: () {},
-                      icon: const Icon(Icons.shuffle_rounded, color: Color(0xFFFF6B35), size: 20),
+                      icon: Icon(Icons.shuffle_rounded, color: cs.primary, size: 20),
                       label: Text(
                         'Shuffle',
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFFFF6B35),
+                          color: cs.primary,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFFF2EC), // Lighter orange bg
+                        backgroundColor: cs.primary.withValues(alpha: 0.1), // Lighter dynamic bg
                         elevation: 0,
                         padding: EdgeInsets.symmetric(vertical: 14.h),
                         shape: RoundedRectangleBorder(
@@ -156,7 +154,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   fontSize: 11.sp,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.5,
-                  color: Colors.grey[500],
+                  color: cs.onSurface.withValues(alpha: 0.5),
                 ),
               ),
             ),
@@ -205,7 +203,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                               style: TextStyle(
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.bold,
-                                color: const Color(0xFF1E293B),
+                                color: cs.onSurface,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -215,7 +213,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                               song.artist,
                               style: TextStyle(
                                 fontSize: 13.sp,
-                                color: Colors.grey[500],
+                                color: cs.onSurface.withValues(alpha: 0.5),
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -230,19 +228,19 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         children: [
                           Icon(
                             Icons.favorite_rounded,
-                            color: const Color(0xFFFF6B35),
+                            color: cs.primary,
                             size: 20.w,
                           ),
                           SizedBox(width: 16.w),
-                          Icon(
+                           Icon(
                             Icons.arrow_circle_down_rounded,
-                            color: Colors.grey[400],
+                            color: cs.onSurface.withValues(alpha: 0.3),
                             size: 22.w,
                           ),
                           SizedBox(width: 16.w),
                           Icon(
                             Icons.play_circle_outline_rounded,
-                            color: const Color(0xFF1E293B),
+                            color: cs.onSurface,
                             size: 24.w,
                           ),
                         ],

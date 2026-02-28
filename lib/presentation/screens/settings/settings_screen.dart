@@ -3,18 +3,22 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../providers/locale_provider.dart';
+import '../../widgets/common/confirm_dialog.dart';
+import '../playlist/create_playlist_screen.dart';
+import '../../providers/theme_provider.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
-  bool darkMode = false;
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   int selectedThemeIndex = 0;
-  String selectedLanguage = "English";
 
   final List<_PlaylistItem> playlists = const [
     _PlaylistItem(
@@ -45,12 +49,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Color(0xFFEB5757), // red
   ];
 
-  Color get accent => themeColors[selectedThemeIndex];
+  Color get accent => Theme.of(context).colorScheme.primary;
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final isDark = cs.brightness == Brightness.dark;
+    final themeMode = ref.watch(themeProvider);
+    final darkMode = themeMode == ThemeMode.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F7FA),
       body: Stack(
         children: [
           // soft gradient header background
@@ -60,13 +68,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             right: 0,
             height: 260.h,
             child: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Color(0xFFFFF4EE),
-                    Color(0xFFF7F7FA),
+                    isDark ? cs.surfaceContainerHigh : const Color(0xFFFFF4EE),
+                    cs.surface,
                   ],
                 ),
               ),
@@ -89,11 +97,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           width: 42.w,
                           height: 42.w,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: cs.surface,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(.05),
+                                color: Colors.black.withValues(alpha: .05),
                                 blurRadius: 10,
                                 offset: const Offset(0, 3),
                               ),
@@ -102,7 +110,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           child: Icon(
                             Icons.menu_rounded,
                             size: 22.w,
-                            color: const Color(0xFF111827),
+                            color: cs.onSurface,
                           ),
                         ),
                       ),
@@ -113,7 +121,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           style: TextStyle(
                             fontSize: 20.sp,
                             fontWeight: FontWeight.w900,
-                            color: const Color(0xFF111827),
+                            color: cs.onSurface,
                           ),
                         ),
                       ),
@@ -141,7 +149,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: TextStyle(
                       fontSize: 22.sp,
                       fontWeight: FontWeight.w800,
-                      color: const Color(0xFF111827),
+                      color: cs.onSurface,
                     ),
                   ),
                   SizedBox(height: 4.h),
@@ -149,7 +157,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     "alex.rivera@example.com",
                     style: TextStyle(
                       fontSize: 13.sp,
-                      color: const Color(0xFF6B7280),
+                      color: cs.onSurface.withValues(alpha: .6),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -160,7 +168,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   _PrimarySoftButton(
                     text: "Edit Profile",
                     onTap: () {
-                      // TODO: go to edit profile
+                      context.push('/profile/edit');
                     },
                   ),
 
@@ -171,11 +179,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     leftText: "MY PLAYLISTS",
                     rightText: "See All",
                     accent: accent,
-                    onAdd: () {
-                      // TODO: add playlist
+                    onAdd: () async {
+                      final newPlaylist = await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const CreatePlaylistScreen(),
+                        ),
+                      );
+                      
+                      if (newPlaylist != null) {
+                        // TODO: Implement actual playlist creation logic
+                      }
                     },
                     onSeeAll: () {
-                      // TODO: see all
+                      context.push('/all-playlists');
                     },
                   ),
 
@@ -204,29 +220,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       children: [
                         _RowTile(
                           icon: Icons.translate,
-                          iconBg: accent.withOpacity(.12),
+                          iconBg: accent.withValues(alpha: .12),
                           iconColor: accent,
-                          title: "Language",
-                          trailingText: selectedLanguage,
-                          onTap: () async {
-                            final value = await _showLanguageSheet(context);
-                            if (value != null) {
-                              setState(() => selectedLanguage = value);
-                            }
+                          title: AppLocalizations.of(context)?.drawerLanguage ?? "Language",
+                          trailingText: ref.watch(localeProvider).languageCode == 'ar' 
+                              ? AppLocalizations.of(context)?.drawerArabic 
+                              : AppLocalizations.of(context)?.drawerEnglish,
+                          onTap: () {
+                            final currentCode = ref.read(localeProvider).languageCode;
+                            final newLocale = currentCode == 'ar' ? 'en' : 'ar';
+                            ref.read(localeProvider.notifier).changeLocale(newLocale);
                           },
                         ),
                         _DividerIndent(),
                         _RowTile(
                           icon: Icons.dark_mode_outlined,
-                          iconBg: accent.withOpacity(.12),
+                          iconBg: accent.withValues(alpha: .12),
                           iconColor: accent,
                           title: "Dark Mode",
                           trailing: Switch(
                             value: darkMode,
-                            onChanged: (v) => setState(() => darkMode = v),
+                            onChanged: (v) => ref.read(themeProvider.notifier).toggleTheme(),
                             activeColor: accent,
                           ),
-                          onTap: () => setState(() => darkMode = !darkMode),
+                          onTap: () => ref.read(themeProvider.notifier).toggleTheme(),
                         ),
                         _DividerIndent(),
                         Padding(
@@ -248,7 +265,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   style: TextStyle(
                                     fontSize: 14.sp,
                                     fontWeight: FontWeight.w700,
-                                    color: const Color(0xFF111827),
+                                    color: cs.onSurface,
                                   ),
                                 ),
                               ),
@@ -283,7 +300,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     color: c,
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: selected ? const Color(0xFF111827) : Colors.transparent,
+                                      color: selected ? cs.onSurface : Colors.transparent,
                                       width: 2,
                                     ),
                                     boxShadow: [
@@ -344,11 +361,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       children: [
                         _RowTile(
                           icon: Icons.notifications_none,
-                          iconBg: accent.withOpacity(.12),
+                          iconBg: accent.withValues(alpha: .12),
                           iconColor: accent,
-                          title: "Notifications",
+                          title: AppLocalizations.of(context)?.drawerNotifications ?? "Notifications",
                           onTap: () {
-                            // TODO: go notifications
+                            context.push('/notifications');
                           },
                         ),
                       ],
@@ -372,12 +389,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                   // Log out
                   TextButton.icon(
-                    onPressed: () {
-                      // TODO: logout
+                    onPressed: () async {
+                      final l10n = AppLocalizations.of(context)!;
+                      final confirm = await showConfirmDialog(
+                        context,
+                        title: l10n.dialogLogoutTitle,
+                        content: l10n.dialogLogoutContent,
+                        cancelText: l10n.dialogCancel,
+                        confirmText: l10n.dialogConfirm,
+                        accentColor: accent,
+                        confirmColor: accent,
+                      );
+                      if (confirm == true && context.mounted) {
+                        ZoomDrawer.of(context)?.close();
+                        context.go('/login');
+                      }
                     },
                     icon: Icon(Icons.logout, color: accent),
                     label: Text(
-                      "Log Out",
+                      AppLocalizations.of(context)?.drawerLogOut ?? "Log Out",
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w800,
@@ -393,12 +423,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(horizontal: 8.w),
                     child: OutlinedButton.icon(
-                      onPressed: () {
-                        // TODO: delete account confirm
+                      onPressed: () async {
+                        final l10n = AppLocalizations.of(context)!;
+                        final confirm = await showConfirmDialog(
+                          context,
+                          title: l10n.dialogDeleteTitle,
+                          content: l10n.dialogDeleteContent,
+                          cancelText: l10n.dialogCancel,
+                          confirmText: l10n.dialogConfirm,
+                          accentColor: accent,
+                          confirmColor: const Color(0xFFEB5757),
+                        );
+                        if (confirm == true && context.mounted) {
+                          // Implement delete account logic here
+                          ZoomDrawer.of(context)?.close();
+                          context.go('/login');
+                        }
                       },
                       icon: const Icon(Icons.delete_outline, color: Color(0xFFEB5757)),
                       label: Text(
-                        "Delete Account",
+                        AppLocalizations.of(context)?.drawerDeleteAccount ?? "Delete Account",
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w800,
@@ -407,14 +451,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(
-                          color: const Color(0xFFEB5757).withOpacity(.25),
+                          color: const Color(0xFFEB5757).withValues(alpha: .25),
                           width: 1.2,
                         ),
                         padding: EdgeInsets.symmetric(vertical: 14.h),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18.r),
                         ),
-                        backgroundColor: const Color(0xFFFFF1F1),
+                        backgroundColor: const Color(0xFFEB5757).withValues(alpha: 0.1),
                       ),
                     ),
                   ),
@@ -439,7 +483,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         insetPadding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(28.r),
             boxShadow: [
               BoxShadow(
@@ -470,7 +514,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       width: 64.w,
                       height: 64.w,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.25),
+                        color: Colors.white.withValues(alpha: 0.25),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(Icons.headphones_rounded, color: Colors.white, size: 32.sp),
@@ -530,11 +574,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: TextButton(
                     onPressed: () => Navigator.of(ctx).pop(),
                     style: TextButton.styleFrom(
-                      backgroundColor: const Color(0xFFF3F5F7),
+                      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.r)),
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                     ),
-                    child: Text('Close', style: TextStyle(color: const Color(0xFF6B7280), fontSize: 14.sp, fontWeight: FontWeight.w700)),
+                    child: Text('Close', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 14.sp, fontWeight: FontWeight.w700)),
                   ),
                 ),
               ),
@@ -556,9 +600,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
       decoration: BoxDecoration(
-        color: const Color(0xFFF7F9FC),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(18.r),
-        border: Border.all(color: const Color(0xFFE9EDF3), width: 1),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 1),
       ),
       child: Row(
         children: [
@@ -585,7 +629,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: Text(role, style: TextStyle(color: roleColor, fontSize: 10.sp, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
                 ),
                 SizedBox(height: 5.h),
-                Text(name, style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w800, color: const Color(0xFF111827))),
+                Text(name, style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w800, color: Theme.of(context).colorScheme.onSurface)),
               ],
             ),
           ),
@@ -611,54 +655,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  Future<String?> _showLanguageSheet(BuildContext context) async {
-    final langs = ["English", "Arabic", "French", "Spanish"];
-    return showModalBottomSheet<String>(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-      ),
-      builder: (ctx) {
-        return Padding(
-          padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 16.h),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 44.w,
-                height: 5.h,
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(.12),
-                  borderRadius: BorderRadius.circular(50),
-                ),
-              ),
-              SizedBox(height: 14.h),
-              Text(
-                "Language",
-                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w800),
-              ),
-              SizedBox(height: 10.h),
-              ...langs.map((l) {
-                final selected = l == selectedLanguage;
-                return ListTile(
-                  title: Text(
-                    l,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      color: selected ? accent : const Color(0xFF111827),
-                    ),
-                  ),
-                  trailing: selected ? Icon(Icons.check, color: accent) : null,
-                  onTap: () => Navigator.of(ctx).pop(l),
-                );
-              }),
-            ],
-          ),
-        );
-      },
-    );
-  }
 }
 
 
@@ -683,11 +679,11 @@ class _AvatarWithEdit extends StatelessWidget {
           height: 108.w,
           padding: EdgeInsets.all(6.w),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(.08),
+                color: Colors.black.withValues(alpha: .08),
                 blurRadius: 16,
                 offset: const Offset(0, 6),
               )
@@ -717,7 +713,7 @@ class _AvatarWithEdit extends StatelessWidget {
               decoration: BoxDecoration(
                 color: accent,
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 3),
+                border: Border.all(color: Theme.of(context).colorScheme.surface, width: 3),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(.12),
@@ -749,11 +745,11 @@ class _PrimarySoftButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onTap,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(999),
-            side: BorderSide(color: Colors.black.withOpacity(.06)),
+            side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
           ),
         ),
         child: Text(
@@ -761,7 +757,7 @@ class _PrimarySoftButton extends StatelessWidget {
           style: TextStyle(
             fontSize: 13.sp,
             fontWeight: FontWeight.w800,
-            color: const Color(0xFF111827),
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ),
@@ -794,7 +790,7 @@ class _SectionHeaderRow extends StatelessWidget {
             letterSpacing: 1.2,
             fontSize: 12.sp,
             fontWeight: FontWeight.w900,
-            color: const Color(0xFF9CA3AF),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
           ),
         ),
         SizedBox(width: 10.w),
@@ -849,7 +845,7 @@ class _SectionTitle extends StatelessWidget {
           letterSpacing: 1.2,
           fontSize: 12.sp,
           fontWeight: FontWeight.w900,
-          color: const Color(0xFF9CA3AF),
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
         ),
       ),
     );
@@ -864,11 +860,11 @@ class _CardContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(18.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(.05),
+            color: Colors.black.withValues(alpha: .05),
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -915,7 +911,7 @@ class _RowTile extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFF111827),
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ),
@@ -925,12 +921,12 @@ class _RowTile extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 13.sp,
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFF6B7280),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             if (trailing != null) trailing!,
             if (trailing == null)
-              Icon(Icons.chevron_right, color: const Color(0xFF9CA3AF), size: 22.w),
+              Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3), size: 22.w),
           ],
         ),
       ),
@@ -969,7 +965,7 @@ class _DividerIndent extends StatelessWidget {
     return Divider(
       height: 1,
       thickness: 1,
-      color: const Color(0xFFF1F5F9),
+      color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
       indent: 66.w,
       endIndent: 0,
     );
@@ -994,14 +990,19 @@ class _PlaylistCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 150.w,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18.r),
-        boxShadow: [
+    return InkWell(
+      onTap: () {
+        context.push('/playlist/1'); // Using dummy ID 1 for now
+      },
+      borderRadius: BorderRadius.circular(18.r),
+      child: Container(
+        width: 150.w,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(18.r),
+          boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(.05),
+            color: Colors.black.withValues(alpha: .05),
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -1034,7 +1035,7 @@ class _PlaylistCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 13.sp,
               fontWeight: FontWeight.w900,
-              color: const Color(0xFF111827),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           SizedBox(height: 2.h),
@@ -1045,11 +1046,11 @@ class _PlaylistCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 11.5.sp,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF6B7280),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],
       ),
-    );
+    ));
   }
 }

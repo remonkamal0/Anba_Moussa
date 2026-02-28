@@ -192,11 +192,11 @@ class _SignupScreenState extends State<_SignupScreen> {
       contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(22.r),
-        borderSide: BorderSide(color: _border, width: 1),
+        borderSide: BorderSide(color: _fieldFill, width: 1),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(22.r),
-        borderSide: BorderSide(color: _orange, width: 1.5),
+        borderSide: BorderSide(color: _fieldFill, width: 1),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(22.r),
@@ -291,18 +291,12 @@ class _SignupScreenState extends State<_SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
       backgroundColor: _bg,
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final isTablet = constraints.maxWidth >= 600;
-            final hPad = isTablet ? 64.w : 24.w;
-            return SingleChildScrollView(
-              physics: const ClampingScrollPhysics(),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: hPad),
-                child: Column(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.w),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 18.h),
@@ -505,27 +499,6 @@ class _SignupScreenState extends State<_SignupScreen> {
 
                       SizedBox(height: 22.h),
 
-                      // Skip button
-                      Center(
-                        child: InkWell(
-                          onTap: () => context.go('/home'),
-                          borderRadius: BorderRadius.circular(20.r),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                            child: Text(
-                              'Skip',
-                              style: TextStyle(
-                                color: _muted,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ).animate().fadeIn(delay: 200.ms, duration: 300.ms),
-
-                      SizedBox(height: 15.h),
-
                       // Divider
                       Row(
                         children: [
@@ -618,8 +591,6 @@ class _SignupScreenState extends State<_SignupScreen> {
               ],
             ),
           ),
-        );
-          },
         ),
       ),
     );

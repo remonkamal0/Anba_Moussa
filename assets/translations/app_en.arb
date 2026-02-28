@@ -49,5 +49,18 @@
   "drawerDeleteAccount": "Delete Account",
   "drawerLogOut": "Log Out",
   "drawerArabic": "Arabic",
-  "drawerEnglish": "English"
+  "drawerEnglish": "English",
+  "dialogLogoutTitle": "Log Out",
+  "dialogLogoutContent": "Are you sure you want to log out?",
+  "dialogDeleteTitle": "Delete Account",
+  "dialogDeleteContent": "Are you sure you want to delete your account? This action cannot be undone.",
+  "dialogCancel": "Cancel",
+  "dialogConfirm": "Confirm",
+  "playlistCreateTitle": "New Playlist",
+  "playlistAddCover": "ADD COVER",
+  "playlistNameLabel": "PLAYLIST NAME",
+  "playlistNameHint": "Give your playlist a name",
+  "playlistSearchTracksHint": "Search tracks to add",
+  "playlistSuggestedTracks": "SUGGESTED TRACKS",
+  "playlistCreateButton": "Create Playlist"
 }

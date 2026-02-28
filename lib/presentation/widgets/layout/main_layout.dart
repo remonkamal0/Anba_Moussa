@@ -124,9 +124,11 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       borderRadius: 24.0,
       showShadow: true,
       angle: isRtl ? 12.0 : -12.0,
-      drawerShadowsBackgroundColor: Colors.grey[300]!,
+      drawerShadowsBackgroundColor: Theme.of(context).brightness == Brightness.dark 
+          ? Colors.black26 
+          : Colors.grey[300]!,
       slideWidth: MediaQuery.of(context).size.width * 0.75,
-      menuBackgroundColor: Colors.white,
+      menuBackgroundColor: Theme.of(context).colorScheme.surface,
     );
   }
 }
@@ -160,11 +162,11 @@ class _CustomBottomNav extends StatelessWidget {
         child: Container(
           height: 64.h,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(32.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.10),
+                color: Colors.black.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.4 : 0.10),
                 blurRadius: 20,
                 spreadRadius: 0,
                 offset: const Offset(0, 4),
@@ -203,8 +205,9 @@ class _NavTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const orange = Color(0xFFF05A28);
-    const grey = Color(0xFF9AA3B2);
+    final cs = Theme.of(context).colorScheme;
+    final orange = cs.primary;
+    final grey = cs.onSurface.withValues(alpha: 0.4);
 
     return GestureDetector(
       onTap: onTap,
@@ -247,6 +250,7 @@ class _MiniPlayer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final track = state.track!;
+    final cs = Theme.of(context).colorScheme;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 12.w),
@@ -256,7 +260,9 @@ class _MiniPlayer extends ConsumerWidget {
           height: 64.h,
           padding: EdgeInsets.symmetric(horizontal: 12.w),
           decoration: BoxDecoration(
-            color: const Color(0xFF1B2340),
+            color: Theme.of(context).brightness == Brightness.dark
+                ? cs.surfaceVariant.withValues(alpha: 0.95)
+                : const Color(0xFF1B2340),
             borderRadius: BorderRadius.circular(20.r),
             boxShadow: [
               BoxShadow(
@@ -325,8 +331,8 @@ class _MiniPlayer extends ConsumerWidget {
                   width: 36.w,
                   height: 36.w,
                   margin: EdgeInsets.symmetric(horizontal: 4.w),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFFF6B35),
+                  decoration: BoxDecoration(
+                    color: cs.primary,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(

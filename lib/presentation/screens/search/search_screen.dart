@@ -132,32 +132,32 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: cs.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Container(
           decoration: BoxDecoration(
-            color: Colors.grey[100],
+            color: cs.onSurface.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
           ),
           child: TextField(
             controller: _searchController,
+            style: TextStyle(color: cs.onSurface),
             onChanged: _onSearchChanged,
             autofocus: true,
             decoration: InputDecoration(
               hintText: 'Search songs, artists, albums...',
-              prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
+              hintStyle: TextStyle(color: cs.onSurface.withValues(alpha: 0.4)),
+              prefixIcon: Icon(Icons.search, color: cs.onSurface.withValues(alpha: 0.4)),
               suffixIcon: _isSearching
                   ? IconButton(
-                      icon: Icon(Icons.clear, color: Colors.grey[600]),
+                      icon: Icon(Icons.clear, color: cs.onSurface.withValues(alpha: 0.4)),
                       onPressed: _onClearSearch,
                     )
                   : null,
@@ -202,13 +202,13 @@ class _SearchScreenState extends State<SearchScreen> {
                       Icon(
                         Icons.search_off,
                         size: 64.w,
-                        color: Colors.grey[400],
+                        color: cs.onSurface.withValues(alpha: 0.2),
                       ),
                       SizedBox(height: AppConstants.mediumSpacing.h),
                       Text(
                         'No results found for "$_searchQuery"',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Colors.grey[600],
+                          color: cs.onSurface.withValues(alpha: 0.5),
                         ),
                       ),
                     ],
@@ -243,6 +243,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _buildSectionHeader(String title) {
+    final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
       child: Row(
@@ -252,7 +253,7 @@ class _SearchScreenState extends State<SearchScreen> {
             title,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           if (!_isSearching)
@@ -264,7 +265,7 @@ class _SearchScreenState extends State<SearchScreen> {
               child: Text(
                 'Clear all',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xFFFF6B35),
+                  color: cs.primary,
                 ),
               ),
             ),
@@ -286,6 +287,7 @@ class SearchResultTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return ListTile(
       contentPadding: EdgeInsets.all(AppConstants.mediumSpacing.r),
       leading: Container(
@@ -293,7 +295,7 @@ class SearchResultTile extends StatelessWidget {
         height: 48.w,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius.r),
-          color: _getResultTypeColor(result.type),
+          color: _getResultTypeColor(context, result.type),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius.r),
@@ -318,7 +320,7 @@ class SearchResultTile extends StatelessWidget {
         result.title,
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
           fontWeight: FontWeight.w600,
-          color: Colors.black,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
@@ -326,24 +328,25 @@ class SearchResultTile extends StatelessWidget {
       subtitle: Text(
         result.subtitle,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: Colors.grey[600],
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
         ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
       trailing: Icon(
         Icons.play_arrow,
-        color: Colors.black,
+        color: Theme.of(context).colorScheme.onSurface,
         size: 24.w,
       ),
       onTap: onTap,
     );
   }
 
-  Color _getResultTypeColor(SearchResultType type) {
+  Color _getResultTypeColor(BuildContext context, SearchResultType type) {
+    final cs = Theme.of(context).colorScheme;
     switch (type) {
       case SearchResultType.song:
-        return const Color(0xFFFF6B35);
+        return cs.primary;
       case SearchResultType.artist:
         return Colors.purple;
       case SearchResultType.album:

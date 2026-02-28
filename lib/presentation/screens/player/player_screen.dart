@@ -20,7 +20,7 @@ class PlayerScreen extends ConsumerStatefulWidget {
 
 class _PlayerScreenState extends ConsumerState<PlayerScreen>
     with TickerProviderStateMixin {
-  static const Color _accent = Color(0xFFFF6B35);
+  // No longer using static const cs.primary, using Theme.of(context).colorScheme.primary instead.
   static const _demoUrl =
       'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
 
@@ -153,6 +153,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final audioState = ref.watch(audioProvider);
     final _position = audioState.position;
     final _duration = audioState.duration;
@@ -172,9 +173,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
       angle: isRtl ? 12 : -12,
       drawerShadowsBackgroundColor: Colors.grey[300]!,
       slideWidth: sw * 0.75,
-      menuBackgroundColor: Colors.white,
+      menuBackgroundColor: cs.surface,
       mainScreen: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: cs.surface,
         body: SafeArea(
           child: LayoutBuilder(
             builder: (ctx, box) => SingleChildScrollView(
@@ -194,13 +195,23 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                         padding: EdgeInsets.symmetric(horizontal: 10.w),
                         child: Row(
                           children: [
-                            // ☰ Drawer toggle
                             IconButton(
-                              onPressed: () =>
-                                  _drawerController.toggle?.call(),
-                              icon: Icon(Icons.menu_rounded,
-                                  color: Colors.black87, size: 24.sp),
+                              onPressed: () => context.pop(),
+                              icon: Icon(
+                                isRtl
+                                    ? Icons.arrow_back_ios_rounded
+                                    : Icons.arrow_back_ios_rounded,
+                                color: cs.onSurface,
+                                size: 20.sp,
+                              ),
                             ),
+                            // ☰ Drawer toggle
+                            // IconButton(
+                            //   onPressed: () =>
+                            //       _drawerController.toggle?.call(),
+                            //   icon: Icon(Icons.menu_rounded,
+                            //       color: Colors.black87, size: 24.sp),
+                            // ),
                             Expanded(
                               child: Column(
                                 children: [
@@ -222,23 +233,14 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                     style: TextStyle(
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.w800,
-                                      color: Colors.black,
+                                      color: cs.onSurface,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
                             // ← Back
-                            IconButton(
-                              onPressed: () => context.pop(),
-                              icon: Icon(
-                                isRtl
-                                    ? Icons.arrow_back_ios_rounded
-                                    : Icons.arrow_back_ios_rounded,
-                                color: Colors.black87,
-                                size: 20.sp,
-                              ),
-                            ),
+
                           ],
                         ),
                       ),
@@ -265,16 +267,16 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                      color: _accent, width: 6),
+                                      color: cs.primary, width: 6),
                                 ),
                               ),
                               // White gap
                               Container(
                                 width: artSize * 0.87,
                                 height: artSize * 0.87,
-                                decoration: const BoxDecoration(
+                                decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Colors.white,
+                                  color: cs.surface,
                                 ),
                               ),
                               // Cover image
@@ -296,9 +298,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                 height: artSize * 0.08,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Colors.white,
+                                  color: cs.surface,
                                   border: Border.all(
-                                      color: _accent, width: 2),
+                                      color: cs.primary, width: 2),
                                 ),
                               ),
                             ],
@@ -320,7 +322,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                 fontSize:
                                     (sw * 0.085).clamp(24, 42).toDouble(),
                                 fontWeight: FontWeight.w900,
-                                color: Colors.black87,
+                                color: cs.onSurface,
                               ),
                             ),
                             SizedBox(height: 6.h),
@@ -329,7 +331,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                               style: TextStyle(
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.grey[500],
+                                color: cs.onSurface.withValues(alpha: 0.6),
                               ),
                             ),
                           ],
@@ -374,11 +376,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                   child: SliderTheme(
                                     data: SliderTheme.of(context).copyWith(
                                       trackHeight: 4.h,
-                                      activeTrackColor: _accent,
-                                      inactiveTrackColor: Colors.grey[300],
-                                      thumbColor: _accent,
+                                      activeTrackColor: cs.primary,
+                                      inactiveTrackColor: cs.outlineVariant,
+                                      thumbColor: cs.primary,
                                       overlayColor:
-                                          _accent.withOpacity(0.15),
+                                          cs.primary.withOpacity(0.15),
                                       thumbShape: RoundSliderThumbShape(
                                           enabledThumbRadius: 7.r),
                                     ),
@@ -406,12 +408,12 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                       style: TextStyle(
                                           fontSize: 13.sp,
                                           fontWeight: FontWeight.w600,
-                                          color: Colors.grey[600])),
+                                          color: cs.onSurface.withValues(alpha: 0.6))),
                                   Text(_fmt(_duration),
                                       style: TextStyle(
                                           fontSize: 13.sp,
                                           fontWeight: FontWeight.w600,
-                                          color: Colors.grey[600])),
+                                          color: cs.onSurface.withValues(alpha: 0.6))),
                                 ],
                               ),
                             ),
@@ -427,11 +429,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                         child: Container(
                           height: 88.h,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: cs.surfaceVariant,
                             borderRadius: BorderRadius.circular(28.r),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.07),
+                                color: Colors.black.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.07),
                                 blurRadius: 30,
                                 offset: const Offset(0, 16),
                               ),
@@ -444,7 +446,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                               _IBtn(
                                 icon: Icons.shuffle_rounded,
                                 color: _isShuffled
-                                    ? _accent
+                                    ? cs.primary
                                     : Colors.grey[400]!,
                                 size: 26.sp,
                                 onTap: () => setState(
@@ -452,7 +454,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                               ),
                               _IBtn(
                                 icon: Icons.skip_previous_rounded,
-                                color: Colors.black87,
+                                color: cs.onSurface,
                                 size: 34.sp,
                                 onTap: () => _audioNotifier.seek(Duration.zero),
                               ),
@@ -461,11 +463,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                 width: 62.w,
                                 height: 62.w,
                                 decoration: BoxDecoration(
-                                  color: _accent,
+                                  color: cs.primary,
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: _accent.withOpacity(0.35),
+                                      color: cs.primary.withOpacity(0.35),
                                       blurRadius: 22,
                                       offset: const Offset(0, 10),
                                     ),
@@ -484,14 +486,14 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                               ),
                               _IBtn(
                                 icon: Icons.skip_next_rounded,
-                                color: Colors.black87,
+                                color: cs.onSurface,
                                 size: 34.sp,
                                 onTap: () {},
                               ),
                               _IBtn(
                                 icon: Icons.repeat_rounded,
                                 color: _isRepeating
-                                    ? _accent
+                                    ? cs.primary
                                     : Colors.grey[400]!,
                                 size: 26.sp,
                                 onTap: () => setState(
@@ -510,15 +512,15 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                         child: Row(
                           children: [
                             Icon(Icons.volume_down_rounded,
-                                color: Colors.grey[400], size: 20.sp),
+                                color: cs.onSurface.withValues(alpha: 0.4), size: 20.sp),
                             Expanded(
                               child: SliderTheme(
                                 data: SliderTheme.of(context).copyWith(
                                   trackHeight: 4.h,
-                                  activeTrackColor: _accent,
-                                  inactiveTrackColor: Colors.grey[200],
-                                  thumbColor: _accent,
-                                  overlayColor: _accent.withOpacity(0.15),
+                                  activeTrackColor: cs.primary,
+                                  inactiveTrackColor: cs.outlineVariant,
+                                  thumbColor: cs.primary,
+                                  overlayColor: cs.primary.withOpacity(0.15),
                                   thumbShape: RoundSliderThumbShape(
                                       enabledThumbRadius: 7.r),
                                 ),
@@ -534,7 +536,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                               ),
                             ),
                             Icon(Icons.volume_up_rounded,
-                                color: Colors.grey[400], size: 20.sp),
+                                color: cs.onSurface.withValues(alpha: 0.4), size: 20.sp),
                           ],
                         ),
                       ),
@@ -564,6 +566,7 @@ class _EqualizerBars extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return SizedBox(
       height: 32,
       child: Row(
@@ -580,7 +583,7 @@ class _EqualizerBars extends StatelessWidget {
                   width: 5,
                   height: h,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF6B35)
+                    color: cs.primary
                         .withOpacity(0.6 + 0.4 * eqAnims[i].value),
                     borderRadius: BorderRadius.circular(3),
                   ),
@@ -599,19 +602,28 @@ class _EqualizerBars extends StatelessWidget {
 class _IBtn extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
-  final Color color;
+  final Color? color;
   final double size;
 
   const _IBtn({
     required this.icon,
     required this.onTap,
-    this.color = const Color(0xFFFF6B35),
+    this.color,
     this.size = 26,
   });
 
   @override
-  Widget build(BuildContext context) =>
-      IconButton(onPressed: onTap, icon: Icon(icon, color: color, size: size));
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return IconButton(
+      onPressed: onTap,
+      icon: Icon(
+        icon,
+        color: color ?? cs.primary,
+        size: size,
+      ),
+    );
+  }
 }
 
 // ─── Track model ──────────────────────────────────────────────────────────────

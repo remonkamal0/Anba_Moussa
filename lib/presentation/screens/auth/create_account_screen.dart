@@ -102,6 +102,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -328,7 +329,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _createAccount,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF6B35),
+                      backgroundColor: cs.primary,
                       foregroundColor: Colors.white,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -504,7 +505,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       child: Text(
                         'Login',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: const Color(0xFFFF6B35),
+                          color: cs.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -564,7 +565,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
-              borderSide: const BorderSide(color: Color(0xFFFF6B35), width: 2),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),

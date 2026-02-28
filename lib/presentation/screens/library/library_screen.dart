@@ -67,22 +67,19 @@ class _LibraryScreenState extends State<LibraryScreen> {
     final gap = 12.w;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.black),
+          icon: Icon(Icons.menu, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () {
             final drawer = ZoomDrawer.of(context);
             if (drawer != null) drawer.toggle();
           },
         ),
         title: Text(
-          'LIBARY',
+          'LIBRARY',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w800,
-            color: Colors.black,
+            color: Theme.of(context).colorScheme.onSurface,
             letterSpacing: 1.2,
           ),
         ),
@@ -138,6 +135,7 @@ class _AlbumCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: ClipRRect(
@@ -170,11 +168,11 @@ class _AlbumCard extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 7.h),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(40.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.18),
+                      color: Colors.black.withValues(alpha: 0.18),
                       blurRadius: 12,
                       offset: const Offset(0, 6),
                     ),
@@ -186,8 +184,8 @@ class _AlbumCard extends StatelessWidget {
                     Container(
                       width: 34.w,
                       height: 34.w,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFFF6B35),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -209,20 +207,20 @@ class _AlbumCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 13.sp,
                               fontWeight: FontWeight.w800,
-                              color: Colors.black,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                           SizedBox(height: 1.h),
-                          Text(
-                            item.year,
-                            style: TextStyle(
-                              fontSize: 11.sp,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w600,
+                            Text(
+                              item.year,
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),

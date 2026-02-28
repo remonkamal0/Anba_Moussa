@@ -7,6 +7,7 @@ import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/locale_provider.dart';
+import 'confirm_dialog.dart';
 
 class AppDrawer extends ConsumerWidget {
   const AppDrawer({super.key});
@@ -193,8 +194,21 @@ class AppDrawer extends ConsumerWidget {
                       icon: Icons.delete_forever_rounded,
                       title: l10n.drawerDeleteAccount,
                       titleColor: Colors.red,
-                      onTap: () {
-                        // Implement delete account logic
+                      onTap: () async {
+                        final confirm = await showConfirmDialog(
+                          context,
+                          title: l10n.dialogDeleteTitle,
+                          content: l10n.dialogDeleteContent,
+                          cancelText: l10n.dialogCancel,
+                          confirmText: l10n.dialogConfirm,
+                          accentColor: accentColor,
+                          confirmColor: Colors.red,
+                        );
+                        if (confirm == true && context.mounted) {
+                          // Implement delete account logic
+                          _closeDrawer(context);
+                          context.go('/login');
+                        }
                       },
                     ),
 
@@ -224,9 +238,20 @@ class AppDrawer extends ConsumerWidget {
                 width: double.infinity,
                 height: 54.h,
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                    _closeDrawer(context);
-                    context.go('/login');
+                  onPressed: () async {
+                    final confirm = await showConfirmDialog(
+                      context,
+                      title: l10n.dialogLogoutTitle,
+                      content: l10n.dialogLogoutContent,
+                      cancelText: l10n.dialogCancel,
+                      confirmText: l10n.dialogConfirm,
+                      accentColor: accentColor,
+                      confirmColor: accentColor,
+                    );
+                    if (confirm == true && context.mounted) {
+                      _closeDrawer(context);
+                      context.go('/login');
+                    }
                   },
                   icon: Icon(Icons.logout, size: 20.r),
                   label: Text(

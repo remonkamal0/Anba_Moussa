@@ -379,6 +379,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'English'**
   String get drawerEnglish;
+
+  /// No description provided for @dialogLogoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Out'**
+  String get dialogLogoutTitle;
+
+  /// No description provided for @dialogLogoutContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to log out?'**
+  String get dialogLogoutContent;
+
+  /// No description provided for @dialogDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get dialogDeleteTitle;
+
+  /// No description provided for @dialogDeleteContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete your account? This action cannot be undone.'**
+  String get dialogDeleteContent;
+
+  /// No description provided for @dialogCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get dialogCancel;
+
+  /// No description provided for @dialogConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get dialogConfirm;
+
+  /// No description provided for @playlistCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Playlist'**
+  String get playlistCreateTitle;
+
+  /// No description provided for @playlistAddCover.
+  ///
+  /// In en, this message translates to:
+  /// **'ADD COVER'**
+  String get playlistAddCover;
+
+  /// No description provided for @playlistNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'PLAYLIST NAME'**
+  String get playlistNameLabel;
+
+  /// No description provided for @playlistNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Give your playlist a name'**
+  String get playlistNameHint;
+
+  /// No description provided for @playlistSearchTracksHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search tracks to add'**
+  String get playlistSearchTracksHint;
+
+  /// No description provided for @playlistSuggestedTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'SUGGESTED TRACKS'**
+  String get playlistSuggestedTracks;
+
+  /// No description provided for @playlistCreateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Playlist'**
+  String get playlistCreateButton;
 }
 
 class _AppLocalizationsDelegate

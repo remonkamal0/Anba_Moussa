@@ -136,18 +136,17 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: CustomScrollView(
         slivers: [
           // App bar with artist image
           SliverAppBar(
             expandedHeight: 350.h,
             pinned: true,
-            backgroundColor: Colors.white,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black),
+              icon: Icon(Icons.arrow_back, color: cs.onSurface),
               onPressed: () => Navigator.of(context).pop(),
             ),
             actions: [
@@ -156,7 +155,7 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                   // TODO: Share artist
                   print('Share artist');
                 },
-                icon: const Icon(Icons.share, color: Colors.black),
+                icon: Icon(Icons.share, color: cs.onSurface),
               ),
             ],
             flexibleSpace: FlexibleSpaceBar(
@@ -204,7 +203,7 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                         _artist.name,
                         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: cs.onSurface,
                         ),
                       ).animate().fadeIn(
                         duration: AppConstants.defaultAnimationDuration,
@@ -214,7 +213,7 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                         SizedBox(width: AppConstants.smallSpacing.w),
                         Icon(
                           Icons.verified,
-                          color: const Color(0xFFFF6B35),
+                          color: cs.primary,
                           size: 24.w,
                         ).animate().fadeIn(
                           duration: AppConstants.defaultAnimationDuration,
@@ -232,14 +231,14 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                       Text(
                         '${_artist.followers} followers',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.grey[600],
+                          color: cs.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                       SizedBox(width: AppConstants.largeSpacing.w),
                       Text(
                         '${_artist.monthlyListeners} monthly listeners',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.grey[600],
+                          color: cs.onSurface.withValues(alpha: 0.6),
                         ),
                       ),
                     ],
@@ -261,13 +260,13 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                           vertical: AppConstants.smallSpacing.h,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFF6B35).withOpacity(0.1),
+                          color: cs.primary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
                         ),
                         child: Text(
                           genre,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: const Color(0xFFFF6B35),
+                            color: cs.primary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -284,7 +283,7 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                   Text(
                     _artist.description,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[700],
+                      color: cs.onSurface.withValues(alpha: 0.7),
                     ),
                   ).animate().fadeIn(
                     duration: AppConstants.defaultAnimationDuration,
@@ -302,7 +301,7 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                         child: ElevatedButton(
                           onPressed: _onPlay,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFF6B35),
+                            backgroundColor: cs.primary,
                             foregroundColor: Colors.white,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
@@ -341,7 +340,7 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                         child: OutlinedButton(
                           onPressed: _onFollow,
                           style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: const Color(0xFFFF6B35)),
+                            side: BorderSide(color: cs.primary),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
                             ),
@@ -350,7 +349,7 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                           child: Text(
                             _isFollowing ? 'Following' : 'Follow',
                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: const Color(0xFFFF6B35),
+                              color: cs.primary,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -370,7 +369,7 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                     'Popular Songs',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ).animate().fadeIn(
                     duration: AppConstants.defaultAnimationDuration,
@@ -413,7 +412,7 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                     'Albums',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ).animate().fadeIn(
                     duration: AppConstants.defaultAnimationDuration,
@@ -527,6 +526,7 @@ class PopularSongTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return ListTile(
       contentPadding: EdgeInsets.all(AppConstants.mediumSpacing.r),
       leading: Container(
@@ -544,7 +544,7 @@ class PopularSongTile extends StatelessWidget {
         song.title,
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
           fontWeight: FontWeight.w600,
-          color: Colors.black,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
@@ -552,7 +552,7 @@ class PopularSongTile extends StatelessWidget {
       subtitle: Text(
         '${song.plays} plays • ${song.duration}',
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: Colors.grey[600],
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
         ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
@@ -561,7 +561,7 @@ class PopularSongTile extends StatelessWidget {
         width: 24.w,
         height: 24.w,
         decoration: BoxDecoration(
-          color: const Color(0xFFFF6B35),
+          color: cs.primary,
           shape: BoxShape.circle,
         ),
         child: Center(
@@ -597,7 +597,7 @@ class AlbumCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -641,7 +641,7 @@ class AlbumCard extends StatelessWidget {
                       album.title,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -652,7 +652,7 @@ class AlbumCard extends StatelessWidget {
                     Text(
                       '${album.year} • ${album.songCount} songs',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                   ],

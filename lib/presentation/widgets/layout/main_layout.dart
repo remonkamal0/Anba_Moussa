@@ -249,7 +249,11 @@ class _MiniPlayer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final track = state.track!;
+    final state = ref.watch(miniPlayerProvider);
+    final track = state.track;
+    final locale = Localizations.localeOf(context).languageCode;
+
+    if (!state.isVisible || track == null) return const SizedBox.shrink();
     final cs = Theme.of(context).colorScheme;
 
     return Padding(
@@ -297,7 +301,7 @@ class _MiniPlayer extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      track.title,
+                      track.getLocalizedTitle(locale),
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
@@ -308,7 +312,7 @@ class _MiniPlayer extends ConsumerWidget {
                     ),
                     SizedBox(height: 2.h),
                     Text(
-                      track.artist,
+                      track.getLocalizedSpeaker(locale) ?? 'Unknown',
                       style: TextStyle(
                         color: Colors.white54,
                         fontSize: 11.sp,

@@ -1,11 +1,15 @@
 class Track {
   final String id;
   final String categoryId;
-  final String title;
-  final String? subtitle;
-  final String? description;
-  final String? speaker;
-  final String? coverImageUrl;
+  final String titleAr;
+  final String titleEn;
+  final String? subtitleAr;
+  final String? subtitleEn;
+  final String? descriptionAr;
+  final String? descriptionEn;
+  final String? speakerAr;
+  final String? speakerEn;
+  final String? imageUrl;
   final String audioUrl;
   final int? durationSeconds;
   final DateTime? publishedAt;
@@ -16,11 +20,15 @@ class Track {
   Track({
     required this.id,
     required this.categoryId,
-    required this.title,
-    this.subtitle,
-    this.description,
-    this.speaker,
-    this.coverImageUrl,
+    required this.titleAr,
+    required this.titleEn,
+    this.subtitleAr,
+    this.subtitleEn,
+    this.descriptionAr,
+    this.descriptionEn,
+    this.speakerAr,
+    this.speakerEn,
+    this.imageUrl,
     required this.audioUrl,
     this.durationSeconds,
     this.publishedAt,
@@ -28,6 +36,11 @@ class Track {
     required this.createdAt,
     required this.updatedAt,
   });
+
+  String getLocalizedTitle(String locale) => locale == 'ar' ? titleAr : titleEn;
+  String? getLocalizedSubtitle(String locale) => locale == 'ar' ? subtitleAr : subtitleEn;
+  String? getLocalizedDescription(String locale) => locale == 'ar' ? descriptionAr : descriptionEn;
+  String? getLocalizedSpeaker(String locale) => locale == 'ar' ? speakerAr : speakerEn;
 
   Duration? get duration => durationSeconds != null 
       ? Duration(seconds: durationSeconds!) 
@@ -54,6 +67,6 @@ class Track {
 
   @override
   String toString() {
-    return 'Track{id: $id, title: $title, categoryId: $categoryId}';
+    return 'Track{id: $id, titleAr: $titleAr, categoryId: $categoryId}';
   }
 }

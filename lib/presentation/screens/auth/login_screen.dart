@@ -61,6 +61,10 @@ class _LoginScreenState extends State<_LoginScreen> {
       if (!mounted) return;
 
       if (response.user != null) {
+        // Ensure profile exists in SQL table (sync from metadata)
+        await _supabaseService.ensureMyProfileExists();
+        
+        if (!mounted) return;
         // Navigate to home screen on successful login
         context.go(AppConstants.homeRoute);
       } else {
@@ -215,10 +219,9 @@ class _LoginScreenState extends State<_LoginScreen> {
               physics: const ClampingScrollPhysics(),
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: h),
-                child: IntrinsicHeight(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: hPad),
-                    child: Column(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: hPad),
+                  child: Column(
                       children: [
                         SizedBox(height: vTop),
 
@@ -402,7 +405,6 @@ class _LoginScreenState extends State<_LoginScreen> {
                     ),
                   ),
                 ),
-              ),
             );
           },
         ),

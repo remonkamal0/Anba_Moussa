@@ -37,6 +37,9 @@ class _SignupScreenState extends State<_SignupScreen> {
   bool _isLoading = false;
   bool _agree = false;
 
+  String? _selectedGender;
+  DateTime? _selectedBirthDate;
+
   // Get theme colors dynamically
   Color get _bg => Theme.of(context).scaffoldBackgroundColor;
   Color get _navy => Theme.of(context).colorScheme.onSurface;
@@ -98,6 +101,8 @@ class _SignupScreenState extends State<_SignupScreen> {
           'full_name': _fullNameController.text.trim(),
           'phone': _phoneController.text.trim(),
           'church': _churchController.text.trim(),
+          'gender': _selectedGender,
+          'birth_date': _selectedBirthDate?.toIso8601String(),
         },
       );
 
@@ -408,6 +413,82 @@ class _SignupScreenState extends State<_SignupScreen> {
                           if (v == null || v.trim().isEmpty) return 'Please enter your church name';
                           return null;
                         },
+                      ),
+
+                      SizedBox(height: 14.h),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _fieldLabel('Gender'),
+                                DropdownButtonFormField<String>(
+                                  value: _selectedGender,
+                                  items: ['male', 'female']
+                                      .map((g) => DropdownMenuItem(
+                                            value: g,
+                                            child: Text(g[0].toUpperCase() + g.substring(1)),
+                                          ))
+                                      .toList(),
+                                  onChanged: (v) => setState(() => _selectedGender = v),
+                                  decoration: _pillDecoration(
+                                    hint: 'Select',
+                                    prefix: Icons.transgender,
+                                  ),
+                                  validator: (v) => v == null ? 'Required' : null,
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 14.w),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _fieldLabel('Birth Date'),
+                                InkWell(
+                                  onTap: () async {
+                                    final picked = await showDatePicker(
+                                      context: context,
+                                      initialDate: _selectedBirthDate ?? DateTime(2000),
+                                      firstDate: DateTime(1900),
+                                      lastDate: DateTime.now(),
+                                    );
+                                    if (picked != null) {
+                                      setState(() => _selectedBirthDate = picked);
+                                    }
+                                  },
+                                  child: Container(
+                                    height: 50.h,
+                                    padding: EdgeInsets.symmetric(horizontal: 14.w),
+                                    decoration: BoxDecoration(
+                                      color: _fieldFill,
+                                      borderRadius: BorderRadius.circular(22.r),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.calendar_today, color: const Color(0xFFA7B0C0), size: 20.sp),
+                                        SizedBox(width: 10.w),
+                                        Text(
+                                          _selectedBirthDate == null
+                                              ? 'Pick Date'
+                                              : '${_selectedBirthDate!.day}/${_selectedBirthDate!.month}/${_selectedBirthDate!.year}',
+                                          style: TextStyle(
+                                            color: _selectedBirthDate == null ? const Color(0xFFB6BECB) : _navy,
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
 
                       SizedBox(height: 10.h),

@@ -4,61 +4,41 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:provider/provider.dart';
+import '../../providers/library_provider.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../domain/entities/category.dart';
 
-class LibraryScreen extends StatefulWidget {
+class LibraryScreen extends StatelessWidget {
   const LibraryScreen({super.key});
 
   @override
-  State<LibraryScreen> createState() => _LibraryScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => sl.libraryProvider..initialize(),
+      child: const _LibraryScreenContent(),
+    );
+  }
 }
 
-class _LibraryScreenState extends State<LibraryScreen> {
-  final List<LibraryItem> _items = [
-    LibraryItem(
-      id: '1',
-      title: 'Joy',
-      year: '2020',
-      imageUrl: 'https://picsum.photos/seed/joy/400/400',
-      type: LibraryItemType.album,
-    ),
-    LibraryItem(
-      id: '2',
-      title: 'Chu',
-      year: '2019',
-      imageUrl: 'https://picsum.photos/seed/chu/400/400',
-      type: LibraryItemType.album,
-    ),
-    LibraryItem(
-      id: '3',
-      title: 'To Y',
-      year: '2023',
-      imageUrl: 'https://picsum.photos/seed/toy/400/400',
-      type: LibraryItemType.album,
-    ),
-    LibraryItem(
-      id: '4',
-      title: 'Salv',
-      year: '2022',
-      imageUrl: 'https://picsum.photos/seed/salv/400/400',
-      type: LibraryItemType.album,
-    ),
-    LibraryItem(
-      id: '5',
-      title: 'New',
-      year: '2024',
-      imageUrl: 'https://picsum.photos/seed/newalbum/400/400',
-      type: LibraryItemType.album,
-    ),
-  ];
+class _LibraryScreenContent extends StatefulWidget {
+  const _LibraryScreenContent();
 
-  void _onItemTapped(LibraryItem item) {
-    final params = Uri.encodeComponent;
+  @override
+  State<_LibraryScreenContent> createState() => _LibraryScreenContentState();
+}
+
+class _LibraryScreenContentState extends State<_LibraryScreenContent> {
+  void _onCategoryTapped(Category category) {
+    final locale = Localizations.localeOf(context).languageCode;
     context.push(
-      '/album/${item.id}'
-          '?title=${params(item.title)}'
-          '&imageUrl=${params(item.imageUrl)}'
-          '&artist=${params("Various Artists")}'
-          '&year=${params(item.year)}',
+      Uri(
+        path: '/album/${category.id}',
+        queryParameters: {
+          'title': category.getLocalizedTitle(locale),
+          'imageUrl': category.imageUrl ?? '',
+        },
+      ).toString(),
     );
   }
 
@@ -66,76 +46,96 @@ class _LibraryScreenState extends State<LibraryScreen> {
   Widget build(BuildContext context) {
     final gap = 12.w;
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.menu, color: Theme.of(context).colorScheme.onSurface),
-          onPressed: () {
-            final drawer = ZoomDrawer.of(context);
-            if (drawer != null) drawer.toggle();
-          },
-        ),
-        title: Text(
-          'LIBRARY',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w800,
-            color: Theme.of(context).colorScheme.onSurface,
-            letterSpacing: 1.2,
+    return Consumer<LibraryProvider>(
+      builder: (context, provider, child) {
+        final state = provider.state;
+
+        return Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: Icon(Icons.menu, color: Theme.of(context).colorScheme.onSurface),
+              onPressed: () {
+                final drawer = ZoomDrawer.of(context);
+                if (drawer != null) drawer.toggle();
+              },
+            ),
+            title: Text(
+              'LIBRARY',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: Theme.of(context).colorScheme.onSurface,
+                    letterSpacing: 1.2,
+                  ),
+            ),
+            centerTitle: true,
           ),
-        ),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
-        child: GridView.builder(
-          itemCount: _items.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: gap,
-            mainAxisSpacing: gap,
-            childAspectRatio: 1, // مربع زي الصورة
-          ),
-          itemBuilder: (context, index) {
-            final item = _items[index];
-            return _AlbumCard(
-              item: item,
-              onTap: () => _onItemTapped(item),
-            )
-                .animate()
-                .fadeIn(
-              duration: const Duration(milliseconds: 280),
-              delay: Duration(milliseconds: index * 70),
-              curve: Curves.easeOut,
-            )
-                .slideY(
-              begin: 0.12,
-              end: 0,
-              duration: const Duration(milliseconds: 280),
-              delay: Duration(milliseconds: index * 70),
-              curve: Curves.easeOut,
-            );
-          },
-        ),
-      ),
+          body: _buildBody(state, gap),
+        );
+      },
     );
+  }
+
+  Widget _buildBody(LibraryState state, double gap) {
+    switch (state.status) {
+      case LibraryStatus.loading:
+        return const Center(child: CircularProgressIndicator());
+      case LibraryStatus.error:
+        return Center(child: Text(state.errorMessage ?? 'An error occurred'));
+      case LibraryStatus.loaded:
+        if (state.categories.isEmpty) {
+          return const Center(child: Text('No categories found'));
+        }
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+          child: GridView.builder(
+            itemCount: state.categories.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: gap,
+              mainAxisSpacing: gap,
+              childAspectRatio: 0.85, 
+            ),
+            itemBuilder: (context, index) {
+              final category = state.categories[index];
+              return _CategoryCard(
+                category: category,
+                onTap: () => _onCategoryTapped(category),
+              )
+                  .animate()
+                  .fadeIn(
+                    duration: const Duration(milliseconds: 280),
+                    delay: Duration(milliseconds: index * 40),
+                    curve: Curves.easeOut,
+                  )
+                  .slideY(
+                    begin: 0.1,
+                    end: 0,
+                    duration: const Duration(milliseconds: 280),
+                    delay: Duration(milliseconds: index * 40),
+                    curve: Curves.easeOut,
+                  );
+            },
+          ),
+        );
+    }
   }
 }
 
-// ---------------------------------------------------------------------------
-// Album Card (مطابق للشكل المرسل)
-// ---------------------------------------------------------------------------
-class _AlbumCard extends StatelessWidget {
-  final LibraryItem item;
+class _CategoryCard extends StatelessWidget {
+  final Category category;
   final VoidCallback onTap;
 
-  const _AlbumCard({
-    required this.item,
+  const _CategoryCard({
+    required this.category,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final locale = Localizations.localeOf(context).languageCode;
+    final title = category.getLocalizedTitle(locale);
+    final subtitle = category.getLocalizedSubtitle(locale);
+
     return GestureDetector(
       onTap: onTap,
       child: ClipRRect(
@@ -144,46 +144,50 @@ class _AlbumCard extends StatelessWidget {
           children: [
             // Background image
             Positioned.fill(
-              child: CachedNetworkImage(
-                imageUrl: item.imageUrl,
-                fit: BoxFit.cover,
-                placeholder: (_, __) => Container(
-                  color: Colors.grey[200],
-                  child: const Center(
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                ),
-                errorWidget: (_, __, ___) => Container(
-                  color: Colors.grey[200],
-                  child: const Icon(Icons.broken_image, color: Colors.grey),
-                ),
-              ),
+              child: category.imageUrl != null && category.imageUrl!.isNotEmpty
+                  ? CachedNetworkImage(
+                      imageUrl: category.imageUrl!,
+                      fit: BoxFit.cover,
+                      placeholder: (_, __) => Container(
+                        color: Colors.grey[200],
+                        child: const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                      errorWidget: (_, __, ___) => Container(
+                        color: Colors.grey[200],
+                        child: const Icon(Icons.broken_image, color: Colors.grey),
+                      ),
+                    )
+                  : Container(
+                      color: Colors.grey[200],
+                      child: const Icon(Icons.category_outlined, color: Colors.grey),
+                    ),
             ),
 
             // Bottom capsule overlay
             Positioned(
-              left: 12.w,
-              right: 12.w,
-              bottom: 12.h,
+              left: 10.w,
+              right: 10.w,
+              bottom: 10.h,
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 7.h),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(40.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.18),
-                      blurRadius: 12,
-                      offset: const Offset(0, 6),
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
                 child: Row(
                   children: [
-                    // Play button
                     Container(
-                      width: 34.w,
-                      height: 34.w,
+                      width: 32.w,
+                      height: 32.w,
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primary,
                         shape: BoxShape.circle,
@@ -195,32 +199,34 @@ class _AlbumCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 8.w),
-
-                    // Title + Year
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            item.title,
+                            title,
                             style: TextStyle(
-                              fontSize: 13.sp,
+                              fontSize: 12.sp,
                               fontWeight: FontWeight.w800,
                               color: Theme.of(context).colorScheme.onSurface,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          SizedBox(height: 1.h),
+                          if (subtitle != null) ...[
+                            SizedBox(height: 1.h),
                             Text(
-                              item.year,
+                              subtitle,
                               style: TextStyle(
-                                fontSize: 11.sp,
+                                fontSize: 10.sp,
                                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                                 fontWeight: FontWeight.w600,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
+                          ],
                         ],
                       ),
                     ),
@@ -233,29 +239,4 @@ class _AlbumCard extends StatelessWidget {
       ),
     );
   }
-}
-
-// ---------------------------------------------------------------------------
-// Data models
-// ---------------------------------------------------------------------------
-class LibraryItem {
-  final String id;
-  final String title;
-  final String year;
-  final String imageUrl;
-  final LibraryItemType type;
-
-  LibraryItem({
-    required this.id,
-    required this.title,
-    required this.year,
-    required this.imageUrl,
-    required this.type,
-  });
-}
-
-enum LibraryItemType {
-  album,
-  playlist,
-  artist,
 }

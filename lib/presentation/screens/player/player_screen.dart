@@ -44,8 +44,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
 
   final Track _track = const Track(
     id: '1',
-    title: 'Have you',
-    artist: 'Madihu, Low G',
+    titleAr: 'Have you',
+    titleEn: 'Have you',
+    speakerAr: 'Madihu, Low G',
+    speakerEn: 'Madihu, Low G',
     album: "Madihu's best songs",
     coverImageUrl: 'https://picsum.photos/seed/cityscape/800/800',
   );
@@ -88,8 +90,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
           _demoUrl,
           MiniPlayerTrack(
             id: _track.id,
-            title: _track.title,
-            artist: _track.artist,
+            titleAr: _track.titleAr,
+            titleEn: _track.titleEn,
+            speakerAr: _track.speakerAr,
+            speakerEn: _track.speakerEn,
             coverImageUrl: _track.coverImageUrl,
           ),
         );
@@ -316,7 +320,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                         child: Column(
                           children: [
                             Text(
-                              _track.title,
+                              _track.titleAr, // Or use a localization helper if available here
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize:
@@ -327,7 +331,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                             ),
                             SizedBox(height: 6.h),
                             Text(
-                              _track.artist,
+                              _track.speakerAr,
                               style: TextStyle(
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w600,
@@ -630,15 +634,19 @@ class _IBtn extends StatelessWidget {
 
 class Track {
   final String id;
-  final String title;
-  final String artist;
+  final String titleAr;
+  final String titleEn;
+  final String speakerAr;
+  final String speakerEn;
   final String album;
   final String coverImageUrl;
 
   const Track({
     required this.id,
-    required this.title,
-    required this.artist,
+    required this.titleAr,
+    required this.titleEn,
+    required this.speakerAr,
+    required this.speakerEn,
     required this.album,
     required this.coverImageUrl,
   });

@@ -6,6 +6,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
 
+import '../../../domain/entities/track.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../core/theme/app_text_styles.dart';
+
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
@@ -16,69 +20,11 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  bool _isSearching = false;
+  bool _isLoading = false;
+  List<Track> _searchResults = [];
 
-  final List<SearchResult> _recentSearches = [
-    SearchResult(
-      id: '1',
-      type: SearchResultType.song,
-      title: 'Midnight Dreams',
-      subtitle: 'Luna Rose',
-      imageUrl: 'https://picsum.photos/seed/midnight-dreams/60/60',
-    ),
-    SearchResult(
-      id: '2',
-      type: SearchResultType.artist,
-      title: 'The Weeknd',
-      subtitle: 'Artist',
-      imageUrl: 'https://picsum.photos/seed/the-weeknd/60/60',
-    ),
-    SearchResult(
-      id: '3',
-      type: SearchResultType.album,
-      title: 'After Hours',
-      subtitle: 'Album • The Weeknd',
-      imageUrl: 'https://picsum.photos/seed/after-hours/60/60',
-    ),
-    SearchResult(
-      id: '4',
-      type: SearchResultType.playlist,
-      title: 'Summer Vibes',
-      subtitle: 'Playlist • 24 songs',
-      imageUrl: 'https://picsum.photos/seed/summer-vibes/60/60',
-    ),
-  ];
-
-  final List<SearchResult> _allResults = [
-    SearchResult(
-      id: '5',
-      type: SearchResultType.song,
-      title: 'Ocean Waves',
-      subtitle: 'Blue Horizon',
-      imageUrl: 'https://picsum.photos/seed/ocean-waves/60/60',
-    ),
-    SearchResult(
-      id: '6',
-      type: SearchResultType.song,
-      title: 'Golden Hour',
-      subtitle: 'Sunset Boulevard',
-      imageUrl: 'https://picsum.photos/seed/golden-hour/60/60',
-    ),
-    SearchResult(
-      id: '7',
-      type: SearchResultType.artist,
-      title: 'Arctic Monkeys',
-      subtitle: 'Artist',
-      imageUrl: 'https://picsum.photos/seed/arctic-monkeys/60/60',
-    ),
-    SearchResult(
-      id: '8',
-      type: SearchResultType.album,
-      title: 'Celestial',
-      subtitle: 'Album • Luna Rose',
-      imageUrl: 'https://picsum.photos/seed/celestial/60/60',
-    ),
-  ];
+  // Recents could be stored in local storage later
+  final List<Track> _recentTracks = [];
 
   @override
   void dispose() {
@@ -86,49 +32,53 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
+  Future<void> _performSearch(String query) async {
+    if (query.isEmpty) {
+      setState(() {
+        _searchResults = [];
+        _isLoading = false;
+      });
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final results = await sl.trackRepository.searchTracks(query);
+      if (mounted) {
+        setState(() {
+          _searchResults = results;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        // Handle error toast or message
+      }
+    }
+  }
+
   void _onSearchChanged(String query) {
-    setState(() {
-      _searchQuery = query;
-      _isSearching = query.isNotEmpty;
-    });
+    setState(() => _searchQuery = query);
+    // Debounce search if needed, but for simplicity:
+    _performSearch(query);
   }
 
   void _onClearSearch() {
     _searchController.clear();
     setState(() {
       _searchQuery = '';
-      _isSearching = false;
+      _searchResults = [];
     });
   }
 
-  void _onResultTapped(SearchResult result) {
-    // TODO: Navigate to appropriate screen based on result type
-    print('Tapped: ${result.title} (${result.type})');
-    
-    switch (result.type) {
-      case SearchResultType.song:
-        // Navigate to player
-        break;
-      case SearchResultType.artist:
-        // Navigate to artist page
-        break;
-      case SearchResultType.album:
-        context.go('/album/${result.id}');
-        break;
-      case SearchResultType.playlist:
-        // Navigate to playlist
-        break;
-    }
+  void _onTrackTapped(Track track) {
+    context.push('/player?trackId=${track.id}');
   }
 
-  List<SearchResult> get _filteredResults {
-    if (_searchQuery.isEmpty) return [];
-    
-    return _allResults.where((result) {
-      return result.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-             result.subtitle.toLowerCase().contains(_searchQuery.toLowerCase());
-    }).toList();
-  }
+  List<Track> get _filteredResults => _searchResults;
+  bool get _isSearching => _searchQuery.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -171,71 +121,50 @@ class _SearchScreenState extends State<SearchScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            if (!_isSearching) ...[
-              // Recent searches
-              _buildSectionHeader('Recent Searches'),
+            if (_isLoading)
+              const Expanded(child: Center(child: CircularProgressIndicator()))
+            else if (_searchQuery.isEmpty && _recentTracks.isEmpty)
               Expanded(
-                child: ListView.builder(
-                  padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
-                  itemCount: _recentSearches.length,
-                  itemBuilder: (context, index) {
-                    final result = _recentSearches[index];
-                    return SearchResultTile(
-                      result: result,
-                      onTap: () => _onResultTapped(result),
-                    ).animate().slideX(
-                      duration: AppConstants.defaultAnimationDuration,
-                      delay: Duration(milliseconds: index * 100),
-                      begin: -0.2,
-                      curve: Curves.easeOut,
-                    );
-                  },
-                ),
-              ),
-            ] else ...[
-              // Search results
-              if (_filteredResults.isEmpty) ...[
-                Center(
+                child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.search_off,
-                        size: 64.w,
-                        color: cs.onSurface.withValues(alpha: 0.2),
-                      ),
-                      SizedBox(height: AppConstants.mediumSpacing.h),
-                      Text(
-                        'No results found for "$_searchQuery"',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: cs.onSurface.withValues(alpha: 0.5),
-                        ),
-                      ),
+                      Icon(Icons.search, size: 64.w, color: cs.onSurface.withValues(alpha: 0.1)),
+                      SizedBox(height: 16.h),
+                      Text('Search for your favorite songs', 
+                        style: AppTextStyles.getBodyLarge(context).copyWith(color: cs.onSurface.withValues(alpha: 0.5))),
                     ],
                   ),
                 ),
-              ] else ...[
-                _buildSectionHeader('Search Results'),
-                Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
-                    itemCount: _filteredResults.length,
-                    itemBuilder: (context, index) {
-                      final result = _filteredResults[index];
-                      return SearchResultTile(
-                        result: result,
-                        onTap: () => _onResultTapped(result),
-                      ).animate().slideX(
-                        duration: AppConstants.defaultAnimationDuration,
-                        delay: Duration(milliseconds: index * 100),
-                        begin: -0.2,
-                        curve: Curves.easeOut,
-                      );
-                    },
+              )
+            else if (_searchQuery.isNotEmpty && _searchResults.isEmpty)
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.search_off, size: 64.w, color: cs.onSurface.withValues(alpha: 0.1)),
+                      SizedBox(height: 16.h),
+                      Text('No results found for "$_searchQuery"',
+                        style: AppTextStyles.getBodyLarge(context).copyWith(color: cs.onSurface.withValues(alpha: 0.5))),
+                    ],
                   ),
                 ),
-              ],
-            ],
+              )
+            else
+              Expanded(
+                child: ListView.builder(
+                  padding: EdgeInsets.all(16.w),
+                  itemCount: _searchQuery.isEmpty ? _recentTracks.length : _searchResults.length,
+                  itemBuilder: (context, index) {
+                    final track = _searchQuery.isEmpty ? _recentTracks[index] : _searchResults[index];
+                    return SearchResultTile(
+                      track: track,
+                      onTap: () => _onTrackTapped(track),
+                    ).animate().fadeIn(delay: Duration(milliseconds: index * 50)).slideX(begin: -0.05);
+                  },
+                ),
+              ),
           ],
         ),
       ),
@@ -276,119 +205,78 @@ class _SearchScreenState extends State<SearchScreen> {
 }
 
 class SearchResultTile extends StatelessWidget {
-  final SearchResult result;
+  final Track track;
   final VoidCallback onTap;
 
   const SearchResultTile({
     super.key,
-    required this.result,
+    required this.track,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final locale = Localizations.localeOf(context).languageCode;
+
     return ListTile(
-      contentPadding: EdgeInsets.all(AppConstants.mediumSpacing.r),
+      contentPadding: EdgeInsets.symmetric(vertical: 8.h),
       leading: Container(
-        width: 48.w,
-        height: 48.w,
+        width: 52.w,
+        height: 52.w,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius.r),
-          color: _getResultTypeColor(context, result.type),
+          borderRadius: BorderRadius.circular(12.r),
+          color: cs.primary.withValues(alpha: 0.1),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius.r),
-          child: result.imageUrl != null
-              ? Image.network(
-                  result.imageUrl!,
+          borderRadius: BorderRadius.circular(12.r),
+          child: track.imageUrl != null
+              ? CachedNetworkImage(
+                  imageUrl: track.imageUrl!,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Icon(
-                    _getResultTypeIcon(result.type),
-                    color: Colors.white,
+                  errorWidget: (context, url, error) => Icon(
+                    Icons.music_note,
+                    color: cs.primary,
                     size: 24.w,
                   ),
                 )
               : Icon(
-                  _getResultTypeIcon(result.type),
-                  color: Colors.white,
+                  Icons.music_note,
+                  color: cs.primary,
                   size: 24.w,
                 ),
         ),
       ),
       title: Text(
-        result.title,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          fontWeight: FontWeight.w600,
-          color: Theme.of(context).colorScheme.onSurface,
+        track.getLocalizedTitle(locale),
+        style: AppTextStyles.getBodyLarge(context).copyWith(
+          fontWeight: FontWeight.w700,
+          color: cs.onSurface,
         ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(
-        result.subtitle,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+        track.getLocalizedSpeaker(locale) ?? 'Unknown Speaker',
+        style: AppTextStyles.getBodySmall(context).copyWith(
+          color: cs.onSurface.withValues(alpha: 0.5),
         ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      trailing: Icon(
-        Icons.play_arrow,
-        color: Theme.of(context).colorScheme.onSurface,
-        size: 24.w,
+      trailing: Container(
+        padding: EdgeInsets.all(8.w),
+        decoration: BoxDecoration(
+          color: cs.primary.withValues(alpha: 0.1),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          Icons.play_arrow_rounded,
+          color: cs.primary,
+          size: 20.w,
+        ),
       ),
       onTap: onTap,
     );
   }
-
-  Color _getResultTypeColor(BuildContext context, SearchResultType type) {
-    final cs = Theme.of(context).colorScheme;
-    switch (type) {
-      case SearchResultType.song:
-        return cs.primary;
-      case SearchResultType.artist:
-        return Colors.purple;
-      case SearchResultType.album:
-        return Colors.blue;
-      case SearchResultType.playlist:
-        return Colors.green;
-    }
-  }
-
-  IconData _getResultTypeIcon(SearchResultType type) {
-    switch (type) {
-      case SearchResultType.song:
-        return Icons.music_note;
-      case SearchResultType.artist:
-        return Icons.person;
-      case SearchResultType.album:
-        return Icons.album;
-      case SearchResultType.playlist:
-        return Icons.playlist_play;
-    }
-  }
-}
-
-class SearchResult {
-  final String id;
-  final SearchResultType type;
-  final String title;
-  final String subtitle;
-  final String? imageUrl;
-
-  SearchResult({
-    required this.id,
-    required this.type,
-    required this.title,
-    required this.subtitle,
-    this.imageUrl,
-  });
-}
-
-enum SearchResultType {
-  song,
-  artist,
-  album,
-  playlist,
 }

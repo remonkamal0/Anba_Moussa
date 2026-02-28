@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:anba_moussa/l10n/app_localizations.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import '../../../domain/entities/notification.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../core/constants/app_constants.dart';
 
 class NotificationsScreen extends StatefulWidget {
@@ -13,10 +18,54 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
+  List<AppNotification> _notifications = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchNotifications();
+  }
+
+  Future<void> _fetchNotifications() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final notifications = await sl.getNotificationsUseCase.execute();
+      if (mounted) {
+        setState(() {
+          _notifications = notifications;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = e.toString();
+        });
+      }
+    }
+  }
+
+  Future<void> _markAllAsRead() async {
+    try {
+      await sl.notificationRepository.markAllAsRead();
+      _fetchNotifications();
+    } catch (e) {
+      // Handle error
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
+    final locale = Localizations.localeOf(context).languageCode;
 
     return Scaffold(
       appBar: AppBar(
@@ -34,108 +83,62 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.more_vert, color: cs.onSurface),
-            onPressed: () {
-              // TODO: Show more options
-              print('More options');
-            },
+            icon: Icon(Icons.done_all, color: cs.primary),
+            onPressed: _markAllAsRead,
+            tooltip: 'Mark all as read',
           ),
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Column(
-            children: [
-              // Today's notifications
-              _buildNotificationSection(
-                title: 'TODAY',
-                notifications: [
-                  NotificationItem(
-                    id: '1',
-                    type: NotificationType.newRelease,
-                    title: 'New Release: "After Hours" by The Weeknd',
-                    time: '2h ago',
-                    hasImage: true,
-                    imageUrl: 'https://picsum.photos/seed/album-cover/100/100',
-                    isRead: false,
-                  ),
-                  NotificationItem(
-                    id: '2',
-                    type: NotificationType.likedPlaylist,
-                    title: 'Sarah L. liked your Summer Vibes playlist',
-                    time: '5h ago',
-                    hasImage: true,
-                    imageUrl: 'https://picsum.photos/seed/profile-sarah/100/100',
-                    isRead: false,
-                  ),
-                  NotificationItem(
-                    id: '3',
-                    type: NotificationType.discoverWeekly,
-                    title: 'Your Discover Weekly is ready! Dive into your personalized mix for the week.',
-                    time: '8h ago',
-                    hasImage: true,
-                    imageUrl: 'https://picsum.photos/seed/discover-mix/100/100',
-                    isRead: false,
-                  ),
-                ],
-              ),
-  
-              // Orange separator line
-              Container(
-                height: 1.h,
-                color: cs.primary,
-                margin: EdgeInsets.symmetric(vertical: 8.h),
-              ),
-  
-              // Earlier notifications
-              _buildNotificationSection(
-                title: 'EARLIER',
-                notifications: [
-                  NotificationItem(
-                    id: '4',
-                    type: NotificationType.tourAnnouncement,
-                    title: 'Arctic Monkeys just announced a new tour date in your city!',
-                    time: 'Yesterday',
-                    hasImage: true,
-                    imageUrl: 'https://picsum.photos/seed/band-performing/100/100',
-                    isRead: true,
-                    actionText: 'Get Tickets',
-                    actionColor: cs.primary,
-                  ),
-                  NotificationItem(
-                    id: '5',
-                    type: NotificationType.newFollower,
-                    title: 'David Chen followed you. Check out their shared playlists.',
-                    time: '2 days ago',
-                    hasImage: true,
-                    imageUrl: 'https://picsum.photos/seed/david-chen/100/100',
-                    isRead: false,
-                  ),
-                  NotificationItem(
-                    id: '6',
-                    type: NotificationType.playlistMilestone,
-                    title: 'Your playlist Midnight Jazz reached 100 followers! 🎉',
-                    time: '3 days ago',
-                    hasImage: true,
-                    imageUrl: 'https://picsum.photos/seed/playlist-milestone/100/100',
-                    isRead: false,
-                  ),
-                ],
-              ),
-              SizedBox(height: 20.h),
-            ],
-          ),
-        ),
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _errorMessage != null
+                ? Center(child: Text(_errorMessage!))
+                : _notifications.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.notifications_none, size: 64.w, color: cs.onSurface.withValues(alpha: 0.1)),
+                            SizedBox(height: 16.h),
+                            Text('No notifications found', 
+                              style: AppTextStyles.getBodyLarge(context).copyWith(color: cs.onSurface.withValues(alpha: 0.5))),
+                          ],
+                        ),
+                      )
+                    : RefreshIndicator(
+                        onRefresh: _fetchNotifications,
+                        child: ListView.separated(
+                          padding: EdgeInsets.all(16.w),
+                          itemCount: _notifications.length,
+                          separatorBuilder: (_, __) => Divider(height: 24.h, thickness: 0.5, color: cs.outlineVariant),
+                          itemBuilder: (context, index) {
+                            final n = _notifications[index];
+                            return NotificationTile(
+                              notification: n,
+                              onTap: () {
+                                if (!n.isRead) {
+                                  sl.notificationRepository.markAsRead(n.id);
+                                }
+                                // Handle deep link if any
+                                if (n.internalRoute != null) {
+                                  context.push(n.internalRoute!);
+                                }
+                              },
+                            ).animate().fadeIn(delay: Duration(milliseconds: index * 50)).slideX(begin: -0.05);
+                          },
+                        ),
+                      ),
       ),
     );
   }
 
   Widget _buildNotificationSection({
     required String title,
-    required List<NotificationItem> notifications,
+    required List<AppNotification> notifications,
   }) {
     final cs = Theme.of(context).colorScheme;
+    final locale = Localizations.localeOf(context).languageCode;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -169,7 +172,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               notification: notification,
               onTap: () {
                 // TODO: Handle notification tap
-                print('Tapped: ${notification.title}');
+                print('Tapped: ${notification.getLocalizedTitle(locale)}');
               },
             ).animate().slideX(
               duration: AppConstants.defaultAnimationDuration,
@@ -185,7 +188,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 }
 
 class NotificationTile extends StatelessWidget {
-  final NotificationItem notification;
+  final AppNotification notification;
   final VoidCallback onTap;
 
   const NotificationTile({
@@ -196,162 +199,119 @@ class NotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.all(AppConstants.mediumSpacing.r),
-      leading: Container(
-        width: 48.w,
-        height: 48.w,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius.r),
-          color: _getNotificationColor(notification.type),
-        ),
-        child: notification.hasImage && notification.imageUrl != null
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius.r),
-                child: Image.network(
-                  notification.imageUrl!,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Icon(
-                    Icons.image,
-                    size: 24.w,
-                    color: Colors.grey[400],
-                  ),
-                ),
-              )
-            : Icon(
-                _getNotificationIcon(notification.type),
-                color: Colors.white,
-                size: 24.w,
-              ),
-      ),
-      title: Text(
-        notification.title,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          fontWeight: FontWeight.w600,
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: Text(
-        notification.time,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-        ),
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (notification.actionText != null)
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppConstants.smallSpacing.w,
-                vertical: AppConstants.extraSmallSpacing.h,
-              ),
-              decoration: BoxDecoration(
-                color: notification.actionColor ?? const Color(0xFFFF6B35),
-                borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius.r),
-              ),
-              child: Text(
-                notification.actionText!,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: notification.actionColor != null ? Colors.white : Colors.black,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          IconButton(
-            onPressed: () {
-              // TODO: Handle notification action
-              if (notification.type == NotificationType.newRelease ||
-                  notification.type == NotificationType.likedPlaylist ||
-                  notification.type == NotificationType.discoverWeekly) {
-                // Mark as read
-              }
-            },
-            icon: Icon(
-              notification.type == NotificationType.newRelease ||
-                      notification.type == NotificationType.likedPlaylist ||
-                      notification.type == NotificationType.discoverWeekly
-                  ? Icons.close
-                  : Icons.chevron_right,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
-            ),
-            iconSize: 20.w,
-          ),
-        ],
-      ),
+    final cs = Theme.of(context).colorScheme;
+    final locale = Localizations.localeOf(context).languageCode;
+
+    return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 8.h),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Icon or Image
+            Container(
+              width: 52.w,
+              height: 52.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12.r),
+                color: notification.isRead ? cs.onSurface.withValues(alpha: 0.05) : cs.primary.withValues(alpha: 0.1),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.r),
+                child: notification.imageUrl != null
+                    ? CachedNetworkImage(
+                        imageUrl: notification.imageUrl!,
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) => Icon(Icons.notifications, color: cs.primary.withValues(alpha: 0.5)),
+                        errorWidget: (_, __, ___) => Icon(Icons.notifications, color: cs.primary),
+                      )
+                    : Icon(
+                        _getIconForKind(notification.kind),
+                        color: notification.isRead ? cs.onSurface.withValues(alpha: 0.4) : cs.primary,
+                        size: 24.w,
+                      ),
+              ),
+            ),
+            SizedBox(width: 12.w),
+
+            // Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          notification.getLocalizedTitle(locale),
+                          style: AppTextStyles.getBodyLarge(context).copyWith(
+                            fontWeight: notification.isRead ? FontWeight.w600 : FontWeight.w800,
+                            color: notification.isRead ? cs.onSurface.withValues(alpha: 0.7) : cs.onSurface,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (!notification.isRead)
+                        Container(
+                          width: 8.w,
+                          height: 8.w,
+                          decoration: BoxDecoration(color: cs.primary, shape: BoxShape.circle),
+                        ),
+                    ],
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    notification.getLocalizedBody(locale),
+                    style: AppTextStyles.getBodySmall(context).copyWith(
+                      color: cs.onSurface.withValues(alpha: 0.6),
+                      height: 1.3,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 6.h),
+                  Text(
+                    _formatDateTime(notification.sentAt),
+                    style: AppTextStyles.getLabelSmall(context).copyWith(
+                      color: cs.onSurface.withValues(alpha: 0.4),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  Color _getNotificationColor(NotificationType type) {
-    switch (type) {
-      case NotificationType.newRelease:
-      case NotificationType.likedPlaylist:
-        return Colors.orange;
-      case NotificationType.discoverWeekly:
-        return Colors.green;
-      case NotificationType.tourAnnouncement:
-        return Colors.purple;
-      case NotificationType.newFollower:
-        return Colors.blue;
-      case NotificationType.playlistMilestone:
-        return Colors.red;
-      default:
-        return Colors.grey;
+  IconData _getIconForKind(String kind) {
+    switch (kind) {
+      case 'new_track': return Icons.music_note_rounded;
+      case 'new_category': return Icons.category_rounded;
+      case 'system': return Icons.settings_suggest_rounded;
+      default: return Icons.notifications_rounded;
     }
   }
 
-  IconData _getNotificationIcon(NotificationType type) {
-    switch (type) {
-      case NotificationType.newRelease:
-        return Icons.album;
-      case NotificationType.likedPlaylist:
-        return Icons.favorite;
-      case NotificationType.discoverWeekly:
-        return Icons.explore;
-      case NotificationType.tourAnnouncement:
-        return Icons.music_note;
-      case NotificationType.newFollower:
-        return Icons.person_add;
-      case NotificationType.playlistMilestone:
-        return Icons.playlist_play;
-      default:
-        return Icons.notifications;
-    }
+  String _formatDateTime(DateTime dt) {
+    final now = DateTime.now();
+    final diff = now.difference(dt);
+
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    if (diff.inDays < 7) return '${diff.inDays}d ago';
+    
+    return '${dt.day}/${dt.month}/${dt.year}';
   }
 }
 
-class NotificationItem {
-  final String id;
-  final NotificationType type;
-  final String title;
-  final String time;
-  final String? imageUrl;
-  final bool hasImage;
-  final bool isRead;
-  final String? actionText;
-  final Color? actionColor;
+// These are no longer needed
+// class NotificationItem ...
+// enum NotificationType ...
 
-  NotificationItem({
-    required this.id,
-    required this.type,
-    required this.title,
-    required this.time,
-    this.imageUrl,
-    this.hasImage = false,
-    this.isRead = false,
-    this.actionText,
-    this.actionColor,
-  });
-}
-
-enum NotificationType {
-  newRelease,
-  likedPlaylist,
-  discoverWeekly,
-  tourAnnouncement,
-  newFollower,
-  playlistMilestone,
-}

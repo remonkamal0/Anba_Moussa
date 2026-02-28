@@ -354,22 +354,22 @@ class _SliderCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.22),
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                  child: Text(
-                    'FEATURED',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1.0,
-                    ),
-                  ),
-                ),
+                // Container(
+                //   padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                //   decoration: BoxDecoration(
+                //     color: Colors.white.withOpacity(0.22),
+                //     borderRadius: BorderRadius.circular(10.r),
+                //   ),
+                //   // child: Text(
+                //   //   'FEATURED',
+                //   //   style: TextStyle(
+                //   //     color: Colors.white,
+                //   //     fontSize: 12.sp,
+                //   //     fontWeight: FontWeight.w800,
+                //   //     letterSpacing: 1.0,
+                //   //   ),
+                //   // ),
+                // ),
                 const Spacer(),
                 Text(
                   item.title,

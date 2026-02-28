@@ -1,9 +1,11 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/entities/track.dart';
+import '../../domain/entities/slider.dart' as entity;
 import '../constants/app_constants.dart';
 import '../../data/models/category_model.dart';
 import '../../data/models/track_model.dart';
+import '../../data/models/slider_model.dart';
 
 class SupabaseService {
   static SupabaseService? _instance;
@@ -171,6 +173,14 @@ class SupabaseService {
     final metaFullName = (meta['full_name'] ?? fallbackFullName ?? '').toString();
     final metaPhone = (meta['phone'] ?? fallbackPhone ?? '').toString();
     final metaChurch = (meta['church'] ?? fallbackChurch ?? '').toString();
+    final metaGender = (meta['gender'] ?? '').toString();
+    final metaBirthDateStr = (meta['birth_date'] ?? '').toString();
+    DateTime? metaBirthDate;
+    if (metaBirthDateStr.isNotEmpty) {
+      try {
+        metaBirthDate = DateTime.parse(metaBirthDateStr);
+      } catch (_) {}
+    }
 
     final profile = await getMyProfile();
 
@@ -179,6 +189,8 @@ class SupabaseService {
         fullName: metaFullName.isNotEmpty ? metaFullName : 'User',
         phone: metaPhone,
         church: metaChurch,
+        gender: metaGender,
+        birthDate: metaBirthDate,
       );
       return;
     }
@@ -187,11 +199,15 @@ class SupabaseService {
     final currentName = (profile['full_name'] ?? '').toString();
     final currentPhone = (profile['phone'] ?? '').toString();
     final currentChurch = (profile['church'] ?? '').toString();
+    final currentGender = (profile['gender'] ?? '').toString();
+    final currentBirthDate = profile['birth_date'];
 
     await updateMyProfile(
       fullName: currentName.isNotEmpty ? null : metaFullName,
       phone: currentPhone.isNotEmpty ? null : metaPhone,
       church: currentChurch.isNotEmpty ? null : metaChurch,
+      gender: currentGender.isNotEmpty ? null : metaGender,
+      birthDate: currentBirthDate != null ? null : metaBirthDate,
     );
   }
 
@@ -276,7 +292,7 @@ class SupabaseService {
     return await getMyProfile();
   }
 
-  Future<List<Map<String, dynamic>>> fetchSliders() async {
+  Future<List<entity.Slider>> fetchSliders() async {
     final response = await client
         .from('sliders')
         .select()
@@ -284,10 +300,23 @@ class SupabaseService {
         .order('sort_order', ascending: true)
         .order('created_at', ascending: false);
 
-    return List<Map<String, dynamic>>.from(response);
+    return (response as List).map((sliderMap) {
+      final model = SliderModel.fromJson(sliderMap as Map<String, dynamic>);
+      return entity.Slider(
+        id: model.id,
+        titleAr: model.titleAr,
+        titleEn: model.titleEn,
+        subtitleAr: model.subtitleAr,
+        subtitleEn: model.subtitleEn,
+        imageUrl: model.imageUrl,
+        linkUrl: model.linkUrl,
+        sortOrder: model.sortOrder,
+        isActive: model.isActive,
+      );
+    }).toList();
   }
 
-  Future<List<Map<String, dynamic>>> fetchCategories() async {
+  Future<List<Category>> fetchCategories() async {
     final response = await client
         .from('categories')
         .select()
@@ -295,7 +324,22 @@ class SupabaseService {
         .order('sort_order', ascending: true)
         .order('created_at', ascending: false);
 
-    return List<Map<String, dynamic>>.from(response as List);
+    return (response as List).map((catMap) {
+      final model = CategoryModel.fromJson(catMap as Map<String, dynamic>);
+      return Category(
+        id: model.id,
+        slug: model.slug,
+        titleAr: model.titleAr,
+        titleEn: model.titleEn,
+        subtitleAr: model.subtitleAr,
+        subtitleEn: model.subtitleEn,
+        imageUrl: model.imageUrl,
+        sortOrder: model.sortOrder,
+        isActive: model.isActive,
+        createdAt: model.createdAt,
+        updatedAt: model.updatedAt,
+      );
+    }).toList();
   }
 
   Future<List<Track>> fetchTopTracks({int limit = 10}) async {
@@ -329,11 +373,15 @@ class SupabaseService {
       return Track(
         id: model.id,
         categoryId: model.categoryId,
-        title: model.getLocalizedName('en'),
-        subtitle: model.getLocalizedSubtitle('en'),
-        description: model.getLocalizedDescription('en'),
-        speaker: model.getLocalizedSpeaker('en'),
-        coverImageUrl: model.coverImageUrl,
+        titleAr: model.titleAr ?? model.titleEn ?? '',
+        titleEn: model.titleEn ?? model.titleAr ?? '',
+        subtitleAr: model.subtitleAr,
+        subtitleEn: model.subtitleEn,
+        descriptionAr: model.descriptionAr,
+        descriptionEn: model.descriptionEn,
+        speakerAr: model.speakerAr,
+        speakerEn: model.speakerEn,
+        imageUrl: model.coverImageUrl,
         audioUrl: model.audioUrl,
         durationSeconds: model.durationSeconds,
         publishedAt: model.publishedAt,

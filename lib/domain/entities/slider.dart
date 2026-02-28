@@ -1,7 +1,9 @@
 class Slider {
   final String id;
-  final String title;
-  final String? subtitle;
+  final String titleAr;
+  final String titleEn;
+  final String? subtitleAr;
+  final String? subtitleEn;
   final String? imageUrl;
   final String? linkUrl;
   final int? sortOrder;
@@ -9,8 +11,10 @@ class Slider {
 
   const Slider({
     required this.id,
-    required this.title,
-    this.subtitle,
+    required this.titleAr,
+    required this.titleEn,
+    this.subtitleAr,
+    this.subtitleEn,
     this.imageUrl,
     this.linkUrl,
     this.sortOrder,
@@ -20,8 +24,10 @@ class Slider {
   factory Slider.fromMap(Map<String, dynamic> map) {
     return Slider(
       id: map['id'] as String,
-      title: (map['title_ar'] as String?) ?? (map['title_en'] as String?) ?? 'بدون عنوان',
-      subtitle: (map['subtitle_ar'] as String?) ?? (map['subtitle_en'] as String?),
+      titleAr: map['title_ar'] as String? ?? '',
+      titleEn: map['title_en'] as String? ?? '',
+      subtitleAr: map['subtitle_ar'] as String?,
+      subtitleEn: map['subtitle_en'] as String?,
       imageUrl: map['image_url'] as String?,
       linkUrl: map['link_url'] as String?,
       sortOrder: map['sort_order'] as int?,
@@ -29,11 +35,16 @@ class Slider {
     );
   }
 
+  String getLocalizedTitle(String locale) => locale == 'ar' ? titleAr : titleEn;
+  String? getLocalizedSubtitle(String locale) => locale == 'ar' ? subtitleAr : subtitleEn;
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'title': title,
-      'subtitle': subtitle,
+      'title_ar': titleAr,
+      'title_en': titleEn,
+      'subtitle_ar': subtitleAr,
+      'subtitle_en': subtitleEn,
       'image_url': imageUrl,
       'link_url': linkUrl,
       'sort_order': sortOrder,
@@ -43,8 +54,10 @@ class Slider {
 
   Slider copyWith({
     String? id,
-    String? title,
-    String? subtitle,
+    String? titleAr,
+    String? titleEn,
+    String? subtitleAr,
+    String? subtitleEn,
     String? imageUrl,
     String? linkUrl,
     int? sortOrder,
@@ -52,8 +65,10 @@ class Slider {
   }) {
     return Slider(
       id: id ?? this.id,
-      title: title ?? this.title,
-      subtitle: subtitle ?? this.subtitle,
+      titleAr: titleAr ?? this.titleAr,
+      titleEn: titleEn ?? this.titleEn,
+      subtitleAr: subtitleAr ?? this.subtitleAr,
+      subtitleEn: subtitleEn ?? this.subtitleEn,
       imageUrl: imageUrl ?? this.imageUrl,
       linkUrl: linkUrl ?? this.linkUrl,
       sortOrder: sortOrder ?? this.sortOrder,
@@ -72,6 +87,6 @@ class Slider {
 
   @override
   String toString() {
-    return 'Slider(id: $id, title: $title)';
+    return 'Slider(id: $id, titleAr: $titleAr)';
   }
 }

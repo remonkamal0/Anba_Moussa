@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:go_router/go_router.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import '../../../domain/entities/track.dart';
+import '../../../core/di/service_locator.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../core/constants/app_constants.dart';
 
 class AlbumDetailsScreen extends ConsumerStatefulWidget {
   final String albumId;
@@ -15,11 +19,11 @@ class AlbumDetailsScreen extends ConsumerStatefulWidget {
 
   const AlbumDetailsScreen({
     super.key,
-    this.albumId = '1',
-    this.title = 'Island Getaway',
-    this.imageUrl = 'https://picsum.photos/seed/violin/800/800',
-    this.artist = 'Olivia Lyric',
-    this.year = '2023',
+    required this.albumId,
+    required this.title,
+    required this.imageUrl,
+    this.artist = '',
+    this.year = '',
   });
 
   @override
@@ -29,43 +33,59 @@ class AlbumDetailsScreen extends ConsumerStatefulWidget {
 class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
   final ZoomDrawerController _drawerController = ZoomDrawerController();
 
-  String _selectedCategory = 'Rock';
-  final List<String> _categories = ['Rock', 'Pop', 'Chill', 'Jazz'];
+  String _selectedCategory = 'All';
+  final List<String> _categories = ['All']; // Could be dynamic later
 
-  // حالات محلية للأكشن (مفضلة/تحميل) لكل تراك
+  List<Track> _tracks = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+
   final Set<String> _likedTrackIds = {};
   final Set<String> _downloadedTrackIds = {};
 
-  List<AlbumTrack> get _tracks => [
-    AlbumTrack(
-      id: '1',
-      title: 'Sunset Boulevard',
-      artist: widget.artist,
-      duration: '3:42',
-      coverImageUrl: 'https://picsum.photos/seed/sunset/120/120',
-    ),
-    AlbumTrack(
-      id: '2',
-      title: 'Waves of Ocean',
-      artist: widget.artist,
-      duration: '4:15',
-      coverImageUrl: 'https://picsum.photos/seed/waves/120/120',
-    ),
-    AlbumTrack(
-      id: '3',
-      title: 'Golden Hour',
-      artist: widget.artist,
-      duration: '2:58',
-      coverImageUrl: 'https://picsum.photos/seed/golden/120/120',
-    ),
-    AlbumTrack(
-      id: '4',
-      title: 'Midnight Dreams',
-      artist: widget.artist,
-      duration: '5:21',
-      coverImageUrl: 'https://picsum.photos/seed/midnight/120/120',
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _fetchTracks();
+    _fetchFavorites();
+  }
+
+  Future<void> _fetchTracks() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final tracks = await sl.getTracksByCategoryUseCase.execute(widget.albumId);
+      if (mounted) {
+        setState(() {
+          _tracks = tracks;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = e.toString();
+        });
+      }
+    }
+  }
+
+  Future<void> _fetchFavorites() async {
+    try {
+      final favoriteIds = await sl.getFavoriteTrackIdsUseCase.execute();
+      if (mounted) {
+        setState(() {
+          _likedTrackIds.addAll(favoriteIds);
+        });
+      }
+    } catch (e) {
+      // Quietly fail for favorites
+    }
+  }
 
   void _toast(String msg) {
     ScaffoldMessenger.of(context).clearSnackBars();
@@ -81,32 +101,38 @@ class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
 
   void _onCategorySelected(String category) {
     setState(() => _selectedCategory = category);
+    // Add filtering logic here if needed
   }
 
-  void _onTrackTapped(AlbumTrack track) {
-    // هنا تقدر تربط miniPlayerProvider لو عندك
+  void _onTrackTapped(Track track) {
     context.push('/player?trackId=${track.id}');
   }
 
   void _onPlayAll() {
-    final first = _tracks.first;
-    _onTrackTapped(first);
+    if (_tracks.isNotEmpty) {
+      _onTrackTapped(_tracks.first);
+    }
   }
 
-  void _toggleLike(AlbumTrack track) {
-    setState(() {
-      if (_likedTrackIds.contains(track.id)) {
-        _likedTrackIds.remove(track.id);
-        _toast('Removed from favorites ❤️‍🩹');
-      } else {
-        _likedTrackIds.add(track.id);
-        _toast('Added to favoritesة ❤️');
-      }
-    });
+  void _toggleLike(Track track) async {
+    final isLiked = _likedTrackIds.contains(track.id);
+    try {
+      await sl.toggleFavoriteTrackUseCase.execute(track.id, !isLiked);
+      setState(() {
+        if (isLiked) {
+          _likedTrackIds.remove(track.id);
+          _toast('Removed from favorites ❤️‍🩹');
+        } else {
+          _likedTrackIds.add(track.id);
+          _toast('Added to favorites ❤️');
+        }
+      });
+    } catch (e) {
+      _toast('Error updating favorites');
+    }
   }
 
-  void _toggleDownload(AlbumTrack track) async {
-    // هنا عملنا اكشن UI فوري + محاكاة تحميل (Fake)
+  void _toggleDownload(Track track) async {
     if (_downloadedTrackIds.contains(track.id)) {
       setState(() => _downloadedTrackIds.remove(track.id));
       _toast('The download was cancelled ⛔');
@@ -114,12 +140,9 @@ class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
     }
 
     _toast('Loading… ⏳');
-
-    // محاكاة وقت تحميل بسيط
     await Future.delayed(const Duration(milliseconds: 700));
 
     if (!mounted) return;
-
     setState(() => _downloadedTrackIds.add(track.id));
     _toast('Downloaded ✅');
   }
@@ -167,146 +190,133 @@ class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
           //   ),
           // ],
         ),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Hero Header + Play Button + Tracks Count Badge (مخفي تحت زرار التشغيل)
-              _HeroAlbumHeader(
-                title: widget.title,
-                artist: widget.artist,
-                imageUrl: widget.imageUrl,
-                tracksCount: _tracks.length,
-                onPlayTap: _onPlayAll,
-              )
-                  .animate()
-                  .fadeIn(duration: const Duration(milliseconds: 260))
-                  .slideY(begin: 0.08, end: 0, duration: const Duration(milliseconds: 260)),
+        body: _isLoading
+            ? Center(child: CircularProgressIndicator())
+            : _errorMessage != null
+                ? Center(child: Text(_errorMessage!))
+                : SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _HeroAlbumHeader(
+                          title: widget.title,
+                          artist: widget.artist,
+                          imageUrl: widget.imageUrl,
+                          tracksCount: _tracks.length,
+                          onPlayTap: _onPlayAll,
+                        )
+                            .animate()
+                            .fadeIn(duration: const Duration(milliseconds: 260))
+                            .slideY(begin: 0.08, end: 0, duration: const Duration(milliseconds: 260)),
 
-              SizedBox(height: 26.h),
+                        SizedBox(height: 26.h),
 
-              // Categories
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Categories',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w800,
-                      color: cs.onSurface,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'See All',
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w700,
-                        color: cs.primary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                        // Categories (Hidden if only 'All')
+                        if (_categories.length > 1) ...[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Categories',
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w800,
+                                  color: cs.onSurface,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 6.h),
+                          SizedBox(
+                            height: 38.h,
+                            child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: _categories.length,
+                              separatorBuilder: (_, __) => SizedBox(width: 10.w),
+                              itemBuilder: (context, index) {
+                                final cat = _categories[index];
+                                final isSelected = cat == _selectedCategory;
 
-              SizedBox(height: 6.h),
-
-              SizedBox(
-                height: 38.h,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _categories.length,
-                  separatorBuilder: (_, __) => SizedBox(width: 10.w),
-                  itemBuilder: (context, index) {
-                    final cat = _categories[index];
-                    final isSelected = cat == _selectedCategory;
-
-                    return GestureDetector(
-                      onTap: () => _onCategorySelected(cat),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 220),
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                        decoration: BoxDecoration(
-                          color: isSelected ? cs.primary : cs.onSurface.withValues(alpha: 0.05),
-                          borderRadius: BorderRadius.circular(22.r),
-                        ),
-                        child: Center(
-                          child: Text(
-                            cat,
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w800,
-                              color: isSelected ? Colors.white : cs.onSurface.withValues(alpha: 0.87),
+                                return GestureDetector(
+                                  onTap: () => _onCategorySelected(cat),
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 220),
+                                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                                    decoration: BoxDecoration(
+                                      color: isSelected ? cs.primary : cs.onSurface.withValues(alpha: 0.05),
+                                      borderRadius: BorderRadius.circular(22.r),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        cat,
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w800,
+                                          color: isSelected ? Colors.white : cs.onSurface.withValues(alpha: 0.87),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
+                          SizedBox(height: 18.h),
+                        ],
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Tracks',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w800,
+                                color: cs.onSurface,
+                              ),
+                            ),
+                            Text(
+                              '${_tracks.length} Songs',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                                color: cs.onSurface.withValues(alpha: 0.6),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    );
-                  },
-                ),
-              ),
 
-              SizedBox(height: 18.h),
+                        SizedBox(height: 10.h),
 
-              // Tracks header (اختياري: لو عايز تخفي عدد التراكات هنا كمان سيبه كده)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Tracks',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w800,
-                      color: cs.onSurface,
+                        ListView.separated(
+                          itemCount: _tracks.length,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          separatorBuilder: (_, __) => SizedBox(height: 10.h),
+                          itemBuilder: (context, index) {
+                            final t = _tracks[index];
+                            final isLiked = _likedTrackIds.contains(t.id);
+                            final isDownloaded = _downloadedTrackIds.contains(t.id);
+
+                            return TrackCard(
+                              track: t,
+                              isLiked: isLiked,
+                              isDownloaded: isDownloaded,
+                              onTap: () => _onTrackTapped(t),
+                              onLike: () => _toggleLike(t),
+                              onDownload: () => _toggleDownload(t),
+                            )
+                                .animate()
+                                .fadeIn(duration: const Duration(milliseconds: 220), delay: Duration(milliseconds: (70 * index).toInt()))
+                                .slideX(begin: -0.05, end: 0, duration: const Duration(milliseconds: 220), delay: Duration(milliseconds: (70 * index).toInt()));
+                          },
+                        ),
+
+                        SizedBox(height: 18.h),
+                      ],
                     ),
                   ),
-                  // ممكن تشيل السطرين دول لو مش عايز يظهر عدد التراكات هنا
-                  Text(
-                    '${_tracks.length} Songs',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w600,
-                      color: cs.onSurface.withValues(alpha: 0.6),
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 10.h),
-
-              // Track list (كلهم نفس الشكل بدون تمييز)
-              ListView.separated(
-                itemCount: _tracks.length,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                separatorBuilder: (_, __) => SizedBox(height: 10.h),
-                itemBuilder: (context, index) {
-                  final t = _tracks[index];
-
-                  final isLiked = _likedTrackIds.contains(t.id);
-                  final isDownloaded = _downloadedTrackIds.contains(t.id);
-
-                  return TrackCard(
-                    track: t,
-                    isLiked: isLiked,
-                    isDownloaded: isDownloaded,
-                    onTap: () => _onTrackTapped(t),
-                    onLike: () => _toggleLike(t),
-                    onDownload: () => _toggleDownload(t),
-                  )
-                      .animate()
-                      .fadeIn(duration: const Duration(milliseconds: 220), delay: Duration(milliseconds: 70 * index))
-                      .slideX(begin: -0.05, end: 0, duration: const Duration(milliseconds: 220), delay: Duration(milliseconds: 70 * index));
-                },
-              ),
-
-              SizedBox(height: 18.h),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -346,7 +356,7 @@ class _HeroAlbumHeader extends StatelessWidget {
               BoxShadow(
                 color: Colors.black.withOpacity(0.12),
                 blurRadius: 18,
-                offset: const Offset(0, 10),
+                offset: Offset(0, 10),
               ),
             ],
           ),
@@ -432,7 +442,7 @@ class _HeroAlbumHeader extends StatelessWidget {
                         BoxShadow(
                           color: cs.primary.withOpacity(0.3),
                           blurRadius: 16,
-                          offset: const Offset(0, 6),
+                          offset: Offset(0, 6),
                         ),
                       ],
                     ),
@@ -456,7 +466,7 @@ class _HeroAlbumHeader extends StatelessWidget {
 // Track Card (بدون تمييز)
 // ─────────────────────────────────────────────
 class TrackCard extends StatelessWidget {
-  final AlbumTrack track;
+  final Track track;
   final bool isLiked;
   final bool isDownloaded;
   final VoidCallback onTap;
@@ -476,6 +486,8 @@ class TrackCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final locale = Localizations.localeOf(context).languageCode;
+
     return Material(
       color: cs.surface,
       borderRadius: BorderRadius.circular(16.r),
@@ -493,19 +505,26 @@ class TrackCard extends StatelessWidget {
               // cover thumb
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.r),
-                child: CachedNetworkImage(
-                  imageUrl: track.coverImageUrl,
-                  width: 48.w,
-                  height: 48.w,
-                  fit: BoxFit.cover,
-                  placeholder: (_, __) => Container(color: Colors.grey[200], width: 48.w, height: 48.w),
-                  errorWidget: (_, __, ___) => Container(
-                    color: Colors.grey[200],
-                    width: 48.w,
-                    height: 48.w,
-                    child: const Icon(Icons.music_note, color: Colors.grey),
-                  ),
-                ),
+                child: track.imageUrl != null
+                    ? CachedNetworkImage(
+                        imageUrl: track.imageUrl!,
+                        width: 48.w,
+                        height: 48.w,
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) => Container(color: Colors.grey[200], width: 48.w, height: 48.w),
+                        errorWidget: (_, __, ___) => Container(
+                          color: Colors.grey[200],
+                          width: 48.w,
+                          height: 48.w,
+                          child: Icon(Icons.music_note, color: Colors.grey),
+                        ),
+                      )
+                    : Container(
+                        color: Colors.grey[200],
+                        width: 48.w,
+                        height: 48.w,
+                        child: const Icon(Icons.music_note, color: Colors.grey),
+                      ),
               ),
               SizedBox(width: 10.w),
 
@@ -515,7 +534,7 @@ class TrackCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      track.title,
+                      track.getLocalizedTitle(locale),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -529,7 +548,7 @@ class TrackCard extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            track.artist,
+                            track.getLocalizedSpeaker(locale) ?? 'Unknown Speaker',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -539,14 +558,15 @@ class TrackCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Text(
-                          track.duration,
-                          style: TextStyle(
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.w700,
-                            color: cs.onSurface.withValues(alpha: 0.6),
+                        if (track.duration != null)
+                          Text(
+                            _formatDuration(track.duration!),
+                            style: TextStyle(
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w700,
+                              color: cs.onSurface.withValues(alpha: 0.6),
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ],
@@ -580,6 +600,12 @@ class TrackCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _formatDuration(Duration duration) {
+    final String minutes = duration.inMinutes.toString();
+    final String seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
+    return '$minutes:$seconds';
   }
 }
 
@@ -634,21 +660,4 @@ class _DrawerPlaceholder extends StatelessWidget {
       ),
     );
   }
-}
-
-// Data Models
-class AlbumTrack {
-  final String id;
-  final String title;
-  final String artist;
-  final String duration;
-  final String coverImageUrl;
-
-  AlbumTrack({
-    required this.id,
-    required this.title,
-    required this.artist,
-    required this.duration,
-    required this.coverImageUrl,
-  });
 }

@@ -14,6 +14,7 @@ import '../../../core/di/service_locator.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../providers/home_provider.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -305,89 +306,121 @@ class _SliderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 4.w),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20.r),
-        boxShadow: [
-          BoxShadow(
-            color: cs.onSurface.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20.r),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            if (slider.imageUrl != null)
-              Image.network(
-                slider.imageUrl!,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  color: orange.withOpacity(0.12),
-                  child: Icon(Icons.image, color: orange),
-                ),
-              )
-            else
-              Container(color: orange.withOpacity(0.12)),
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    orange.withOpacity(0.70),
-                    orange.withOpacity(0.88),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(16.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.22),
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: Text(
-                      'FEATURED',
-                      style: AppTextStyles.getLabelSmall(context).copyWith(
-                        color: Colors.white,
-                        letterSpacing: 1.0,
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    slider.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.getDisplayMedium(context).copyWith(
-                      color: Colors.white,
-                      height: 1.05,
-                    ),
-                  ),
-                  SizedBox(height: 6.h),
-                  if (slider.subtitle != null)
-                    Text(
-                      slider.subtitle!,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.getBodySmall(context).copyWith(
-                        color: Colors.white.withOpacity(0.92),
-                      ),
-                    ),
-                ],
-              ),
+    return InkWell(
+      onTap: () async {
+        final link = slider.linkUrl;
+        if (link != null && link.isNotEmpty) {
+          debugPrint('Attempting to open slider link: $link');
+          final uri = Uri.tryParse(link);
+          if (uri != null && (uri.scheme == 'http' || uri.scheme == 'https')) {
+            try {
+              final launched = await launchUrl(
+                uri,
+                mode: LaunchMode.externalApplication,
+              );
+              if (!launched) {
+                debugPrint('Could not launch URL: $link');
+              }
+            } catch (e) {
+              debugPrint('Error launching URL: $e');
+            }
+          } else if (link.startsWith('/')) {
+            context.push(link);
+          } else {
+            debugPrint('Invalid or unsupported link format: $link');
+          }
+        }
+      },
+      borderRadius: BorderRadius.circular(20.r),
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 4.w),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.r),
+          boxShadow: [
+            BoxShadow(
+              color: cs.onSurface.withValues(alpha: 0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20.r),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (slider.imageUrl != null)
+                Image.network(
+                  slider.imageUrl!,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    color: orange.withOpacity(0.12),
+                    child: Icon(Icons.image, color: orange),
+                  ),
+                )
+              else
+                Container(color: orange.withOpacity(0.12)),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.0),
+                      Colors.black.withOpacity(0.4),
+                    ],
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: Container(
+                  margin: EdgeInsets.all(16.w),
+                  padding: EdgeInsets.all(12.w),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.85),
+                    borderRadius: BorderRadius.circular(16.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        slider.getLocalizedTitle(Localizations.localeOf(context).languageCode),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.getDisplayMedium(context).copyWith(
+                          color: orange,
+                          fontWeight: FontWeight.w900,
+                          height: 1.1,
+                        ),
+                      ),
+                      if (slider.getLocalizedSubtitle(Localizations.localeOf(context).languageCode) != null) ...[
+                        SizedBox(height: 6.h),
+                        Text(
+                          slider.getLocalizedSubtitle(Localizations.localeOf(context).languageCode)!,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.getBodySmall(context).copyWith(
+                            color: orange.withOpacity(0.7),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -470,7 +503,7 @@ class _CategoriesRow extends StatelessWidget {
                   Uri(
                     path: '/album/${category.id}',
                     queryParameters: {
-                      'title': category.title,
+                      'title': category.getLocalizedTitle(Localizations.localeOf(context).languageCode),
                       'imageUrl': category.imageUrl ?? '',
                     },
                   ).toString(),
@@ -525,7 +558,7 @@ class _CategoriesRow extends StatelessWidget {
                           child: Padding(
                             padding: EdgeInsets.all(12.w),
                             child: Text(
-                              "${category.title}${isSecond ? " •" : ""}",
+                              "${category.getLocalizedTitle(Localizations.localeOf(context).languageCode)}${isSecond ? " •" : ""}",
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.getLabelLarge(context).copyWith(
@@ -606,9 +639,9 @@ class _TopTracksList extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16.r),
                     color: cs.surfaceVariant,
-                    image: track.coverImageUrl != null
+                    image: track.imageUrl != null
                         ? DecorationImage(
-                            image: NetworkImage(track.coverImageUrl!),
+                            image: NetworkImage(track.imageUrl!),
                             fit: BoxFit.cover,
                           )
                         : null,
@@ -620,7 +653,7 @@ class _TopTracksList extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        track.title,
+                        track.getLocalizedTitle(Localizations.localeOf(context).languageCode),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.getTitleMedium(context).copyWith(
@@ -630,7 +663,7 @@ class _TopTracksList extends StatelessWidget {
                       ),
                       SizedBox(height: 4.h),
                       Text(
-                        track.speaker ?? 'Unknown Speaker',
+                        track.getLocalizedSpeaker(Localizations.localeOf(context).languageCode) ?? 'Unknown Speaker',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.getBodyMedium(context).copyWith(

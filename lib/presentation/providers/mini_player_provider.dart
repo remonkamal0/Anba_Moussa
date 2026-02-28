@@ -4,16 +4,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MiniPlayerTrack {
   final String id;
-  final String title;
-  final String artist;
+  final String titleAr;
+  final String titleEn;
+  final String speakerAr;
+  final String speakerEn;
   final String coverImageUrl;
 
   const MiniPlayerTrack({
     required this.id,
-    required this.title,
-    required this.artist,
+    required this.titleAr,
+    required this.titleEn,
+    required this.speakerAr,
+    required this.speakerEn,
     required this.coverImageUrl,
   });
+
+  String getLocalizedTitle(String locale) => locale == 'ar' ? titleAr : titleEn;
+  String getLocalizedSpeaker(String locale) => locale == 'ar' ? speakerAr : speakerEn;
 }
 
 // ─── State ────────────────────────────────────────────────────────────────────

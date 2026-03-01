@@ -98,13 +98,13 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
           ),
         );
       });
+    } else {
+      // If already playing, make sure the mini player state is 'visible' 
+      // so it shows up when we exit this page.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _miniPlayerNotifier.show();
+      });
     }
-
-    // Hide MiniPlayer while we're on this screen
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      _miniPlayerNotifier.hide();
-    });
   }
 
   /// Read the current device media volume and listen to hardware buttons
@@ -137,11 +137,6 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
     for (final c in _eqCtrls) c.dispose();
 
     // NOTE: We intentionally do NOT dispose _audioNotifier.player here.
-    // The AudioPlayer lives in the shared audioProvider which persists beyond
-    // this screen, allowing the MiniPlayer to keep controlling playback.
-
-    // Show MiniPlayer when leaving the screen (deferred so Riverpod is happy).
-    Future(() => _miniPlayerNotifier.show());
     super.dispose();
   }
 
@@ -248,8 +243,6 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                           ],
                         ),
                       ),
-
-                      SizedBox(height: 12.h),
 
                       // ── Spinning vinyl album art ─────────────────
                       AnimatedBuilder(
@@ -460,7 +453,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                 icon: Icons.skip_previous_rounded,
                                 color: cs.onSurface,
                                 size: 34.sp,
-                                onTap: () => _audioNotifier.seek(Duration.zero),
+                                onTap: () => _audioNotifier.skipBackward(),
                               ),
                               // Play/Pause
                               Container(
@@ -492,7 +485,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                 icon: Icons.skip_next_rounded,
                                 color: cs.onSurface,
                                 size: 34.sp,
-                                onTap: () {},
+                                onTap: () => _audioNotifier.skipForward(),
                               ),
                               _IBtn(
                                 icon: Icons.repeat_rounded,

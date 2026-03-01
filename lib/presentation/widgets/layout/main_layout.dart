@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../providers/locale_provider.dart';
+import '../../providers/audio_provider.dart';
 import '../../providers/mini_player_provider.dart';
 import '../common/app_drawer.dart';
 
@@ -58,6 +59,8 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     final currentIndex = _calculateSelectedIndex(context);
     final locale = ref.watch(localeProvider);
     final isRtl = locale.languageCode == 'ar';
+    final String location = GoRouterState.of(context).uri.path;
+
 
     final navItems = [
       _NavItemData(
@@ -102,13 +105,16 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
             Consumer(
               builder: (context, ref, _) {
                 final miniState = ref.watch(miniPlayerProvider);
-                if (!miniState.isVisible || miniState.track == null) {
+                final location = GoRouterState.of(context).uri.path;
+                final isPlayerScreen = location.contains('player');
+                
+                if (!miniState.isVisible || miniState.track == null || isPlayerScreen) {
                   return const SizedBox.shrink();
                 }
                 return Positioned(
                   left: 0,
                   right: 0,
-                  bottom: 84.h,
+                  bottom: 78.h,
                   child: _MiniPlayer(state: miniState),
                 );
               },
@@ -265,14 +271,14 @@ class _MiniPlayer extends ConsumerWidget {
           padding: EdgeInsets.symmetric(horizontal: 12.w),
           decoration: BoxDecoration(
             color: Theme.of(context).brightness == Brightness.dark
-                ? cs.surfaceVariant.withValues(alpha: 0.95)
+                ? const Color(0xFF1E2632)
                 : const Color(0xFF1B2340),
-            borderRadius: BorderRadius.circular(20.r),
+            borderRadius: BorderRadius.circular(16.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.30),
-                blurRadius: 20,
-                offset: const Offset(0, 6),
+                color: Colors.black.withValues(alpha: 0.4),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
               ),
             ],
           ),
@@ -325,12 +331,15 @@ class _MiniPlayer extends ConsumerWidget {
               ),
 
               // Previous
-              _ControlBtn(icon: Icons.skip_previous_rounded, onTap: () {}),
+              _ControlBtn(
+                icon: Icons.skip_previous_rounded,
+                onTap: () => ref.read(audioProvider.notifier).skipBackward(),
+              ),
 
-              // Play / Pause — wired to provider
+              // Play / Pause — wired to audio provider
               GestureDetector(
                 onTap: () =>
-                    ref.read(miniPlayerProvider.notifier).togglePlayPause(),
+                    ref.read(audioProvider.notifier).togglePlayPause(),
                 child: Container(
                   width: 36.w,
                   height: 36.w,
@@ -350,14 +359,17 @@ class _MiniPlayer extends ConsumerWidget {
               ),
 
               // Next
-              _ControlBtn(icon: Icons.skip_next_rounded, onTap: () {}),
+              _ControlBtn(
+                icon: Icons.skip_next_rounded,
+                onTap: () => ref.read(audioProvider.notifier).skipForward(),
+              ),
 
               SizedBox(width: 6.w),
 
               // ✕ Dismiss button
               GestureDetector(
                 onTap: () =>
-                    ref.read(miniPlayerProvider.notifier).dismiss(),
+                    ref.read(audioProvider.notifier).stop(),
                 child: Container(
                   width: 28.w,
                   height: 28.w,
@@ -367,8 +379,8 @@ class _MiniPlayer extends ConsumerWidget {
                   ),
                   child: Icon(
                     Icons.close_rounded,
-                    color: Colors.white70,
-                    size: 16.w,
+                    color: Colors.white.withValues(alpha: 0.7),
+                    size: 18.w,
                   ),
                 ),
               ),
@@ -397,8 +409,8 @@ class _ControlBtn extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 4.w),
-        child: Icon(icon, color: Colors.white70, size: 22.w),
+        padding: EdgeInsets.symmetric(horizontal: 6.w),
+        child: Icon(icon, color: Colors.white.withValues(alpha: 0.9), size: 28.w),
       ),
     );
   }

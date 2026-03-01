@@ -10,12 +10,14 @@ class AudioState {
   final Duration position;
   final Duration duration;
   final String? currentUrl;
+  final MiniPlayerTrack? currentTrack;
 
   const AudioState({
     this.isPlaying = false,
     this.position = Duration.zero,
     this.duration = Duration.zero,
     this.currentUrl,
+    this.currentTrack,
   });
 
   AudioState copyWith({
@@ -23,12 +25,14 @@ class AudioState {
     Duration? position,
     Duration? duration,
     String? currentUrl,
+    MiniPlayerTrack? currentTrack,
   }) {
     return AudioState(
       isPlaying: isPlaying ?? this.isPlaying,
       position: position ?? this.position,
       duration: duration ?? this.duration,
       currentUrl: currentUrl ?? this.currentUrl,
+      currentTrack: currentTrack ?? this.currentTrack,
     );
   }
 }
@@ -69,12 +73,24 @@ class AudioNotifier extends StateNotifier<AudioState> {
 
   Future<void> loadAndPlay(String url, MiniPlayerTrack track) async {
     try {
-      state = state.copyWith(currentUrl: url);
+      state = state.copyWith(currentUrl: url, currentTrack: track);
       await player.setUrl(url);
-      // Register track in mini player (hidden while on PlayerScreen)
+      // Register track in mini player
       _ref.read(miniPlayerProvider.notifier).play(track);
       await player.play();
     } catch (_) {}
+  }
+
+  void skipForward() {
+    final nextPos = player.position + const Duration(seconds: 10);
+    if (nextPos < (player.duration ?? Duration.zero)) {
+      player.seek(nextPos);
+    }
+  }
+
+  void skipBackward() {
+    final prevPos = player.position - const Duration(seconds: 10);
+    player.seek(prevPos < Duration.zero ? Duration.zero : prevPos);
   }
 
   void togglePlayPause() {
@@ -83,6 +99,17 @@ class AudioNotifier extends StateNotifier<AudioState> {
     } else {
       player.play();
     }
+  }
+
+  void stop() async {
+    await player.stop();
+    _ref.read(miniPlayerProvider.notifier).dismiss();
+    state = state.copyWith(
+      currentUrl: null,
+      currentTrack: null,
+      isPlaying: false,
+      position: Duration.zero,
+    );
   }
 
   void seek(Duration position) {

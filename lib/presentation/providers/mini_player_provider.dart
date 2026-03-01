@@ -63,10 +63,6 @@ class MiniPlayerNotifier extends StateNotifier<MiniPlayerState> {
     );
   }
 
-  void togglePlayPause() {
-    state = state.copyWith(isPlaying: !state.isPlaying);
-  }
-
   void setPlaying(bool playing) {
     state = state.copyWith(isPlaying: playing);
   }

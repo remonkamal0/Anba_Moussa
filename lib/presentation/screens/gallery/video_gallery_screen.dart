@@ -4,57 +4,21 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../widgets/common/app_drawer.dart';
+import '../../../domain/entities/video_album.dart';
+import '../../providers/video_provider.dart';
 
-class VideoGalleryScreen extends StatefulWidget {
+class VideoGalleryScreen extends ConsumerStatefulWidget {
   const VideoGalleryScreen({super.key});
 
   @override
-  State<VideoGalleryScreen> createState() => _VideoGalleryScreenState();
+  ConsumerState<VideoGalleryScreen> createState() => _VideoGalleryScreenState();
 }
 
-class _VideoGalleryScreenState extends State<VideoGalleryScreen> {
+class _VideoGalleryScreenState extends ConsumerState<VideoGalleryScreen> {
   final ZoomDrawerController _drawerController = ZoomDrawerController();
-
-  final List<VideoAlbum> _videoAlbums = [
-    VideoAlbum(
-      id: '1',
-      title: 'Church Sermons 2024',
-      videoCount: 15,
-      coverImage: 'https://picsum.photos/seed/church-sermons/800/800',
-    ),
-    VideoAlbum(
-      id: '2',
-      title: 'Live Hymns',
-      videoCount: 42,
-      coverImage: 'https://picsum.photos/seed/live-hymns/800/800',
-    ),
-    VideoAlbum(
-      id: '3',
-      title: 'Youth Conference',
-      videoCount: 8,
-      coverImage: 'https://picsum.photos/seed/youth-conf/800/800',
-    ),
-    VideoAlbum(
-      id: '4',
-      title: 'Special Choir',
-      videoCount: 21,
-      coverImage: 'https://picsum.photos/seed/special-choir/800/800',
-    ),
-    VideoAlbum(
-      id: '5',
-      title: 'Sunday School',
-      videoCount: 12,
-      coverImage: 'https://picsum.photos/seed/sunday-school/800/800',
-    ),
-    VideoAlbum(
-      id: '6',
-      title: 'Acoustic Worship',
-      videoCount: 26,
-      coverImage: 'https://picsum.photos/seed/acoustic-worship/800/800',
-    ),
-  ];
 
   void _onAlbumTapped(VideoAlbum album) {
     Navigator.push(
@@ -75,7 +39,9 @@ class _VideoGalleryScreenState extends State<VideoGalleryScreen> {
   @override
   Widget build(BuildContext context) {
     final isRtl = Directionality.of(context) == TextDirection.rtl;
+    final locale = Localizations.localeOf(context).languageCode;
     final cs = Theme.of(context).colorScheme;
+    final albumsAsync = ref.watch(videoAlbumsProvider);
 
     return ZoomDrawer(
       controller: _drawerController,
@@ -85,26 +51,47 @@ class _VideoGalleryScreenState extends State<VideoGalleryScreen> {
       borderRadius: 24.0,
       showShadow: true,
       angle: isRtl ? 10.0 : -10.0,
-      drawerShadowsBackgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+      drawerShadowsBackgroundColor: cs.onSurface.withValues(alpha: 0.1),
       slideWidth: MediaQuery.of(context).size.width * 0.75,
-      menuBackgroundColor: Theme.of(context).colorScheme.surface,
+      menuBackgroundColor: cs.surface,
       mainScreen: Scaffold(
         backgroundColor: cs.surface,
         appBar: AppBar(
           backgroundColor: cs.surface,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.menu_rounded, color: cs.onSurface),
+            icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.primary, size: 22.w),
             onPressed: () => _drawerController.toggle?.call(),
           ),
-          title: Text(
-            'Video Gallery',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w800,
-              color: cs.onSurface,
-            ),
+          title: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                locale == 'ar' ? 'معرض الفيديو' : 'Video Gallery',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: cs.onSurface,
+                    ),
+              ),
+              Text(
+                locale == 'ar' ? 'المجموعات' : 'COLLECTIONS',
+                style: TextStyle(
+                  fontSize: 10.sp,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.2,
+                  color: cs.onSurface.withValues(alpha: 0.4),
+                ),
+              ),
+            ],
           ),
           centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.search_rounded, color: cs.onSurface, size: 24.w),
+              onPressed: () {},
+            ),
+            SizedBox(width: 8.w),
+          ],
         ),
         body: SafeArea(
           child: Padding(
@@ -112,60 +99,57 @@ class _VideoGalleryScreenState extends State<VideoGalleryScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header like the screenshot
-                SizedBox(height: 6.h),
+                SizedBox(height: 16.h),
                 Text(
-                  'ALL ALBUMS',
+                  locale == 'ar' ? 'جميع الألبومات' : 'ALL ALBUMS',
                   style: TextStyle(
-                    fontSize: 11.sp,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w900,
-                    letterSpacing: 1.1,
+                    letterSpacing: 0.5,
                     color: cs.primary,
                   ),
                 ),
-                SizedBox(height: 6.h),
-
+                SizedBox(height: 4.h),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
                       child: Text(
-                        'Video Collections',
+                        locale == 'ar' ? 'مجموعات الفيديو' : 'Video Collections',
                         style: TextStyle(
-                          fontSize: 24.sp,
+                          fontSize: 28.sp,
                           fontWeight: FontWeight.w900,
                           color: cs.onSurface,
                         ),
                       ),
                     ),
-
-                    // Sort button
                     GestureDetector(
                       onTap: _onSortTapped,
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+                        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
                         decoration: BoxDecoration(
-                          color: cs.surface,
-                          borderRadius: BorderRadius.circular(18.r),
-                          border: Border.all(color: cs.outlineVariant),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20.r),
+                          border: Border.all(color: cs.primary.withOpacity(0.1)),
                           boxShadow: [
                             BoxShadow(
-                              color: cs.onSurface.withValues(alpha: 0.05),
+                              color: cs.primary.withOpacity(0.08),
                               blurRadius: 10,
-                              offset: const Offset(0, 5),
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
                         child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.tune_rounded, size: 16.w, color: cs.primary),
-                            SizedBox(width: 6.w),
+                            Icon(Icons.filter_list_rounded, size: 16.w, color: cs.primary),
+                            SizedBox(width: 8.w),
                             Text(
-                              'Sort',
+                              locale == 'ar' ? 'ترتيب' : 'Sort',
                               style: TextStyle(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w800,
-                                color: cs.onSurface.withValues(alpha: 0.87),
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w900,
+                                color: cs.primary,
                               ),
                             ),
                           ],
@@ -174,40 +158,51 @@ class _VideoGalleryScreenState extends State<VideoGalleryScreen> {
                     ),
                   ],
                 ),
-
                 SizedBox(height: 14.h),
-
                 Expanded(
-                  child: GridView.builder(
-                    padding: EdgeInsets.only(bottom: 14.h),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 14.w,
-                      mainAxisSpacing: 14.h,
-                      childAspectRatio: 0.78, // زي الصورة
-                    ),
-                    itemCount: _videoAlbums.length,
-                    itemBuilder: (context, index) {
-                      final album = _videoAlbums[index];
-
-                      return VideoAlbumCard(
-                        album: album,
-                        onTap: () => _onAlbumTapped(album),
-                      )
-                          .animate()
-                          .fadeIn(
-                        duration: const Duration(milliseconds: 240),
-                        delay: Duration(milliseconds: index * 70),
-                        curve: Curves.easeOut,
-                      )
-                          .slideY(
-                        begin: 0.08,
-                        end: 0,
-                        duration: const Duration(milliseconds: 240),
-                        delay: Duration(milliseconds: index * 70),
-                        curve: Curves.easeOut,
+                  child: albumsAsync.when(
+                    data: (albums) {
+                      if (albums.isEmpty) {
+                        return Center(
+                          child: Text(
+                            locale == 'ar' ? 'لا توجد ألبومات فيديو حالياً' : 'No video albums found',
+                            style: TextStyle(color: cs.onSurface.withOpacity(0.5)),
+                          ),
+                        );
+                      }
+                      return GridView.builder(
+                        padding: EdgeInsets.only(bottom: 14.h),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 14.w,
+                          mainAxisSpacing: 14.h,
+                          childAspectRatio: 0.72, // Balanced for 1:1 image + text
+                        ),
+                        itemCount: albums.length,
+                        itemBuilder: (context, index) {
+                          final album = albums[index];
+                          return VideoAlbumCard(
+                            album: album,
+                            onTap: () => _onAlbumTapped(album),
+                          )
+                              .animate()
+                              .fadeIn(
+                                duration: const Duration(milliseconds: 240),
+                                delay: Duration(milliseconds: index * 70),
+                                curve: Curves.easeOut,
+                              )
+                              .slideY(
+                                begin: 0.08,
+                                end: 0,
+                                duration: const Duration(milliseconds: 240),
+                                delay: Duration(milliseconds: index * 70),
+                                curve: Curves.easeOut,
+                              );
+                        },
                       );
                     },
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (err, stack) => Center(child: Text(err.toString())),
                   ),
                 ),
               ],
@@ -217,23 +212,6 @@ class _VideoGalleryScreenState extends State<VideoGalleryScreen> {
       ),
     );
   }
-}
-
-// ---------------------------------------------------------------------------
-// Model
-// ---------------------------------------------------------------------------
-class VideoAlbum {
-  final String id;
-  final String title;
-  final int videoCount;
-  final String coverImage;
-
-  VideoAlbum({
-    required this.id,
-    required this.title,
-    required this.videoCount,
-    required this.coverImage,
-  });
 }
 
 // ---------------------------------------------------------------------------
@@ -252,58 +230,65 @@ class VideoAlbumCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final locale = Localizations.localeOf(context).languageCode;
+
     return GestureDetector(
       onTap: onTap,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Image with centered play button
-          Expanded(
+          // Image with centered play button - Fixed 1:1 Aspect Ratio
+          AspectRatio(
+            aspectRatio: 1.0,
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18.r),
+                borderRadius: BorderRadius.circular(20.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.10),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 15,
+                    offset: const Offset(0, 8),
                   ),
                 ],
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(18.r),
+                borderRadius: BorderRadius.circular(20.r),
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    CachedNetworkImage(
-                      imageUrl: album.coverImage,
-                      fit: BoxFit.cover,
-                      placeholder: (_, __) => Container(color: Colors.grey[200]),
-                      errorWidget: (_, __, ___) => Container(
-                        color: Colors.grey[200],
-                        child: const Icon(Icons.broken_image, color: Colors.grey),
-                      ),
-                    ),
-
-                    // subtle dark overlay like screenshot
-                    Container(
-                      color: Colors.black.withOpacity(0.08),
-                    ),
+                    if (album.coverImageUrl != null)
+                      CachedNetworkImage(
+                        imageUrl: album.coverImageUrl!,
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) => Container(color: Colors.grey[100]),
+                        errorWidget: (_, __, ___) => Container(
+                          color: Colors.grey[100],
+                          child: const Icon(Icons.broken_image, color: Colors.grey),
+                        ),
+                      )
+                    else
+                      Container(color: Colors.grey[100]),
 
                     // play button in center
                     Center(
                       child: Container(
-                        width: 46.w,
-                        height: 46.w,
+                        width: 48.w,
+                        height: 48.w,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.95),
+                          color: Colors.white.withValues(alpha: 0.95),
                           shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 8,
+                            ),
+                          ],
                         ),
                         child: Icon(
                           Icons.play_arrow_rounded,
                           color: cs.primary,
-                          size: 26.w,
+                          size: 30.w,
                         ),
                       ),
                     ),
@@ -316,28 +301,36 @@ class VideoAlbumCard extends StatelessWidget {
           SizedBox(height: 10.h),
 
           // Title
-          Text(
-            album.title,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w900,
-              color: Theme.of(context).colorScheme.onSurface,
+          Flexible(
+            child: Text(
+              album.getLocalizedTitle(locale),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w900,
+                color: cs.onSurface,
+              ),
             ),
           ),
 
           SizedBox(height: 4.h),
 
-          // Count (orange)
-          Text(
-            '${album.videoCount} Videos',
-            style: TextStyle(
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w900,
-              color: cs.primary,
+          if (album.getLocalizedSubtitle(locale) != null)
+            Flexible(
+              child: Text(
+                album.getLocalizedSubtitle(locale)!,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w900,
+                  color: cs.primary,
+                ),
+              ),
             ),
-          ),
         ],
       ),
     );

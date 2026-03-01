@@ -6,7 +6,11 @@ import '../../data/repositories/track_repository_impl.dart';
 import '../../data/repositories/category_repository_impl.dart';
 import '../../data/repositories/slider_repository_impl.dart';
 import '../../data/repositories/playlist_repository_impl.dart';
+import '../../data/repositories/gallery_repository_impl.dart';
+import '../../data/repositories/video_repository_impl.dart';
 import '../../domain/repositories/category_repository.dart';
+import '../../domain/repositories/gallery_repository.dart';
+import '../../domain/repositories/video_repository.dart';
 import '../../domain/repositories/notification_repository.dart';
 import '../../domain/repositories/playlist_repository.dart';
 import '../../domain/repositories/slider_repository.dart';
@@ -41,6 +45,8 @@ class ServiceLocator {
   late final SliderRepository sliderRepository;
   late final PlaylistRepository playlistRepository;
   late final NotificationRepository notificationRepository;
+  late final GalleryRepository galleryRepository;
+  late final VideoRepository videoRepository;
 
   // Use Cases
   late final GetTopTracksUseCase getTopTracksUseCase;
@@ -67,6 +73,8 @@ class ServiceLocator {
     sliderRepository = SliderRepositoryImpl(remoteDataSource: remoteDataSource);
     playlistRepository = PlaylistRepositoryImpl(remoteDataSource: remoteDataSource);
     notificationRepository = NotificationRepositoryImpl(supabaseService);
+    galleryRepository = GalleryRepositoryImpl(remoteDataSource: remoteDataSource);
+    videoRepository = VideoRepositoryImpl(remoteDataSource: remoteDataSource);
 
     // Use Cases
     getTopTracksUseCase = GetTopTracksUseCase(trackRepository);

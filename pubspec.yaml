@@ -52,6 +52,7 @@ dependencies:
   flutter_volume_controller: ^1.0.7
   video_player: ^2.8.2
   chewie: ^1.7.4
+  youtube_player_flutter: ^9.0.1
 
   # Network & Storage
   dio: ^5.4.0

@@ -9,8 +9,8 @@ part of 'track_model.dart';
 TrackModel _$TrackModelFromJson(Map<String, dynamic> json) => TrackModel(
       id: json['id'] as String,
       categoryId: json['category_id'] as String,
-      titleAr: json['title_ar'] as String,
-      titleEn: json['title_en'] as String,
+      titleAr: json['title_ar'] as String?,
+      titleEn: json['title_en'] as String?,
       subtitleAr: json['subtitle_ar'] as String?,
       subtitleEn: json['subtitle_en'] as String?,
       descriptionAr: json['description_ar'] as String?,

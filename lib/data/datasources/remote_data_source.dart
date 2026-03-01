@@ -5,6 +5,14 @@ import '../../domain/entities/slider.dart' as entity_slider;
 import '../../domain/entities/track.dart';
 import '../models/category_model.dart';
 import '../models/track_model.dart';
+import '../models/photo_album_model.dart';
+import '../models/photo_model.dart';
+import '../models/video_album_model.dart';
+import '../models/video_model.dart';
+import '../../domain/entities/photo_album.dart';
+import '../../domain/entities/photo.dart';
+import '../../domain/entities/video_album.dart';
+import '../../domain/entities/video.dart';
 
 abstract class RemoteDataSource {
   Future<List<Track>> getTopTracks({int limit = 10});
@@ -16,6 +24,10 @@ abstract class RemoteDataSource {
   Future<Track?> getTrackById(String id);
   Future<List<Track>> getFavoriteTracks();
   Future<List<Track>> getTracks({String? categoryId});
+  Future<List<PhotoAlbum>> getPhotoAlbums();
+  Future<List<Photo>> getPhotosByAlbumId(String albumId);
+  Future<List<VideoAlbum>> getVideoAlbums();
+  Future<List<Video>> getVideosByAlbumId(String albumId);
 }
 
 class SupabaseRemoteDataSourceImpl implements RemoteDataSource {
@@ -205,6 +217,62 @@ class SupabaseRemoteDataSourceImpl implements RemoteDataSource {
     final response = await query.order('created_at', ascending: false);
 
     return (response as List).map((json) => _mapTrackModelToEntity(json as Map<String, dynamic>)).toList();
+  }
+
+  @override
+  Future<List<PhotoAlbum>> getPhotoAlbums() async {
+    final response = await client
+        .from('photo_albums')
+        .select()
+        .eq('is_active', true)
+        .order('sort_order', ascending: true)
+        .order('created_at', ascending: false);
+
+    return (response as List)
+        .map((json) => PhotoAlbumModel.fromJson(json as Map<String, dynamic>).toEntity())
+        .toList();
+  }
+
+  @override
+  Future<List<Photo>> getPhotosByAlbumId(String albumId) async {
+    final response = await client
+        .from('photos')
+        .select()
+        .eq('album_id', albumId)
+        .eq('is_active', true)
+        .order('sort_order', ascending: true);
+
+    return (response as List)
+        .map((json) => PhotoModel.fromJson(json as Map<String, dynamic>).toEntity())
+        .toList();
+  }
+
+  @override
+  Future<List<VideoAlbum>> getVideoAlbums() async {
+    final response = await client
+        .from('video_albums')
+        .select()
+        .eq('is_active', true)
+        .order('sort_order', ascending: true)
+        .order('created_at', ascending: false);
+
+    return (response as List)
+        .map((json) => VideoAlbumModel.fromJson(json as Map<String, dynamic>).toEntity())
+        .toList();
+  }
+
+  @override
+  Future<List<Video>> getVideosByAlbumId(String albumId) async {
+    final response = await client
+        .from('videos')
+        .select()
+        .eq('album_id', albumId)
+        .eq('is_active', true)
+        .order('sort_order', ascending: true);
+
+    return (response as List)
+        .map((json) => VideoModel.fromJson(json as Map<String, dynamic>).toEntity())
+        .toList();
   }
 }
 

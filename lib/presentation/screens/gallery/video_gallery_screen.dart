@@ -60,7 +60,7 @@ class _VideoGalleryScreenState extends ConsumerState<VideoGalleryScreen> {
           backgroundColor: cs.surface,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.primary, size: 22.w),
+            icon: Icon(Icons.menu_rounded, color: cs.primary, size: 22.w),
             onPressed: () => _drawerController.toggle?.call(),
           ),
           title: Column(

@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -8,6 +9,9 @@ import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 import '../../providers/audio_provider.dart';
 import '../../providers/mini_player_provider.dart';
+import '../../providers/favorites_provider.dart';
+import '../../providers/downloads_provider.dart';
+import '../../../domain/entities/track.dart';
 import '../../widgets/common/app_drawer.dart';
 
 class PlayerScreen extends ConsumerStatefulWidget {
@@ -20,10 +24,6 @@ class PlayerScreen extends ConsumerStatefulWidget {
 
 class _PlayerScreenState extends ConsumerState<PlayerScreen>
     with TickerProviderStateMixin {
-  // No longer using static const cs.primary, using Theme.of(context).colorScheme.primary instead.
-  static const _demoUrl =
-      'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
-
   final ZoomDrawerController _drawerController = ZoomDrawerController();
   // Vinyl rotation controller
   late final AnimationController _vinylCtrl;
@@ -32,8 +32,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
   late final List<AnimationController> _eqCtrls;
   late final List<Animation<double>> _eqAnims;
 
-  bool _isFavorite = false;
-  bool _isDownloaded = false;
+
+
   bool _isShuffled = false;
   bool _isRepeating = false;
   double _volume = 0.7;
@@ -41,16 +41,6 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
   // Cached notifier references — must be set in initState, NOT accessed in dispose().
   late final MiniPlayerNotifier _miniPlayerNotifier;
   late final AudioNotifier _audioNotifier;
-
-  final Track _track = const Track(
-    id: '1',
-    titleAr: 'Have you',
-    titleEn: 'Have you',
-    speakerAr: 'Madihu, Low G',
-    speakerEn: 'Madihu, Low G',
-    album: "Madihu's best songs",
-    coverImageUrl: 'https://picsum.photos/seed/cityscape/800/800',
-  );
 
   @override
   void initState() {
@@ -60,7 +50,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
     _vinylCtrl = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 14),
-    )..repeat();
+    );
 
     // 5 EQ bars with different oscillation speeds
     const durations = [380, 520, 290, 450, 340];
@@ -68,7 +58,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
       return AnimationController(
         vsync: this,
         duration: Duration(milliseconds: durations[i]),
-      )..repeat(reverse: true);
+      );
     });
     _eqAnims = _eqCtrls
         .map((c) => Tween<double>(begin: 0.15, end: 1.0)
@@ -81,30 +71,26 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
 
     _initVolume();
 
-    // Load audio only if not already playing this track
-    final currentUrl = ref.read(audioProvider).currentUrl;
-    if (currentUrl != _demoUrl) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        _audioNotifier.loadAndPlay(
-          _demoUrl,
-          MiniPlayerTrack(
-            id: _track.id,
-            titleAr: _track.titleAr,
-            titleEn: _track.titleEn,
-            speakerAr: _track.speakerAr,
-            speakerEn: _track.speakerEn,
-            coverImageUrl: _track.coverImageUrl,
-          ),
-        );
-      });
-    } else {
-      // If already playing, make sure the mini player state is 'visible' 
-      // so it shows up when we exit this page.
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _miniPlayerNotifier.show();
-      });
-    }
+    // Listen to playback state to start/stop animations
+    ref.listenManual(
+      audioProvider.select((s) => s.isPlaying),
+      (prev, isPlaying) {
+        if (isPlaying) {
+          _vinylCtrl.repeat();
+          for (final c in _eqCtrls) c.repeat(reverse: true);
+        } else {
+          _vinylCtrl.stop();
+          for (final c in _eqCtrls) c.stop();
+        }
+      },
+      fireImmediately: true,
+    );
+
+    // The track is already loaded by the screen that navigated here (e.g. AlbumDetails)
+    // We just ensure the mini player is visible.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _miniPlayerNotifier.show();
+    });
   }
 
   /// Read the current device media volume and listen to hardware buttons
@@ -154,9 +140,12 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final audioState = ref.watch(audioProvider);
+    final locale = Localizations.localeOf(context).languageCode;
     final _position = audioState.position;
     final _duration = audioState.duration;
     final _isPlaying = audioState.isPlaying;
+    final _isShuffled = audioState.isShuffleModeEnabled;
+    final _isRepeating = audioState.loopMode != LoopMode.off;
 
     final isRtl = Directionality.of(context) == TextDirection.rtl;
     final sw = MediaQuery.of(context).size.width;
@@ -204,13 +193,6 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                 size: 20.sp,
                               ),
                             ),
-                            // ☰ Drawer toggle
-                            // IconButton(
-                            //   onPressed: () =>
-                            //       _drawerController.toggle?.call(),
-                            //   icon: Icon(Icons.menu_rounded,
-                            //       color: Colors.black87, size: 24.sp),
-                            // ),
                             Expanded(
                               child: Column(
                                 children: [
@@ -225,7 +207,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                   ),
                                   SizedBox(height: 3.h),
                                   Text(
-                                    _track.album,
+                                    'Album', // You might want to add album name to MiniPlayerTrack later
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
@@ -277,18 +259,23 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                 ),
                               ),
                               // Cover image
-                              Container(
-                                width: artSize * 0.75,
-                                height: artSize * 0.75,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    image: CachedNetworkImageProvider(
-                                        _track.coverImageUrl),
-                                    fit: BoxFit.cover,
+                                Container(
+                                  width: artSize * 0.75,
+                                  height: artSize * 0.75,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: audioState.currentTrack?.coverImageUrl != null
+                                        ? DecorationImage(
+                                            image: CachedNetworkImageProvider(
+                                                audioState.currentTrack!.coverImageUrl),
+                                            fit: BoxFit.cover,
+                                          )
+                                        : null,
                                   ),
+                                  child: audioState.currentTrack?.coverImageUrl == null
+                                      ? Icon(Icons.music_note, size: artSize * 0.4, color: cs.primary)
+                                      : null,
                                 ),
-                              ),
                               // Centre hole
                               Container(
                                 width: artSize * 0.08,
@@ -313,7 +300,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                         child: Column(
                           children: [
                             Text(
-                              _track.titleAr, // Or use a localization helper if available here
+                              audioState.currentTrack?.getLocalizedTitle(locale) ?? '...',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize:
@@ -324,7 +311,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                             ),
                             SizedBox(height: 6.h),
                             Text(
-                              _track.speakerAr,
+                              audioState.currentTrack?.getLocalizedSpeaker(locale) ?? '...',
                               style: TextStyle(
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w600,
@@ -342,21 +329,88 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _IBtn(
-                            icon: _isDownloaded
-                                ? Icons.download_done_rounded
-                                : Icons.download_rounded,
-                            onTap: () => setState(
-                                () => _isDownloaded = !_isDownloaded),
-                          ),
+                          if (audioState.currentTrack != null)
+                            Consumer(
+                              builder: (context, ref, child) {
+                                final downloads = ref.watch(downloadsProvider);
+                                final isDownloaded = downloads.downloadedTracks.any((t) => t.id == audioState.currentTrack!.id);
+                                final progress = downloads.downloadProgress[audioState.currentTrack!.id];
+                                
+                                if (progress != null) {
+                                  return Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 24.w,
+                                        height: 24.w,
+                                        child: CircularProgressIndicator(
+                                          value: progress,
+                                          strokeWidth: 2,
+                                          color: cs.primary,
+                                        ),
+                                      ),
+                                      Text(
+                                        '${(progress * 100).toInt()}%',
+                                        style: TextStyle(fontSize: 8.sp, fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  );
+                                }
+                                
+                                return _IBtn(
+                                  icon: isDownloaded
+                                      ? Icons.download_done_rounded
+                                      : Icons.download_rounded,
+                                  color: isDownloaded ? cs.primary : Colors.grey[400],
+                                  onTap: () {
+                                    if (!isDownloaded) {
+                                      final mini = audioState.currentTrack!;
+                                      // Reconstruct a Track entity for the provider
+                                      final t = Track(
+                                        id: mini.id,
+                                        titleAr: mini.titleAr,
+                                        titleEn: mini.titleEn,
+                                        speakerAr: mini.speakerAr,
+                                        speakerEn: mini.speakerEn,
+                                        audioUrl: mini.audioUrl,
+                                        imageUrl: mini.coverImageUrl,
+                                        createdAt: DateTime.now(),
+                                        updatedAt: DateTime.now(),
+                                        isActive: true,
+                                        categoryId: '',
+                                      );
+                                      ref.read(downloadsProvider.notifier).downloadTrack(t);
+                                    } else {
+                                      ref.read(downloadsProvider.notifier).removeDownload(audioState.currentTrack!.id);
+                                    }
+                                  },
+                                );
+                              },
+                            ),
                           SizedBox(width: 20.w),
-                          _IBtn(
-                            icon: _isFavorite
-                                ? Icons.favorite_rounded
-                                : Icons.favorite_border_rounded,
-                            onTap: () =>
-                                setState(() => _isFavorite = !_isFavorite),
-                          ),
+                          if (audioState.currentTrack != null)
+                            _IBtn(
+                              icon: ref.watch(favoritesProvider).tracks.any((t) => t.id == audioState.currentTrack!.id)
+                                  ? Icons.favorite_rounded
+                                  : Icons.favorite_border_rounded,
+                              onTap: () {
+                                final mini = audioState.currentTrack!;
+                                final t = Track(
+                                  id: mini.id,
+                                  titleAr: mini.titleAr,
+                                  titleEn: mini.titleEn,
+                                  speakerAr: mini.speakerAr,
+                                  speakerEn: mini.speakerEn,
+                                  audioUrl: mini.audioUrl,
+                                  imageUrl: mini.coverImageUrl,
+                                  createdAt: DateTime.now(),
+                                  updatedAt: DateTime.now(),
+                                  isActive: true,
+                                  categoryId: '',
+                                );
+                                ref.read(favoritesProvider.notifier).toggleFavorite(t);
+                              },
+                            ),
                         ],
                       ),
 
@@ -436,67 +490,68 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                               ),
                             ],
                           ),
-                          child: Row(
-                            mainAxisAlignment:
-                                MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _IBtn(
-                                icon: Icons.shuffle_rounded,
-                                color: _isShuffled
-                                    ? cs.primary
-                                    : Colors.grey[400]!,
-                                size: 26.sp,
-                                onTap: () => setState(
-                                    () => _isShuffled = !_isShuffled),
-                              ),
-                              _IBtn(
-                                icon: Icons.skip_previous_rounded,
-                                color: cs.onSurface,
-                                size: 34.sp,
-                                onTap: () => _audioNotifier.skipBackward(),
-                              ),
-                              // Play/Pause
-                              Container(
-                                width: 62.w,
-                                height: 62.w,
-                                decoration: BoxDecoration(
-                                  color: cs.primary,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: cs.primary.withOpacity(0.35),
-                                      blurRadius: 22,
-                                      offset: const Offset(0, 10),
-                                    ),
-                                  ],
+                          child: Directionality(
+                            textDirection: TextDirection.ltr,
+                            child: Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceEvenly,
+                              children: [
+                                _IBtn(
+                                  icon: Icons.shuffle_rounded,
+                                  color: _isShuffled
+                                      ? cs.primary
+                                      : Colors.grey[400]!,
+                                  size: 26.sp,
+                                  onTap: () => _audioNotifier.toggleShuffle(),
                                 ),
-                                child: IconButton(
-                                  onPressed: _togglePlay,
-                                  icon: Icon(
-                                    _isPlaying
-                                        ? Icons.pause_rounded
-                                        : Icons.play_arrow_rounded,
-                                    color: Colors.white,
-                                    size: 32.sp,
+                                _IBtn(
+                                  icon: Icons.skip_previous_rounded,
+                                  color: cs.onSurface,
+                                  size: 34.sp,
+                                  onTap: () => _audioNotifier.skipBackward(),
+                                ),
+                                // Play/Pause
+                                Container(
+                                  width: 62.w,
+                                  height: 62.w,
+                                  decoration: BoxDecoration(
+                                    color: cs.primary,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: cs.primary.withOpacity(0.35),
+                                        blurRadius: 22,
+                                        offset: const Offset(0, 10),
+                                      ),
+                                    ],
+                                  ),
+                                  child: IconButton(
+                                    onPressed: _togglePlay,
+                                    icon: Icon(
+                                      _isPlaying
+                                          ? Icons.pause_rounded
+                                          : Icons.play_arrow_rounded,
+                                      color: Colors.white,
+                                      size: 32.sp,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              _IBtn(
-                                icon: Icons.skip_next_rounded,
-                                color: cs.onSurface,
-                                size: 34.sp,
-                                onTap: () => _audioNotifier.skipForward(),
-                              ),
-                              _IBtn(
-                                icon: Icons.repeat_rounded,
-                                color: _isRepeating
-                                    ? cs.primary
-                                    : Colors.grey[400]!,
-                                size: 26.sp,
-                                onTap: () => setState(
-                                    () => _isRepeating = !_isRepeating),
-                              ),
-                            ],
+                                _IBtn(
+                                  icon: Icons.skip_next_rounded,
+                                  color: cs.onSurface,
+                                  size: 34.sp,
+                                  onTap: () => _audioNotifier.skipForward(),
+                                ),
+                                _IBtn(
+                                  icon: Icons.repeat_rounded,
+                                  color: _isRepeating
+                                      ? cs.primary
+                                      : Colors.grey[400]!,
+                                  size: 26.sp,
+                                  onTap: () => _audioNotifier.toggleRepeat(),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -623,24 +678,3 @@ class _IBtn extends StatelessWidget {
   }
 }
 
-// ─── Track model ──────────────────────────────────────────────────────────────
-
-class Track {
-  final String id;
-  final String titleAr;
-  final String titleEn;
-  final String speakerAr;
-  final String speakerEn;
-  final String album;
-  final String coverImageUrl;
-
-  const Track({
-    required this.id,
-    required this.titleAr,
-    required this.titleEn,
-    required this.speakerAr,
-    required this.speakerEn,
-    required this.album,
-    required this.coverImageUrl,
-  });
-}

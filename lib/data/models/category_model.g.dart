@@ -10,8 +10,8 @@ CategoryModel _$CategoryModelFromJson(Map<String, dynamic> json) =>
     CategoryModel(
       id: json['id'] as String,
       slug: json['slug'] as String,
-      titleAr: json['title_ar'] as String,
-      titleEn: json['title_en'] as String,
+      titleAr: json['title_ar'] as String?,
+      titleEn: json['title_en'] as String?,
       subtitleAr: json['subtitle_ar'] as String?,
       subtitleEn: json['subtitle_en'] as String?,
       imageUrl: json['image_url'] as String?,

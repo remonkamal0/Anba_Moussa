@@ -9,9 +9,9 @@ class CategoryModel {
   final String id;
   final String slug;
   @JsonKey(name: 'title_ar')
-  final String titleAr;
+  final String? titleAr;
   @JsonKey(name: 'title_en')
-  final String titleEn;
+  final String? titleEn;
   @JsonKey(name: 'subtitle_ar')
   final String? subtitleAr;
   @JsonKey(name: 'subtitle_en')
@@ -30,8 +30,8 @@ class CategoryModel {
   CategoryModel({
     required this.id,
     required this.slug,
-    required this.titleAr,
-    required this.titleEn,
+    this.titleAr,
+    this.titleEn,
     this.subtitleAr,
     this.subtitleEn,
     this.imageUrl,
@@ -47,7 +47,7 @@ class CategoryModel {
   Map<String, dynamic> toJson() => _$CategoryModelToJson(this);
 
   String getLocalizedName(String locale) {
-    return locale == 'ar' ? titleAr : titleEn;
+    return locale == 'ar' ? (titleAr ?? '') : (titleEn ?? '');
   }
 
   String? getLocalizedSubtitle(String locale) {

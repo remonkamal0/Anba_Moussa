@@ -51,10 +51,26 @@ class TrackRepositoryImpl implements TrackRepository {
   Future<void> downloadTrack(String trackId) async {
     final userId = _supabaseService.currentUserId;
     if (userId == null) throw Exception('User not authenticated');
-    await _supabaseService.client.from('downloads').insert({
+    
+    // We can add device info/app version here if we add those dependencies later
+    // For now we fulfill the core requirement of syncing to the table
+    await _supabaseService.client.from('downloads').upsert({
       'user_id': userId,
       'track_id': trackId,
+      'downloaded_at': DateTime.now().toIso8601String(),
     });
+  }
+
+  @override
+  Future<void> removeFromDownloads(String trackId) async {
+    final userId = _supabaseService.currentUserId;
+    if (userId == null) return;
+    
+    await _supabaseService.client
+        .from('downloads')
+        .delete()
+        .eq('user_id', userId)
+        .eq('track_id', trackId);
   }
 
   @override
@@ -73,8 +89,8 @@ class TrackRepositoryImpl implements TrackRepository {
       return Track(
         id: model.id,
         categoryId: model.categoryId,
-        titleAr: model.titleAr ?? model.titleEn ?? '',
-        titleEn: model.titleEn ?? model.titleAr ?? '',
+        titleAr: model.titleAr ?? '',
+        titleEn: model.titleEn ?? '',
         subtitleAr: model.subtitleAr,
         subtitleEn: model.subtitleEn,
         descriptionAr: model.descriptionAr,
@@ -82,7 +98,7 @@ class TrackRepositoryImpl implements TrackRepository {
         speakerAr: model.speakerAr,
         speakerEn: model.speakerEn,
         imageUrl: model.coverImageUrl,
-        audioUrl: model.audioUrl,
+        audioUrl: model.audioUrl ?? '',
         durationSeconds: model.durationSeconds,
         publishedAt: model.publishedAt,
         isActive: model.isActive,

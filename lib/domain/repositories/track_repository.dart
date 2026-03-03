@@ -11,4 +11,5 @@ abstract class TrackRepository {
   Future<void> downloadTrack(String trackId);
   Future<List<Track>> getDownloadedTracks();
   Future<bool> isDownloaded(String trackId);
+  Future<void> removeFromDownloads(String trackId);
 }

@@ -1,23 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:anba_moussa/l10n/app_localizations.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../providers/favorites_provider.dart';
+import '../../providers/downloads_provider.dart';
+import '../../providers/audio_provider.dart';
+import '../../providers/mini_player_provider.dart';
 
 import '../../../domain/entities/track.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../core/theme/app_text_styles.dart';
 
-class SearchScreen extends StatefulWidget {
+class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  ConsumerState<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _SearchScreenState extends ConsumerState<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   bool _isLoading = false;
@@ -54,14 +59,12 @@ class _SearchScreenState extends State<SearchScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        // Handle error toast or message
       }
     }
   }
 
   void _onSearchChanged(String query) {
     setState(() => _searchQuery = query);
-    // Debounce search if needed, but for simplicity:
     _performSearch(query);
   }
 
@@ -74,16 +77,36 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _onTrackTapped(Track track) {
-    context.push('/player?trackId=${track.id}');
-  }
+    final audioState = ref.read(audioProvider);
+    final isCurrentTrack = audioState.currentTrack?.id == track.id;
 
-  List<Track> get _filteredResults => _searchResults;
-  bool get _isSearching => _searchQuery.isNotEmpty;
+    if (isCurrentTrack) {
+      ref.read(audioProvider.notifier).togglePlayPause();
+    } else {
+      final index = _searchResults.indexOf(track);
+      if (index != -1) {
+        ref.read(audioProvider.notifier).loadPlaylist(_searchResults, index);
+      } else {
+        // Fallback for recents or other cases
+        ref.read(audioProvider.notifier).loadAndPlay(
+          track.audioUrl,
+          MiniPlayerTrack(
+            id: track.id,
+            titleAr: track.titleAr,
+            titleEn: track.titleEn,
+            speakerAr: track.speakerAr ?? '',
+            speakerEn: track.speakerEn ?? '',
+            coverImageUrl: track.imageUrl ?? '',
+            audioUrl: track.audioUrl,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -105,7 +128,7 @@ class _SearchScreenState extends State<SearchScreen> {
               hintText: 'Search songs, artists, albums...',
               hintStyle: TextStyle(color: cs.onSurface.withValues(alpha: 0.4)),
               prefixIcon: Icon(Icons.search, color: cs.onSurface.withValues(alpha: 0.4)),
-              suffixIcon: _isSearching
+              suffixIcon: _searchQuery.isNotEmpty
                   ? IconButton(
                       icon: Icon(Icons.clear, color: cs.onSurface.withValues(alpha: 0.4)),
                       onPressed: _onClearSearch,
@@ -170,41 +193,9 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
     );
   }
-
-  Widget _buildSectionHeader(String title) {
-    final cs = Theme.of(context).colorScheme;
-    return Padding(
-      padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-          if (!_isSearching)
-            TextButton(
-              onPressed: () {
-                // TODO: Clear recent searches
-                print('Clear recent searches');
-              },
-              child: Text(
-                'Clear all',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: cs.primary,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
 }
 
-class SearchResultTile extends StatelessWidget {
+class SearchResultTile extends ConsumerWidget {
   final Track track;
   final VoidCallback onTap;
 
@@ -215,12 +206,16 @@ class SearchResultTile extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final locale = Localizations.localeOf(context).languageCode;
+    final isFavorite = ref.watch(favoritesProvider).tracks.any((t) => t.id == track.id);
+    final downloads = ref.watch(downloadsProvider);
+    final isDownloaded = downloads.downloadedTracks.any((t) => t.id == track.id);
+    final progress = downloads.downloadProgress[track.id];
 
     return ListTile(
-      contentPadding: EdgeInsets.symmetric(vertical: 8.h),
+      contentPadding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
       leading: Container(
         width: 52.w,
         height: 52.w,
@@ -234,47 +229,82 @@ class SearchResultTile extends StatelessWidget {
               ? CachedNetworkImage(
                   imageUrl: track.imageUrl!,
                   fit: BoxFit.cover,
-                  errorWidget: (context, url, error) => Icon(
-                    Icons.music_note,
-                    color: cs.primary,
-                    size: 24.w,
-                  ),
+                  errorWidget: (context, url, error) => Icon(Icons.music_note, color: cs.primary, size: 24.w),
                 )
-              : Icon(
-                  Icons.music_note,
-                  color: cs.primary,
-                  size: 24.w,
-                ),
+              : Icon(Icons.music_note, color: cs.primary, size: 24.w),
         ),
       ),
       title: Text(
         track.getLocalizedTitle(locale),
-        style: AppTextStyles.getBodyLarge(context).copyWith(
-          fontWeight: FontWeight.w700,
-          color: cs.onSurface,
-        ),
+        style: AppTextStyles.getBodyLarge(context).copyWith(fontWeight: FontWeight.w700, color: cs.onSurface),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(
         track.getLocalizedSpeaker(locale) ?? 'Unknown Speaker',
-        style: AppTextStyles.getBodySmall(context).copyWith(
-          color: cs.onSurface.withValues(alpha: 0.5),
-        ),
+        style: AppTextStyles.getBodySmall(context).copyWith(color: cs.onSurface.withValues(alpha: 0.5)),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      trailing: Container(
-        padding: EdgeInsets.all(8.w),
-        decoration: BoxDecoration(
-          color: cs.primary.withValues(alpha: 0.1),
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          Icons.play_arrow_rounded,
-          color: cs.primary,
-          size: 20.w,
-        ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: Icon(
+              isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+              color: isFavorite ? cs.primary : cs.onSurface.withValues(alpha: 0.3),
+              size: 22.sp,
+            ),
+            onPressed: () => ref.read(favoritesProvider.notifier).toggleFavorite(track),
+          ),
+          progress != null
+              ? SizedBox(
+                  width: 22.w,
+                  height: 22.w,
+                  child: CircularProgressIndicator(value: progress, strokeWidth: 2, color: cs.primary),
+                )
+              : IconButton(
+                  icon: Icon(
+                    isDownloaded ? Icons.download_done_rounded : Icons.download_outlined,
+                    color: isDownloaded ? cs.primary : cs.onSurface.withValues(alpha: 0.3),
+                    size: 22.sp,
+                  ),
+                  onPressed: () {
+                    if (isDownloaded) {
+                      ref.read(downloadsProvider.notifier).removeDownload(track.id);
+                    } else {
+                      ref.read(downloadsProvider.notifier).downloadTrack(track);
+                    }
+                  },
+                ),
+          SizedBox(width: 4.w),
+          Consumer(
+            builder: (context, ref, _) {
+              final audioState = ref.watch(audioProvider);
+              final isCurrentTrack = audioState.currentTrack?.id == track.id;
+              final isPlaying = audioState.isPlaying && isCurrentTrack;
+
+              return InkWell(
+                onTap: () {
+                  if (isCurrentTrack) {
+                    ref.read(audioProvider.notifier).togglePlayPause();
+                  } else {
+                    onTap();
+                  }
+                },
+                child: Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(color: cs.primary.withValues(alpha: 0.1), shape: BoxShape.circle),
+                  child: Icon(
+                    isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                    color: cs.primary,
+                    size: 24.sp,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       onTap: onTap,
     );

@@ -68,22 +68,27 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     final locale = Localizations.localeOf(context).languageCode;
 
     return Scaffold(
+      backgroundColor: cs.surface,
       appBar: AppBar(
+        backgroundColor: cs.surface,
+        elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: cs.onSurface),
-          onPressed: () => Navigator.of(context).pop(),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.onSurface),
+          onPressed: () => context.pop(),
         ),
         title: Text(
-          'Notifications',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: cs.onSurface,
+          'NOTIFICATIONS',
+          style: TextStyle(
+            fontSize: 12.sp,
+            letterSpacing: 1.2,
+            fontWeight: FontWeight.w800,
+            color: cs.onSurface.withValues(alpha: 0.7),
           ),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.done_all, color: cs.primary),
+            icon: Icon(Icons.done_all_rounded, color: cs.primary),
             onPressed: _markAllAsRead,
             tooltip: 'Mark all as read',
           ),
@@ -99,10 +104,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.notifications_none, size: 64.w, color: cs.onSurface.withValues(alpha: 0.1)),
+                            Container(
+                              padding: EdgeInsets.all(24.w),
+                              decoration: BoxDecoration(
+                                color: cs.primary.withValues(alpha: 0.08),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(Icons.notifications_none_rounded, size: 64.w, color: cs.primary.withValues(alpha: 0.4)),
+                            ),
                             SizedBox(height: 16.h),
-                            Text('No notifications found', 
-                              style: AppTextStyles.getBodyLarge(context).copyWith(color: cs.onSurface.withValues(alpha: 0.5))),
+                            Text(
+                              'No notifications found', 
+                              style: AppTextStyles.getTitleMedium(context).copyWith(
+                                color: cs.onSurface.withValues(alpha: 0.5),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ],
                         ),
                       )

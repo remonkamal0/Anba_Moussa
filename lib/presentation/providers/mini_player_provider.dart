@@ -9,6 +9,7 @@ class MiniPlayerTrack {
   final String speakerAr;
   final String speakerEn;
   final String coverImageUrl;
+  final String audioUrl;
 
   const MiniPlayerTrack({
     required this.id,
@@ -17,6 +18,7 @@ class MiniPlayerTrack {
     required this.speakerAr,
     required this.speakerEn,
     required this.coverImageUrl,
+    required this.audioUrl,
   });
 
   String getLocalizedTitle(String locale) => locale == 'ar' ? titleAr : titleEn;

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'tag_model.dart';
 
 part 'track_model.g.dart';
 
@@ -26,7 +27,7 @@ class TrackModel {
   @JsonKey(name: 'cover_image_url')
   final String? coverImageUrl;
   @JsonKey(name: 'audio_url')
-  final String audioUrl;
+  final String? audioUrl;
   @JsonKey(name: 'duration_seconds')
   final int? durationSeconds;
   @JsonKey(name: 'published_at')
@@ -37,6 +38,7 @@ class TrackModel {
   final DateTime createdAt;
   @JsonKey(name: 'updated_at')
   final DateTime updatedAt;
+  final List<TagModel>? tags;
 
   TrackModel({
     required this.id,
@@ -50,12 +52,13 @@ class TrackModel {
     this.speakerAr,
     this.speakerEn,
     this.coverImageUrl,
-    required this.audioUrl,
+    this.audioUrl,
     this.durationSeconds,
     this.publishedAt,
     required this.isActive,
     required this.createdAt,
     required this.updatedAt,
+    this.tags,
   });
 
   factory TrackModel.fromJson(Map<String, dynamic> json) =>
@@ -63,9 +66,9 @@ class TrackModel {
 
   Map<String, dynamic> toJson() => _$TrackModelToJson(this);
 
-  String getLocalizedName(String locale) {
-    if (locale == 'ar') return titleAr ?? titleEn ?? 'بدون عنوان';
-    return titleEn ?? titleAr ?? 'Untitled';
+  String getLocalizedTitle(String locale) {
+    if (locale == 'ar') return titleAr ?? '';
+    return titleEn ?? '';
   }
 
   String? getLocalizedSubtitle(String locale) {

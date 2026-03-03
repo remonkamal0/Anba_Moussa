@@ -304,8 +304,8 @@ class SupabaseService {
       final model = SliderModel.fromJson(sliderMap as Map<String, dynamic>);
       return entity.Slider(
         id: model.id,
-        titleAr: model.titleAr,
-        titleEn: model.titleEn,
+        titleAr: model.titleAr ?? '',
+        titleEn: model.titleEn ?? '',
         subtitleAr: model.subtitleAr,
         subtitleEn: model.subtitleEn,
         imageUrl: model.imageUrl,
@@ -329,8 +329,8 @@ class SupabaseService {
       return Category(
         id: model.id,
         slug: model.slug,
-        titleAr: model.titleAr,
-        titleEn: model.titleEn,
+        titleAr: model.titleAr ?? '',
+        titleEn: model.titleEn ?? '',
         subtitleAr: model.subtitleAr,
         subtitleEn: model.subtitleEn,
         imageUrl: model.imageUrl,
@@ -382,7 +382,7 @@ class SupabaseService {
         speakerAr: model.speakerAr,
         speakerEn: model.speakerEn,
         imageUrl: model.coverImageUrl,
-        audioUrl: model.audioUrl,
+        audioUrl: model.audioUrl ?? '',
         durationSeconds: model.durationSeconds,
         publishedAt: model.publishedAt,
         isActive: model.isActive,

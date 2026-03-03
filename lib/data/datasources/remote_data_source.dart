@@ -5,6 +5,8 @@ import '../../domain/entities/slider.dart' as entity_slider;
 import '../../domain/entities/track.dart';
 import '../models/category_model.dart';
 import '../models/track_model.dart';
+import '../models/tag_model.dart';
+import '../../domain/entities/tag.dart';
 import '../models/photo_album_model.dart';
 import '../models/photo_model.dart';
 import '../models/video_album_model.dart';
@@ -38,12 +40,30 @@ class SupabaseRemoteDataSourceImpl implements RemoteDataSource {
   String? _getCurrentUserId() => client.auth.currentUser?.id;
 
   Track _mapTrackModelToEntity(Map<String, dynamic> json) {
-    final model = TrackModel.fromJson(json);
-    return Track(
-      id: model.id,
-      categoryId: model.categoryId,
-      titleAr: model.titleAr ?? model.titleEn ?? '',
-      titleEn: model.titleEn ?? model.titleAr ?? '',
+    try {
+      final model = TrackModel.fromJson(json);
+      
+      // Extract tags from nested join result: track_tags(tags(*))
+      List<Tag> tags = [];
+      if (json['track_tags'] != null) {
+        final trackTags = json['track_tags'] as List<dynamic>;
+        for (var tt in trackTags) {
+          if (tt is Map && tt['tags'] != null) {
+            final tagData = tt['tags'];
+            if (tagData is Map<String, dynamic>) {
+              tags.add(TagModel.fromJson(tagData).toEntity());
+            } else if (tagData is List && tagData.isNotEmpty) {
+              tags.add(TagModel.fromJson(tagData.first as Map<String, dynamic>).toEntity());
+            }
+          }
+        }
+      }
+
+      return Track(
+        id: model.id,
+        categoryId: model.categoryId,
+      titleAr: model.titleAr ?? '',
+      titleEn: model.titleEn ?? '',
       subtitleAr: model.subtitleAr,
       subtitleEn: model.subtitleEn,
       descriptionAr: model.descriptionAr,
@@ -51,13 +71,18 @@ class SupabaseRemoteDataSourceImpl implements RemoteDataSource {
       speakerAr: model.speakerAr,
       speakerEn: model.speakerEn,
       imageUrl: model.coverImageUrl,
-      audioUrl: model.audioUrl,
+      audioUrl: model.audioUrl ?? '',
       durationSeconds: model.durationSeconds,
       publishedAt: model.publishedAt,
       isActive: model.isActive,
       createdAt: model.createdAt,
-      updatedAt: model.updatedAt,
-    );
+        updatedAt: model.updatedAt,
+        tags: tags,
+      );
+    } catch (e, stack) {
+      print('Error parsing track in _mapTrackModelToEntity: $e\n$stack\nJSON: $json');
+      rethrow;
+    }
   }
 
   Category _mapCategoryModelToEntity(Map<String, dynamic> json) {
@@ -65,8 +90,8 @@ class SupabaseRemoteDataSourceImpl implements RemoteDataSource {
     return Category(
       id: model.id,
       slug: model.slug,
-      titleAr: model.titleAr,
-      titleEn: model.titleEn,
+      titleAr: model.titleAr ?? '',
+      titleEn: model.titleEn ?? '',
       subtitleAr: model.subtitleAr,
       subtitleEn: model.subtitleEn,
       imageUrl: model.imageUrl,
@@ -207,7 +232,7 @@ class SupabaseRemoteDataSourceImpl implements RemoteDataSource {
   Future<List<Track>> getTracks({String? categoryId}) async {
     var query = client
         .from('tracks')
-        .select('*')
+        .select('*, track_tags(tags(*))')
         .eq('is_active', true);
 
     if (categoryId != null) {

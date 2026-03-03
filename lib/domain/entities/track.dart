@@ -1,3 +1,5 @@
+import 'tag.dart';
+
 class Track {
   final String id;
   final String categoryId;
@@ -15,6 +17,7 @@ class Track {
   final DateTime? publishedAt;
   final bool isActive;
   final DateTime createdAt;
+  final List<Tag> tags;
   final DateTime updatedAt;
 
   Track({
@@ -35,6 +38,7 @@ class Track {
     required this.isActive,
     required this.createdAt,
     required this.updatedAt,
+    this.tags = const [],
   });
 
   String getLocalizedTitle(String locale) => locale == 'ar' ? titleAr : titleEn;

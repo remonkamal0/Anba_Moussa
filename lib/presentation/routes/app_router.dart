@@ -141,6 +141,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppConstants.playerRoute,
+        name: 'player',
         builder: (context, state) {
           final trackId = state.uri.queryParameters['trackId'];
           return PlayerScreen(trackId: trackId);

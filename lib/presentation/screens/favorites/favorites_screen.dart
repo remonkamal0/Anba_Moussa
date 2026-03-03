@@ -1,70 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
+import '../../providers/favorites_provider.dart';
+import '../../providers/downloads_provider.dart';
+import '../../providers/audio_provider.dart';
+import '../../../domain/entities/track.dart';
 
-class FavoritesScreen extends StatefulWidget {
+class FavoritesScreen extends ConsumerWidget {
   const FavoritesScreen({super.key});
 
-  @override
-  State<FavoritesScreen> createState() => _FavoritesScreenState();
-}
+  void _playAll(WidgetRef ref, BuildContext context, List<Track> favorites, {bool shuffle = false}) {
+    if (favorites.isEmpty) return;
+    
+    final tracksToPlay = [...favorites];
+    if (shuffle) tracksToPlay.shuffle();
+    
+    ref.read(audioProvider.notifier).loadPlaylist(tracksToPlay, 0);
+    context.push('/player');
+  }
 
-class _FavoritesScreenState extends State<FavoritesScreen> {
-  final List<FavoriteSong> _favoriteSongs = [
-    FavoriteSong(
-      id: '1',
-      title: 'Blinding Lights',
-      artist: 'The Weeknd',
-      isLiked: true,
-      albumArtUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&q=80',
-    ),
-    FavoriteSong(
-      id: '2',
-      title: 'Stay',
-      artist: 'The Kid LAROI & Justin Bieber',
-      isLiked: true,
-      albumArtUrl: 'https://images.unsplash.com/photo-1493225457124-b049d107fb7f?w=400&q=80',
-    ),
-    FavoriteSong(
-      id: '3',
-      title: 'Levitating',
-      artist: 'Dua Lipa',
-      isLiked: true,
-      albumArtUrl: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&q=80',
-    ),
-    FavoriteSong(
-      id: '4',
-      title: 'Bad Habits',
-      artist: 'Ed Sheeran',
-      isLiked: true,
-      albumArtUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&q=80',
-    ),
-    FavoriteSong(
-      id: '5',
-      title: 'Save Your Tears',
-      artist: 'The Weeknd & Ariana Grande',
-      isLiked: true,
-      albumArtUrl: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&q=80',
-    ),
-    FavoriteSong(
-      id: '6',
-      title: 'Good 4 U',
-      artist: 'Olivia Rodrigo',
-      isLiked: true,
-      albumArtUrl: 'https://images.unsplash.com/photo-1516280440502-a2fc978b7b20?w=400&q=80',
-    ),
-    FavoriteSong(
-      id: '7',
-      title: 'Heat Waves',
-      artist: 'Glass Animals',
-      isLiked: true,
-      albumArtUrl: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&q=80',
-    ),
-  ];
+  void _onTrackTapped(WidgetRef ref, BuildContext context, List<Track> favorites, int index) {
+    final track = favorites[index];
+    final audioState = ref.read(audioProvider);
+    final isCurrentTrack = audioState.currentTrack?.id == track.id;
+
+    if (isCurrentTrack) {
+      ref.read(audioProvider.notifier).togglePlayPause();
+    } else {
+      ref.read(audioProvider.notifier).loadPlaylist(favorites, index);
+      context.push('/player');
+    }
+  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
+    final favState = ref.watch(favoritesProvider);
+    final favorites = favState.tracks;
+    final locale = Localizations.localeOf(context).languageCode;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -79,196 +55,240 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.search_rounded, color: cs.onSurface, size: 24),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Action Buttons Row
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
-                      label: Text(
-                        'Play All',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+            if (favorites.isNotEmpty) ...[
+              // Action Buttons Row
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () => _playAll(ref, context, favorites),
+                        icon: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
+                        label: Text(
+                          'Play All',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: cs.primary,
-                        elevation: 4,
-                        shadowColor: cs.primary.withOpacity(0.5),
-                        padding: EdgeInsets.symmetric(vertical: 14.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24.r),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 16.w),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () {},
-                      icon: Icon(Icons.shuffle_rounded, color: cs.primary, size: 20),
-                      label: Text(
-                        'Shuffle',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold,
-                          color: cs.primary,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: cs.primary.withValues(alpha: 0.1), // Lighter dynamic bg
-                        elevation: 0,
-                        padding: EdgeInsets.symmetric(vertical: 14.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24.r),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: cs.primary,
+                          elevation: 4,
+                          shadowColor: cs.primary.withOpacity(0.5),
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24.r),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            
-            // Liked Songs Count
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
-              child: Text(
-                '${_favoriteSongs.length} LIKED SONGS',
-                style: TextStyle(
-                  fontSize: 11.sp,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.5,
-                  color: cs.onSurface.withValues(alpha: 0.5),
+                    SizedBox(width: 16.w),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () => _playAll(ref, context, favorites, shuffle: true),
+                        icon: Icon(Icons.shuffle_rounded, color: cs.primary, size: 20),
+                        label: Text(
+                          'Shuffle',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.bold,
+                            color: cs.primary,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: cs.primary.withOpacity(0.1),
+                          elevation: 0,
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24.r),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
+              
+              // Liked Songs Count
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
+                child: Text(
+                  '${favorites.length} LIKED SONGS',
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.5,
+                    color: cs.onSurface.withOpacity(0.5),
+                  ),
+                ),
+              ),
+            ],
             
             // List of Favorite Songs
             Expanded(
-              child: ListView.separated(
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
-                itemCount: _favoriteSongs.length,
-                separatorBuilder: (context, index) => SizedBox(height: 16.h),
-                itemBuilder: (context, index) {
-                  final song = _favoriteSongs[index];
-                  return Row(
-                    children: [
-                      // Circular Cover Art
-                      Container(
-                        width: 56.w,
-                        height: 56.w,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: ClipOval(
-                          child: CachedNetworkImage(
-                            imageUrl: song.albumArtUrl,
-                            fit: BoxFit.cover,
+              child: favState.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : favorites.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No favorites yet',
+                            style: TextStyle(color: cs.onSurface.withOpacity(0.5)),
                           ),
-                        ),
-                      ),
-                      
-                      SizedBox(width: 16.w),
-                      
-                      // Title and Artist
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              song.title,
-                              style: TextStyle(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.bold,
-                                color: cs.onSurface,
+                        )
+                      : ListView.separated(
+                          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
+                          itemCount: favorites.length,
+                          separatorBuilder: (context, index) => SizedBox(height: 16.h),
+                          itemBuilder: (context, index) {
+                            final song = favorites[index];
+                            return InkWell(
+                              onTap: () => _onTrackTapped(ref, context, favorites, index),
+                              child: Row(
+                                children: [
+                                  // Circular Cover Art
+                                  Container(
+                                    width: 56.w,
+                                    height: 56.w,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.08),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: ClipOval(
+                                      child: song.imageUrl != null
+                                          ? CachedNetworkImage(
+                                              imageUrl: song.imageUrl!,
+                                              fit: BoxFit.cover,
+                                              placeholder: (context, url) => Container(color: cs.surfaceVariant),
+                                              errorWidget: (context, url, error) => const Icon(Icons.music_note),
+                                            )
+                                          : const Icon(Icons.music_note),
+                                    ),
+                                  ),
+                                  
+                                  SizedBox(width: 16.w),
+                                  
+                                  // Title and Artist
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          song.getLocalizedTitle(locale),
+                                          style: TextStyle(
+                                            fontSize: 15.sp,
+                                            fontWeight: FontWeight.bold,
+                                            color: cs.onSurface,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(height: 4.h),
+                                        Text(
+                                          song.getLocalizedSpeaker(locale) ?? '',
+                                          style: TextStyle(
+                                            fontSize: 13.sp,
+                                            color: cs.onSurface.withOpacity(0.5),
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  
+                                  // Action Icons (Like, Download, Play)
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.favorite_rounded,
+                                          color: cs.primary,
+                                          size: 20.w,
+                                        ),
+                                        onPressed: () => ref.read(favoritesProvider.notifier).toggleFavorite(song),
+                                      ),
+                                      Consumer(
+                                        builder: (context, ref, child) {
+                                          final downloads = ref.watch(downloadsProvider);
+                                          final isDownloaded = downloads.downloadedTracks.any((t) => t.id == song.id);
+                                          final progress = downloads.downloadProgress[song.id];
+
+                                          if (progress != null) {
+                                            return SizedBox(
+                                              width: 20.w,
+                                              height: 20.w,
+                                              child: CircularProgressIndicator(
+                                                value: progress,
+                                                strokeWidth: 2,
+                                                color: cs.primary,
+                                              ),
+                                            );
+                                          }
+
+                                          return IconButton(
+                                            icon: Icon(
+                                              isDownloaded ? Icons.download_done_rounded : Icons.download_outlined,
+                                              color: isDownloaded ? cs.primary : cs.onSurface.withOpacity(0.3),
+                                              size: 22.w,
+                                            ),
+                                            onPressed: () {
+                                              if (isDownloaded) {
+                                                ref.read(downloadsProvider.notifier).removeDownload(song.id);
+                                              } else {
+                                                ref.read(downloadsProvider.notifier).downloadTrack(song);
+                                              }
+                                            },
+                                          );
+                                        },
+                                      ),
+                                      SizedBox(width: 4.w),
+                                      Consumer(
+                                        builder: (context, ref, _) {
+                                          final audioState = ref.watch(audioProvider);
+                                          final isCurrentTrack = audioState.currentTrack?.id == song.id;
+                                          final isPlaying = audioState.isPlaying && isCurrentTrack;
+
+                                          return GestureDetector(
+                                            onTap: () {
+                                              if (isCurrentTrack) {
+                                                ref.read(audioProvider.notifier).togglePlayPause();
+                                              } else {
+                                                _onTrackTapped(ref, context, favorites, index);
+                                              }
+                                            },
+                                            child: Icon(
+                                              isPlaying ? Icons.pause_circle_filled_rounded : Icons.play_circle_outline_rounded,
+                                              color: isPlaying ? cs.primary : cs.onSurface,
+                                              size: 26.w,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            SizedBox(height: 4.h),
-                            Text(
-                              song.artist,
-                              style: TextStyle(
-                                fontSize: 13.sp,
-                                color: cs.onSurface.withValues(alpha: 0.5),
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
+                            );
+                          },
                         ),
-                      ),
-                      
-                      // Action Icons (Like, Download, Play)
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.favorite_rounded,
-                            color: cs.primary,
-                            size: 20.w,
-                          ),
-                          SizedBox(width: 16.w),
-                           Icon(
-                            Icons.arrow_circle_down_rounded,
-                            color: cs.onSurface.withValues(alpha: 0.3),
-                            size: 22.w,
-                          ),
-                          SizedBox(width: 16.w),
-                          Icon(
-                            Icons.play_circle_outline_rounded,
-                            color: cs.onSurface,
-                            size: 24.w,
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-              ),
             ),
           ],
         ),
       ),
     );
   }
-}
-
-class FavoriteSong {
-  final String id;
-  final String title;
-  final String artist;
-  final bool isLiked;
-  final String albumArtUrl;
-
-  FavoriteSong({
-    required this.id,
-    required this.title,
-    required this.artist,
-    required this.isLiked,
-    required this.albumArtUrl,
-  });
 }

@@ -6,15 +6,15 @@ part 'tag_model.g.dart';
 @JsonSerializable()
 class TagModel {
   final String id;
-  @JsonKey(name: 'name_ar')
-  final String? nameAr;
-  @JsonKey(name: 'name_en')
-  final String? nameEn;
+  @JsonKey(name: 'title_ar')
+  final String? titleAr;
+  @JsonKey(name: 'title_en')
+  final String? titleEn;
 
   TagModel({
     required this.id,
-    this.nameAr,
-    this.nameEn,
+    this.titleAr,
+    this.titleEn,
   });
 
   factory TagModel.fromJson(Map<String, dynamic> json) => _$TagModelFromJson(json);
@@ -22,7 +22,7 @@ class TagModel {
 
   Tag toEntity() => Tag(
         id: id,
-        nameAr: nameAr ?? '',
-        nameEn: nameEn ?? '',
+        titleAr: titleAr ?? '',
+        titleEn: titleEn ?? '',
       );
 }

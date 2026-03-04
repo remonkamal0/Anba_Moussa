@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../providers/locale_provider.dart';
+import '../../providers/user_profile_provider.dart';
 import '../../widgets/common/confirm_dialog.dart';
 import '../playlist/create_playlist_screen.dart';
 import '../../providers/theme_provider.dart';
@@ -60,6 +61,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final darkMode = themeMode == ThemeMode.dark;
     final currentAccent = ref.watch(accentColorProvider);
     final accentName = _getAccentName(currentAccent);
+    final userProfile = ref.watch(userProfileProvider);
 
     return Scaffold(
       body: Stack(
@@ -136,19 +138,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   SizedBox(height: 18.h),
 
                   // Avatar + edit icon
-                  _AvatarWithEdit(
-                    accent: accent,
-                    imageUrl:
-                        "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&q=80",
-                    onEdit: () {
-                      // TODO: change avatar
-                    },
-                  ),
+
 
                   SizedBox(height: 14.h),
 
                   Text(
-                    "Alex Rivera",
+                    userProfile.fullName,
                     style: TextStyle(
                       fontSize: 22.sp,
                       fontWeight: FontWeight.w800,
@@ -156,14 +151,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                   ),
                   SizedBox(height: 4.h),
-                  Text(
-                    "alex.rivera@example.com",
-                    style: TextStyle(
-                      fontSize: 13.sp,
-                      color: cs.onSurface.withValues(alpha: .6),
-                      fontWeight: FontWeight.w500,
+                  if (userProfile.email.isNotEmpty)
+                    Text(
+                      userProfile.email,
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        color: cs.onSurface.withValues(alpha: .6),
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
 
                   SizedBox(height: 14.h),
 

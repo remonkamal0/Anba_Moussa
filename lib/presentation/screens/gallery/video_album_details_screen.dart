@@ -9,6 +9,7 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../../../domain/entities/video_album.dart';
 import '../../../domain/entities/video.dart';
 import '../../providers/video_provider.dart';
+import '../../widgets/common/error_handle_widget.dart';
 
 class VideoAlbumDetailsScreen extends ConsumerWidget {
   final VideoAlbum album;
@@ -260,8 +261,10 @@ class VideoAlbumDetailsScreen extends ConsumerWidget {
                   );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, stack) => Center(child: Text(err.toString())),
-              ),
+                error: (error, stack) => ErrorHandleWidget(
+          error: error,
+          onRetry: () => ref.refresh(albumVideosProvider(album.id)),
+        ),      ),
             ),
           ],
         ),

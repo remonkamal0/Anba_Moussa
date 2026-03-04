@@ -36,6 +36,11 @@ class AppTheme {
       iconTheme: const IconThemeData(color: onSurface),
       dividerColor: const Color(0xFFEEEEEE),
       fontFamily: primaryFont,
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: primary,
+        selectionHandleColor: primary,
+        selectionColor: primary.withOpacity(0.3),
+      ),
       textTheme: _buildTextTheme(primaryFont, fallbackFont, onSurface),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
@@ -128,6 +133,11 @@ class AppTheme {
       iconTheme: const IconThemeData(color: onSurface),
       dividerColor: const Color(0xFF333333),
       fontFamily: primaryFont,
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: primary,
+        selectionHandleColor: primary,
+        selectionColor: primary.withOpacity(0.3),
+      ),
       textTheme: _buildTextTheme(primaryFont, fallbackFont, onSurface),
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(

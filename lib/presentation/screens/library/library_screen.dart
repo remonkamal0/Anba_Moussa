@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:provider/provider.dart';
 import '../../providers/library_provider.dart';
+import '../../widgets/common/error_handle_widget.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../domain/entities/category.dart';
 
@@ -69,18 +70,22 @@ class _LibraryScreenContentState extends State<_LibraryScreenContent> {
             ),
             centerTitle: true,
           ),
-          body: _buildBody(state, gap),
+          body: _buildBody(provider, gap),
         );
       },
     );
   }
 
-  Widget _buildBody(LibraryState state, double gap) {
+  Widget _buildBody(LibraryProvider provider, double gap) {
+    final state = provider.state;
     switch (state.status) {
       case LibraryStatus.loading:
         return const Center(child: CircularProgressIndicator());
       case LibraryStatus.error:
-        return Center(child: Text(state.errorMessage ?? 'An error occurred'));
+        return ErrorHandleWidget(
+          error: state.error ?? 'An error occurred',
+          onRetry: () => provider.fetchCategories(),
+        );
       case LibraryStatus.loaded:
         if (state.categories.isEmpty) {
           return const Center(child: Text('No categories found'));

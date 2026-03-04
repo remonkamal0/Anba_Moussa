@@ -78,7 +78,7 @@ class AlbumDetailsNotifier extends StateNotifier<AlbumDetailsState> {
         tagsSet.addAll(track.tags);
       }
       final sortedTags = tagsSet.toList()
-        ..sort((a, b) => a.nameEn.compareTo(b.nameEn));
+        ..sort((a, b) => a.titleEn.compareTo(b.titleEn));
 
       state = state.copyWith(
         allTracks: tracks,

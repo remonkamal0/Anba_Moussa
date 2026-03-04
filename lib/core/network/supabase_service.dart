@@ -79,6 +79,15 @@ class SupabaseService {
     }
   }
 
+  Future<void> updateUserPassword(String newPassword) async {
+    final user = client.auth.currentUser;
+    if (user == null) throw Exception('Not authenticated');
+    
+    await client.auth.updateUser(
+      UserAttributes(password: newPassword),
+    );
+  }
+
   // ----------------------------
   // Profile management (SAFE with RLS)
   // ----------------------------

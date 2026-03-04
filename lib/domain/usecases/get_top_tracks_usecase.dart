@@ -6,7 +6,7 @@ class GetTopTracksUseCase {
 
   GetTopTracksUseCase(this.repository);
 
-  Future<List<Track>> execute() async {
-    return await repository.getTracks(); // or a specific method for top tracks
+  Future<List<Track>> execute({int limit = 10}) async {
+    return await repository.getTopTracks(limit: limit);
   }
 }

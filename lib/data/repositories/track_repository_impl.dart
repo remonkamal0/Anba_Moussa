@@ -121,4 +121,14 @@ class TrackRepositoryImpl implements TrackRepository {
 
     return response != null;
   }
+
+  @override
+  Future<List<Track>> getTopTracks({int limit = 10}) async {
+    return await remoteDataSource.getTopTracks(limit: limit);
+  }
+
+  @override
+  Future<void> logPlayEvent(String trackId) async {
+    await remoteDataSource.logPlayEvent(trackId);
+  }
 }

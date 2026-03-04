@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import '../../core/services/download_service.dart';
+import '../../core/di/service_locator.dart';
 import 'mini_player_provider.dart';
 
 // ─── State ─────────────────────────────────────────────────────────────────────
@@ -82,16 +83,28 @@ class AudioNotifier extends StateNotifier<AudioState> {
       state = state.copyWith(loopMode: loopMode);
     });
     _indexSub = player.currentIndexStream.listen((index) {
-      if (index != null && player.audioSource is ConcatenatingAudioSource) {
-        final source = player.audioSource as ConcatenatingAudioSource;
-        if (index >= 0 && index < source.children.length) {
-          final audioSource = source.children[index];
-          // Use dynamic or common base class as tag is available on base AudioSource in just_audio
-          final dynamic tag = (audioSource as dynamic).tag;
-          if (tag is MiniPlayerTrack) {
-            state = state.copyWith(currentTrack: tag);
-            _ref.read(miniPlayerProvider.notifier).play(tag);
+      if (index != null) {
+        MiniPlayerTrack? currentTrack;
+        
+        final source = player.audioSource;
+        if (source is ConcatenatingAudioSource) {
+          if (index >= 0 && index < source.children.length) {
+            final audioSource = source.children[index];
+            final dynamic tag = (audioSource as dynamic).tag;
+            if (tag is MiniPlayerTrack) {
+              currentTrack = tag;
+            }
           }
+        } else if (source != null) {
+          final dynamic tag = (source as dynamic).tag;
+          if (tag is MiniPlayerTrack) {
+            currentTrack = tag;
+          }
+        }
+
+        if (currentTrack != null) {
+          state = state.copyWith(currentTrack: currentTrack);
+          _ref.read(miniPlayerProvider.notifier).play(currentTrack);
         }
       }
     });

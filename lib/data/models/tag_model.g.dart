@@ -8,12 +8,12 @@ part of 'tag_model.dart';
 
 TagModel _$TagModelFromJson(Map<String, dynamic> json) => TagModel(
       id: json['id'] as String,
-      nameAr: json['name_ar'] as String?,
-      nameEn: json['name_en'] as String?,
+      titleAr: json['title_ar'] as String?,
+      titleEn: json['title_en'] as String?,
     );
 
 Map<String, dynamic> _$TagModelToJson(TagModel instance) => <String, dynamic>{
       'id': instance.id,
-      'name_ar': instance.nameAr,
-      'name_en': instance.nameEn,
+      'title_ar': instance.titleAr,
+      'title_en': instance.titleEn,
     };

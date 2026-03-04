@@ -350,49 +350,6 @@ class _HeroAlbumHeader extends StatelessWidget {
           ),
         ),
 
-        // Floating play button
-        Positioned(
-          right: 22.w,
-          bottom: -28.h,
-          child: Column(
-            children: [
-              Consumer(
-                builder: (context, ref, _) {
-                  final audioState = ref.watch(audioProvider);
-                  // Check if any track from this album is playing (simplified by checking if currentTrack is from this album
-                  // but we don't have albumId in currentTrack metadata usually. 
-                  // Let's just use the first track as a representative if possible?
-                  // Or better, we can't easily know if "this album" is playing without more info.
-                  // For now, let's just make it a play button that acts as "Play First Track".
-                  
-                  return GestureDetector(
-                    onTap: onPlayTap,
-                    child: Container(
-                      width: 60.w,
-                      height: 60.w,
-                      decoration: BoxDecoration(
-                        color: cs.primary,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: cs.primary.withOpacity(0.35),
-                            blurRadius: 18,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        Icons.play_arrow_rounded,
-                        color: Colors.white,
-                        size: 38.w,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
@@ -540,6 +497,31 @@ class _TrackTile extends StatelessWidget {
                             color: isCurrent ? orange.withValues(alpha: 0.7) : cs.onSurface.withValues(alpha: 0.6),
                           ),
                         ),
+                        if (track.tags.isNotEmpty) ...[
+                          SizedBox(height: 6.h),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: track.tags.map((tag) => Container(
+                                margin: EdgeInsets.only(right: 6.w),
+                                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                                decoration: BoxDecoration(
+                                  color: orange.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(6.r),
+                                  border: Border.all(color: orange.withValues(alpha: 0.1)),
+                                ),
+                                child: Text(
+                                  tag.getLocalizedName(locale),
+                                  style: TextStyle(
+                                    fontSize: 9.sp,
+                                    fontWeight: FontWeight.w700,
+                                    color: orange,
+                                  ),
+                                ),
+                              )).toList(),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -674,12 +656,12 @@ class _TagChip extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 22.w),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFFF15A24) : cs.surface,
+            color: isSelected ? orange : cs.surface,
             borderRadius: BorderRadius.circular(24.r),
             boxShadow: [
               BoxShadow(
                 color: isSelected 
-                    ? const Color(0xFFF15A24).withValues(alpha: 0.3)
+                    ? orange.withValues(alpha: 0.3)
                     : cs.onSurface.withValues(alpha: 0.05),
                 blurRadius: 8,
                 spreadRadius: 0,

@@ -8,24 +8,24 @@ enum LibraryStatus { loading, loaded, error }
 class LibraryState {
   final LibraryStatus status;
   final List<Category> categories;
-  final String? errorMessage;
+  final Object? error;
 
   const LibraryState({
     required this.status,
     this.categories = const [],
-    this.errorMessage,
+    this.error,
   });
 
   const LibraryState.loading()
       : status = LibraryStatus.loading,
         categories = const [],
-        errorMessage = null;
+        error = null;
 
   const LibraryState.loaded(this.categories)
       : status = LibraryStatus.loaded,
-        errorMessage = null;
+        error = null;
 
-  const LibraryState.error(this.errorMessage)
+  const LibraryState.error(this.error)
       : status = LibraryStatus.error,
         categories = const [];
 }
@@ -56,7 +56,7 @@ class LibraryProvider extends ChangeNotifier {
       _state = LibraryState.loaded(categories);
     } catch (e, st) {
       _logger.error('Failed to fetch categories: $e', e, st);
-      _state = LibraryState.error(e.toString());
+      _state = LibraryState.error(e);
     } finally {
       notifyListeners();
     }

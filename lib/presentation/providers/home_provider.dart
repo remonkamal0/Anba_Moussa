@@ -52,7 +52,7 @@ class HomeProvider extends ChangeNotifier {
       ));
     } catch (e, st) {
       _logger.error('Failed to load home data', e, st);
-      _setState(HomeState.error(e.toString()));
+      _setState(HomeState.error(e));
     }
   }
 
@@ -108,7 +108,7 @@ class HomeState {
   final List<entity.Slider> sliders;
   final Set<String> favoriteTrackIds;
   final int currentIndex;
-  final String? message;
+  final Object? error;
 
   const HomeState({
     required this.status,
@@ -117,7 +117,7 @@ class HomeState {
     this.sliders = const [],
     this.favoriteTrackIds = const {},
     this.currentIndex = 0,
-    this.message,
+    this.error,
   });
 
   const HomeState.loading()
@@ -127,7 +127,7 @@ class HomeState {
         sliders = const [],
         favoriteTrackIds = const {},
         currentIndex = 0,
-        message = null;
+        error = null;
 
   const HomeState.loaded({
     required this.tracks,
@@ -136,9 +136,9 @@ class HomeState {
     required this.favoriteTrackIds,
     this.currentIndex = 0,
   })  : status = HomeStatus.loaded,
-        message = null;
+        error = null;
 
-  const HomeState.error(this.message)
+  const HomeState.error(this.error)
       : status = HomeStatus.error,
         tracks = const [],
         categories = const [],
@@ -153,7 +153,7 @@ class HomeState {
     List<entity.Slider>? sliders,
     Set<String>? favoriteTrackIds,
     int? currentIndex,
-    String? message,
+    Object? error,
   }) {
     return HomeState(
       status: status ?? this.status,
@@ -162,7 +162,7 @@ class HomeState {
       sliders: sliders ?? this.sliders,
       favoriteTrackIds: favoriteTrackIds ?? this.favoriteTrackIds,
       currentIndex: currentIndex ?? this.currentIndex,
-      message: message ?? this.message,
+      error: error ?? this.error,
     );
   }
 
@@ -171,7 +171,7 @@ class HomeState {
     required T Function(List<Track>, List<Category>, List<entity.Slider>,
             Set<String>, int)
         loaded,
-    required T Function(String) error,
+    required T Function(Object) error,
   }) {
     switch (status) {
       case HomeStatus.loading:
@@ -179,7 +179,7 @@ class HomeState {
       case HomeStatus.loaded:
         return loaded(tracks, categories, sliders, favoriteTrackIds, currentIndex);
       case HomeStatus.error:
-        return error(message ?? 'Unknown error');
+        return error(this.error ?? 'Unknown error');
     }
   }
 }

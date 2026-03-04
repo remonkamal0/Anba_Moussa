@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'photo_gallery_screen.dart';
 import '../../../domain/entities/photo_album.dart';
 import '../../providers/gallery_provider.dart';
+import '../../widgets/common/error_handle_widget.dart';
 
 class PhotoAlbumDetailsScreen extends ConsumerWidget {
   final PhotoAlbum album;
@@ -152,7 +153,10 @@ class PhotoAlbumDetailsScreen extends ConsumerWidget {
                   );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, stack) => Center(child: Text(err.toString())),
+                error: (error, stack) => ErrorHandleWidget(
+                  error: error,
+                  onRetry: () => ref.refresh(albumPhotosProvider(album.id)),
+                ),
               ),
             ),
           ],

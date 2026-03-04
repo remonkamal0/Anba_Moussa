@@ -18,6 +18,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart' as riverpod;
 import '../../providers/favorites_provider.dart';
 import '../../providers/downloads_provider.dart';
 import '../../providers/audio_provider.dart';
+import '../../providers/user_profile_provider.dart';
+import '../../widgets/common/error_handle_widget.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -59,13 +61,17 @@ class _HomeViewContentState extends riverpod.ConsumerState<_HomeViewContent> {
     // Left empty since CarouselSlider manages its own auto-play
   }
 
-  @override
   Widget build(BuildContext context) {
+    final userProfile = ref.watch(userProfileProvider);
+    
     return Consumer<HomeProvider>(
       builder: (context, provider, child) {
           return provider.state.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (message) => _ErrorView(message: message),
+            error: (err) => ErrorHandleWidget(
+              error: err,
+              onRetry: () => provider.refresh(),
+            ),
             loaded: (tracks, categories, sliders, favoriteIds, currentIndex) {
               return Scaffold(
                 backgroundColor: Theme.of(context).colorScheme.surface,
@@ -74,7 +80,7 @@ class _HomeViewContentState extends riverpod.ConsumerState<_HomeViewContent> {
                   child: Column(
                     children: [
                       _TopBar(
-                        userName: 'Guest',
+                        userName: userProfile.fullName,
                         onSearch: () => context.push('/search'),
                         onNotifications: () => context.push('/notifications'),
                       ),
@@ -168,17 +174,6 @@ class _TopBar extends StatelessWidget {
             icon: Icon(Icons.menu, color: cs.onSurface),
           ),
           SizedBox(width: 6.w),
-          Container(
-            width: 42.w,
-            height: 42.w,
-            decoration: BoxDecoration(
-              color: cs.primary.withValues(alpha: 0.15),
-              border: Border.all(color: cs.primary.withValues(alpha: 0.3), width: 2),
-              borderRadius: BorderRadius.circular(21.r),
-            ),
-            child: Icon(Icons.person, color: orange),
-          ),
-          SizedBox(width: 10.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

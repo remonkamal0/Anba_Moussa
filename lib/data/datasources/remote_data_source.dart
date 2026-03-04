@@ -1,14 +1,21 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../core/errors/exceptions.dart';
+import '../../core/services/connectivity_service.dart';
 import '../../domain/entities/category.dart';
+import '../../domain/entities/photo.dart';
+import '../../domain/entities/photo_album.dart';
 import '../../domain/entities/slider.dart' as entity_slider;
-import '../../domain/entities/track.dart';
-import '../models/category_model.dart';
-import '../models/track_model.dart';
-import '../models/tag_model.dart';
 import '../../domain/entities/tag.dart';
+import '../../domain/entities/track.dart';
+import '../../domain/entities/video.dart';
+import '../../domain/entities/video_album.dart';
+import '../models/category_model.dart';
 import '../models/photo_album_model.dart';
 import '../models/photo_model.dart';
+import '../models/slider_model.dart';
+import '../models/tag_model.dart';
+import '../models/track_model.dart';
 import '../models/video_album_model.dart';
 import '../models/video_model.dart';
 import '../../domain/entities/photo_album.dart';
@@ -30,12 +37,24 @@ abstract class RemoteDataSource {
   Future<List<Photo>> getPhotosByAlbumId(String albumId);
   Future<List<VideoAlbum>> getVideoAlbums();
   Future<List<Video>> getVideosByAlbumId(String albumId);
+  Future<void> logPlayEvent(String trackId);
 }
 
 class SupabaseRemoteDataSourceImpl implements RemoteDataSource {
   final SupabaseClient client;
+  final ConnectivityService _connectivityService;
 
-  SupabaseRemoteDataSourceImpl({required this.client});
+  SupabaseRemoteDataSourceImpl({
+    required this.client,
+    required ConnectivityService connectivityService,
+  }) : _connectivityService = connectivityService;
+
+  Future<void> _checkConnectivity() async {
+    final isConnected = await _connectivityService.isConnected();
+    if (!isConnected) {
+      throw NoInternetException();
+    }
+  }
 
   String? _getCurrentUserId() => client.auth.currentUser?.id;
 
@@ -45,15 +64,20 @@ class SupabaseRemoteDataSourceImpl implements RemoteDataSource {
       
       // Extract tags from nested join result: track_tags(tags(*))
       List<Tag> tags = [];
-      if (json['track_tags'] != null) {
+      if (json['track_tags'] != null && json['track_tags'] is List) {
         final trackTags = json['track_tags'] as List<dynamic>;
         for (var tt in trackTags) {
-          if (tt is Map && tt['tags'] != null) {
+          if (tt is Map) {
             final tagData = tt['tags'];
-            if (tagData is Map<String, dynamic>) {
-              tags.add(TagModel.fromJson(tagData).toEntity());
-            } else if (tagData is List && tagData.isNotEmpty) {
-              tags.add(TagModel.fromJson(tagData.first as Map<String, dynamic>).toEntity());
+            if (tagData != null) {
+              if (tagData is Map<String, dynamic>) {
+                tags.add(TagModel.fromJson(tagData).toEntity());
+              } else if (tagData is List && tagData.isNotEmpty) {
+                final firstTag = tagData.first;
+                if (firstTag is Map<String, dynamic>) {
+                  tags.add(TagModel.fromJson(firstTag).toEntity());
+                }
+              }
             }
           }
         }
@@ -104,36 +128,61 @@ class SupabaseRemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<List<Track>> getTopTracks({int limit = 10}) async {
-    final response = await client
-        .from('tracks')
-        .select('''
-          id,
-          title_ar,
-          title_en,
-          subtitle_ar,
-          subtitle_en,
-          description_ar,
-          description_en,
-          speaker_ar,
-          speaker_en,
-          cover_image_url,
-          audio_url,
-          duration_seconds,
-          published_at,
-          is_active,
-          created_at,
-          updated_at,
-          category_id
-        ''')
-        .eq('is_active', true)
-        .order('created_at', ascending: false)
-        .limit(limit);
+    await _checkConnectivity();
+    try {
+      // 1. Fetch all active track IDs
+      final idsResponse = await client
+          .from('tracks')
+          .select('id')
+          .eq('is_active', true);
 
-    return (response as List).map((trackMap) => _mapTrackModelToEntity(trackMap as Map<String, dynamic>)).toList();
+      final List<String> allIds = (idsResponse as List).map((e) => e['id'] as String).toList();
+      
+      if (allIds.isEmpty) return [];
+
+      // 2. Shuffle and take the requested limit
+      allIds.shuffle();
+      final selectedIds = allIds.take(limit).toList();
+
+      // 3. Fetch full track details with tags for these random IDs
+      final tracksResponse = await client
+          .from('tracks')
+          .select('''
+            *,
+            track_tags(tags(*))
+          ''')
+          .inFilter('id', selectedIds);
+
+      final List<Track> tracks = (tracksResponse as List)
+          .map((trackMap) => _mapTrackModelToEntity(trackMap as Map<String, dynamic>))
+          .toList();
+
+      // Ensure they remain in the shuffled order
+      tracks.sort((a, b) => selectedIds.indexOf(a.id).compareTo(selectedIds.indexOf(b.id)));
+      
+      return tracks;
+    } catch (e) {
+      print('Error fetching random tracks: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<void> logPlayEvent(String trackId) async {
+    // تم إلغاء التسجيل في قاعدة البيانات بناءً على طلبك
+    // final uid = _getCurrentUserId();
+    // try {
+    //   final Map<String, dynamic> data = {'track_id': trackId};
+    //   if (uid != null) data['user_id'] = uid;
+    //   await client.from('play_events').insert(data);
+    // } catch (e) {
+    //   print('ERROR: Supabase log catch: $e');
+    // }
   }
 
   @override
   Future<List<Category>> getCategories() async {
+    await _checkConnectivity();
     final response = await client
         .from('categories')
         .select()
@@ -146,6 +195,7 @@ class SupabaseRemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<List<entity_slider.Slider>> getSliders() async {
+    await _checkConnectivity();
     final response = await client
         .from('sliders')
         .select()
@@ -161,6 +211,7 @@ class SupabaseRemoteDataSourceImpl implements RemoteDataSource {
     final uid = _getCurrentUserId();
     if (uid == null) return <String>{};
 
+    await _checkConnectivity();
     final response = await client
         .from('favorites')
         .select('track_id')
@@ -190,9 +241,10 @@ class SupabaseRemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<List<Track>> searchTracks(String query) async {
+    await _checkConnectivity();
     final response = await client
         .from('tracks')
-        .select('*')
+        .select('*, track_tags(tags(*))')
         .eq('is_active', true)
         .or('title_ar.ilike.%$query%,title_en.ilike.%$query%')
         .order('created_at', ascending: false)
@@ -203,9 +255,10 @@ class SupabaseRemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<Track?> getTrackById(String id) async {
+    await _checkConnectivity();
     final response = await client
         .from('tracks')
-        .select('*')
+        .select('*, track_tags(tags(*))')
         .eq('id', id)
         .maybeSingle();
     
@@ -217,9 +270,10 @@ class SupabaseRemoteDataSourceImpl implements RemoteDataSource {
   Future<List<Track>> getFavoriteTracks() async {
     final uid = _getCurrentUserId();
     if (uid == null) return [];
+    await _checkConnectivity();
     final response = await client
         .from('favorites')
-        .select('tracks(*)')
+        .select('tracks(*, track_tags(tags(*)))')
         .eq('user_id', uid);
 
     return (response as List).map((json) {
@@ -246,6 +300,7 @@ class SupabaseRemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<List<PhotoAlbum>> getPhotoAlbums() async {
+    await _checkConnectivity();
     final response = await client
         .from('photo_albums')
         .select()
@@ -260,6 +315,7 @@ class SupabaseRemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<List<Photo>> getPhotosByAlbumId(String albumId) async {
+    await _checkConnectivity();
     final response = await client
         .from('photos')
         .select()
@@ -274,6 +330,7 @@ class SupabaseRemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<List<VideoAlbum>> getVideoAlbums() async {
+    await _checkConnectivity();
     final response = await client
         .from('video_albums')
         .select()
@@ -288,6 +345,7 @@ class SupabaseRemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<List<Video>> getVideosByAlbumId(String albumId) async {
+    await _checkConnectivity();
     final response = await client
         .from('videos')
         .select()

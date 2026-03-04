@@ -7,6 +7,7 @@ import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/locale_provider.dart';
+import '../../providers/user_profile_provider.dart';
 import 'confirm_dialog.dart';
 
 class AppDrawer extends ConsumerWidget {
@@ -34,6 +35,8 @@ class AppDrawer extends ConsumerWidget {
     final bg = cs.surface;
     final surface = cs.surface;
     final divider = cs.outlineVariant;
+    
+    final userProfile = ref.watch(userProfileProvider);
 
     return Scaffold(
       backgroundColor: bg,
@@ -47,30 +50,13 @@ class AppDrawer extends ConsumerWidget {
               padding: EdgeInsetsDirectional.fromSTEB(22.w, 22.h, 22.w, 16.h),
               child: Row(
                 children: [
-                  Container(
-                    width: 70.r,
-                    height: 70.r,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: accentColor.withValues(alpha: 0.18),
-                      border: Border.all(
-                        color: isDark ? Colors.white12 : const Color(0xFFE6E6E6),
-                        width: 2,
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.person,
-                      size: 32.r,
-                      color: accentColor,
-                    ),
-                  ),
-                  SizedBox(width: 16.w),
+
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Remon Kamal',
+                          userProfile.fullName,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -80,15 +66,16 @@ class AppDrawer extends ConsumerWidget {
                           ),
                         ),
                         SizedBox(height: 6.h),
-                        Text(
-                          'remon@example.com',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            color: cs.onSurface.withValues(alpha: 0.54),
+                        if (userProfile.email.isNotEmpty)
+                          Text(
+                            userProfile.email,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              color: cs.onSurface.withValues(alpha: 0.54),
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),

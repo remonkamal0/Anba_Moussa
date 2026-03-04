@@ -10,6 +10,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../widgets/common/app_drawer.dart';
 import '../../../domain/entities/photo_album.dart';
 import '../../providers/gallery_provider.dart';
+import '../../widgets/common/error_handle_widget.dart';
 
 class PhotoGalleryScreen extends ConsumerStatefulWidget {
   const PhotoGalleryScreen({super.key});
@@ -133,9 +134,10 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
                       );
                     },
                     loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (err, stack) => Center(
-                      child: Text(err.toString()),
-                    ),
+                    error: (error, stack) => ErrorHandleWidget(
+          error: error,
+          onRetry: () => ref.refresh(photoAlbumsProvider),
+        ),
                   ),
                 ),
               ],

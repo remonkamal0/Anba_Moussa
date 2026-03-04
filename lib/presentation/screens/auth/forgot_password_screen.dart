@@ -103,7 +103,7 @@ class _ForgotPasswordScreenState extends State<_ForgotPasswordScreen> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(18.r),
-        borderSide: BorderSide(color: _border, width: 1),
+        borderSide: BorderSide(color: _orange, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(18.r),

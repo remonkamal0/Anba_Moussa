@@ -12,4 +12,6 @@ abstract class TrackRepository {
   Future<List<Track>> getDownloadedTracks();
   Future<bool> isDownloaded(String trackId);
   Future<void> removeFromDownloads(String trackId);
+  Future<List<Track>> getTopTracks({int limit = 10});
+  Future<void> logPlayEvent(String trackId);
 }

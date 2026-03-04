@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../widgets/common/app_drawer.dart';
 import '../../../domain/entities/video_album.dart';
 import '../../providers/video_provider.dart';
+import '../../widgets/common/error_handle_widget.dart';
 
 class VideoGalleryScreen extends ConsumerStatefulWidget {
   const VideoGalleryScreen({super.key});
@@ -202,7 +203,10 @@ class _VideoGalleryScreenState extends ConsumerState<VideoGalleryScreen> {
                       );
                     },
                     loading: () => const Center(child: CircularProgressIndicator()),
-                    error: (err, stack) => Center(child: Text(err.toString())),
+                    error: (error, stack) => ErrorHandleWidget(
+          error: error,
+          onRetry: () => ref.refresh(videoAlbumsProvider),
+        ),
                   ),
                 ),
               ],

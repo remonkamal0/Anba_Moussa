@@ -1,5 +1,6 @@
 import '../../core/network/supabase_service.dart';
 import '../../core/utils/logger.dart';
+import '../services/connectivity_service.dart';
 import '../../data/datasources/remote_data_source.dart';
 import '../../data/repositories/notification_repository_impl.dart';
 import '../../data/repositories/track_repository_impl.dart';
@@ -35,6 +36,7 @@ class ServiceLocator {
   // Core
   late final Logger logger;
   late final SupabaseService supabaseService;
+  late final ConnectivityService connectivityService;
 
   // Data Sources
   late final RemoteDataSource remoteDataSource;
@@ -63,9 +65,13 @@ class ServiceLocator {
     // Core
     logger = Logger();
     supabaseService = SupabaseService.instance;
+    connectivityService = ConnectivityService();
 
     // Data Sources
-    remoteDataSource = SupabaseRemoteDataSourceImpl(client: supabaseService.client);
+    remoteDataSource = SupabaseRemoteDataSourceImpl(
+      client: supabaseService.client,
+      connectivityService: connectivityService,
+    );
 
     // Repositories
     trackRepository = TrackRepositoryImpl(remoteDataSource, supabaseService);

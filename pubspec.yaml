@@ -36,7 +36,6 @@ dependencies:
 
   # UI & Animation
   flutter_animate: ^4.5.0
-  animations: ^2.0.11
   flutter_zoom_drawer: ^3.2.0
   flutter_screenutil: ^5.9.0
   smooth_page_indicator: ^1.1.0
@@ -65,8 +64,6 @@ dependencies:
   connectivity_plus: ^6.0.3
 
   # Media & Files
-  image_picker: ^1.0.7
-  file_picker: ^8.1.2
   photo_view: ^0.14.0
 
   # Permissions
@@ -74,14 +71,11 @@ dependencies:
 
   # Icons
   cupertino_icons: ^1.0.8
-  font_awesome_flutter: ^10.7.0
 
   # Utility
   intl: ^0.20.2
-  uuid: ^4.2.1
   carousel_slider: ^5.1.2
   url_launcher: ^6.3.2
-  provider: ^6.1.5+1
 
 dev_dependencies:
   flutter_test:

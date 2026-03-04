@@ -99,9 +99,10 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       mainScreen: Scaffold(
         backgroundColor: Colors.transparent,
         extendBody: true,
-        body: Stack(
+        body: widget.child,
+        bottomNavigationBar: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            widget.child,
             // Mini Player: only shown when a track is active
             Consumer(
               builder: (context, ref, _) {
@@ -112,20 +113,16 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
                 if (!miniState.isVisible || miniState.track == null || isPlayerScreen) {
                   return const SizedBox.shrink();
                 }
-                return Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 78.h,
-                  child: const MiniPlayer(),
-                );
+                return const MiniPlayer();
               },
             ),
+            SizedBox(height: 8.h),
+            _CustomBottomNav(
+              items: navItems,
+              currentIndex: currentIndex,
+              onTap: (i) => _onItemTapped(i, context),
+            ),
           ],
-        ),
-        bottomNavigationBar: _CustomBottomNav(
-          items: navItems,
-          currentIndex: currentIndex,
-          onTap: (i) => _onItemTapped(i, context),
         ),
       ),
       borderRadius: 24.0,

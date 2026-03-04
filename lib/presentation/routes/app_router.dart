@@ -22,7 +22,13 @@ import '../screens/favorites/favorites_screen.dart';
 import '../screens/favorites/all_playlists_screen.dart';
 import '../screens/downloads/downloads_screen.dart';
 import '../screens/search/search_screen.dart';
+import '../screens/admin/send_notification_screen.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/network/supabase_service.dart';
+import '../screens/gallery/photo_album_details_screen.dart';
+import '../screens/gallery/video_album_details_screen.dart';
+import '../../domain/entities/photo_album.dart';
+import '../../domain/entities/video_album.dart';
 import '../widgets/layout/main_layout.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -56,6 +62,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/search',
         builder: (context, state) => const SearchScreen(),
+      ),
+      GoRoute(
+        path: '/admin/send-notification',
+        redirect: (context, state) async {
+          // Guard: only allow users with role = 'admin'
+          final profile = await SupabaseService.instance.getMyProfile();
+          final role = profile?['role'] as String? ?? 'user';
+          if (role != 'admin') return '/home';
+          return null; // allow
+        },
+        builder: (context, state) => const SendNotificationScreen(),
       ),
       GoRoute(
         path: '/artist/:artistId',
@@ -151,6 +168,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/forgot-password',
         builder: (context, state) => const ForgotPasswordScreen(),
       ),
+      GoRoute(
+        path: '/photo-album/:albumId',
+        builder: (context, state) {
+          final albumId = state.pathParameters['albumId']!;
+          return _PhotoAlbumDeepLinkScreen(albumId: albumId);
+        },
+      ),
+      GoRoute(
+        path: '/video-album/:albumId',
+        builder: (context, state) {
+          final albumId = state.pathParameters['albumId']!;
+          return _VideoAlbumDeepLinkScreen(albumId: albumId);
+        },
+      ),
     ],
     errorBuilder: (context, state) => Scaffold(
       body: Center(
@@ -159,3 +190,137 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     ),
   );
 });
+
+// ---------------------------------------------------------------------------
+// Helpers for Gallery Deep Links
+// ---------------------------------------------------------------------------
+
+class _PhotoAlbumDeepLinkScreen extends StatefulWidget {
+  final String albumId;
+  const _PhotoAlbumDeepLinkScreen({required this.albumId});
+
+  @override
+  State<_PhotoAlbumDeepLinkScreen> createState() => _PhotoAlbumDeepLinkScreenState();
+}
+
+class _PhotoAlbumDeepLinkScreenState extends State<_PhotoAlbumDeepLinkScreen> {
+  bool _isLoading = true;
+  String? _error;
+  var _album;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetch();
+  }
+
+  Future<void> _fetch() async {
+    try {
+      final res = await SupabaseService.instance.client
+          .from('photo_albums')
+          .select()
+          .eq('id', widget.albumId)
+          .maybeSingle();
+      if (res != null) {
+        // Need to import PhotoAlbumModel or parse manually.
+        // We'll parse it simply:
+        _album = _parsePhotoAlbum(res);
+      } else {
+        _error = 'Album not found';
+      }
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  PhotoAlbum _parsePhotoAlbum(Map<String, dynamic> json) {
+    return PhotoAlbum(
+      id: json['id'],
+      slug: json['slug'],
+      titleAr: json['title_ar'] ?? '',
+      titleEn: json['title_en'] ?? '',
+      subtitleAr: json['subtitle_ar'],
+      subtitleEn: json['subtitle_en'],
+      coverImageUrl: json['cover_image_url'],
+      descriptionAr: json['description_ar'],
+      descriptionEn: json['description_en'],
+      sortOrder: json['sort_order'] ?? 0,
+      isActive: json['is_active'] ?? true,
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['updated_at']),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (_error != null || _album == null) return Scaffold(body: Center(child: Text(_error ?? 'Not found')));
+    return PhotoAlbumDetailsScreen(album: _album);
+  }
+}
+
+class _VideoAlbumDeepLinkScreen extends StatefulWidget {
+  final String albumId;
+  const _VideoAlbumDeepLinkScreen({required this.albumId});
+
+  @override
+  State<_VideoAlbumDeepLinkScreen> createState() => _VideoAlbumDeepLinkScreenState();
+}
+
+class _VideoAlbumDeepLinkScreenState extends State<_VideoAlbumDeepLinkScreen> {
+  bool _isLoading = true;
+  String? _error;
+  var _album;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetch();
+  }
+
+  Future<void> _fetch() async {
+    try {
+      final res = await SupabaseService.instance.client
+          .from('video_albums')
+          .select()
+          .eq('id', widget.albumId)
+          .maybeSingle();
+      if (res != null) {
+        _album = _parseVideoAlbum(res);
+      } else {
+        _error = 'Album not found';
+      }
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  VideoAlbum _parseVideoAlbum(Map<String, dynamic> json) {
+    return VideoAlbum(
+      id: json['id'],
+      slug: json['slug'],
+      titleAr: json['title_ar'] ?? '',
+      titleEn: json['title_en'] ?? '',
+      subtitleAr: json['subtitle_ar'],
+      subtitleEn: json['subtitle_en'],
+      coverImageUrl: json['cover_image_url'],
+      descriptionAr: json['description_ar'],
+      descriptionEn: json['description_en'],
+      sortOrder: json['sort_order'] ?? 0,
+      isActive: json['is_active'] ?? true,
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['updated_at']),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (_error != null || _album == null) return Scaffold(body: Center(child: Text(_error ?? 'Not found')));
+    return VideoAlbumDetailsScreen(album: _album);
+  }
+}

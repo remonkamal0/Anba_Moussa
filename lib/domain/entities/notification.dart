@@ -39,4 +39,29 @@ class AppNotification {
 
   String getLocalizedTitle(String locale) => locale == 'ar' ? titleAr : titleEn;
   String getLocalizedBody(String locale) => locale == 'ar' ? bodyAr : bodyEn;
+
+  AppNotification copyWith({
+    bool? isRead,
+    DateTime? readAt,
+  }) {
+    return AppNotification(
+      id: id,
+      kind: kind,
+      audience: audience,
+      titleAr: titleAr,
+      titleEn: titleEn,
+      bodyAr: bodyAr,
+      bodyEn: bodyEn,
+      imageUrl: imageUrl,
+      actionType: actionType,
+      externalUrl: externalUrl,
+      internalRoute: internalRoute,
+      internalId: internalId,
+      entityType: entityType,
+      entityId: entityId,
+      sentAt: sentAt,
+      isRead: isRead ?? this.isRead,
+      readAt: readAt ?? this.readAt,
+    );
+  }
 }

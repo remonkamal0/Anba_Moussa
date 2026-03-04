@@ -19,6 +19,7 @@ import '../../providers/favorites_provider.dart';
 import '../../providers/downloads_provider.dart';
 import '../../providers/audio_provider.dart';
 import '../../providers/user_profile_provider.dart';
+import '../../providers/notifications_provider.dart';
 import '../../widgets/common/error_handle_widget.dart';
 
 class HomeView extends StatelessWidget {
@@ -206,17 +207,31 @@ class _TopBar extends StatelessWidget {
                 onPressed: onNotifications,
                 icon: Icon(Icons.notifications_outlined, color: cs.onSurface),
               ),
-              Positioned(
-                right: 8,
-                top: 8,
-                child: Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: cs.primary,
-                    shape: BoxShape.circle,
-                  ),
-                ),
+              riverpod.Consumer(
+                builder: (context, ref, child) {
+                  final unreadCount = ref.watch(unreadNotificationsCountProvider);
+                  return unreadCount.when(
+                    data: (count) {
+                      if (count > 0) {
+                        return Positioned(
+                          right: 8,
+                          top: 8,
+                          child: Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: cs.primary,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, __) => const SizedBox.shrink(),
+                  );
+                },
               ),
             ],
           ),
@@ -361,6 +376,7 @@ class _SliderCard extends StatelessWidget {
                 )
               else
                 Container(color: orange.withOpacity(0.12)),
+              // Gradient overlay - deepened at the bottom for text readability
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -368,28 +384,15 @@ class _SliderCard extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.black.withOpacity(0.0),
-                      Colors.black.withOpacity(0.4),
+                      Colors.black.withOpacity(0.7),
                     ],
                   ),
                 ),
               ),
               Align(
                 alignment: Alignment.bottomLeft,
-                child: Container(
-                  margin: EdgeInsets.all(16.w),
-                  padding: EdgeInsets.all(12.w),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.85),
-                    borderRadius: BorderRadius.circular(16.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
+                child: Padding(
+                  padding: EdgeInsets.all(16.w),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -399,7 +402,7 @@ class _SliderCard extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.getDisplayMedium(context).copyWith(
-                          color: orange,
+                          color: Colors.white,
                           fontWeight: FontWeight.w900,
                           height: 1.1,
                         ),
@@ -411,7 +414,7 @@ class _SliderCard extends StatelessWidget {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: AppTextStyles.getBodySmall(context).copyWith(
-                            color: orange.withOpacity(0.7),
+                            color: Colors.white.withValues(alpha: 0.8),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -635,19 +638,6 @@ class _TopTracksList extends riverpod.ConsumerWidget {
                   padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
                   child: Row(
                     children: [
-                      // Index number
-                      SizedBox(
-                        width: 30.w,
-                        child: Text(
-                          (i + 1).toString().padLeft(2, '0'),
-                          style: AppTextStyles.getHeadlineSmall(context).copyWith(
-                            color: isCurrentTrack ? orange : cs.onSurface.withValues(alpha: 0.2),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-
                       // Thumbnail with Visualizer
                       Stack(
                         alignment: Alignment.center,
@@ -709,7 +699,7 @@ class _TopTracksList extends riverpod.ConsumerWidget {
                             ),
                             SizedBox(height: 4.h),
                             Text(
-                              "${track.getLocalizedSpeaker(Localizations.localeOf(context).languageCode) ?? 'Unknown Speaker'} • ${_formatDuration(track.duration ?? Duration.zero)}",
+                              track.getLocalizedSpeaker(Localizations.localeOf(context).languageCode) ?? 'Unknown Speaker',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.getBodyMedium(context).copyWith(
@@ -741,7 +731,7 @@ class _TopTracksList extends riverpod.ConsumerWidget {
                                 ),
                                 onPressed: () => ref.read(favoritesProvider.notifier).toggleFavorite(track),
                               ),
-                              SizedBox(width: 8.w),
+                              SizedBox(width: 2.w),
                               progress != null
                                   ? SizedBox(
                                       width: 20.w,
@@ -768,17 +758,17 @@ class _TopTracksList extends riverpod.ConsumerWidget {
                                         }
                                       },
                                     ),
-                              SizedBox(width: 12.w),
+                              SizedBox(width: 6.w),
                               Container(
-                                padding: EdgeInsets.all(10.w),
+                                padding: EdgeInsets.all(8.w),
                                 decoration: BoxDecoration(
                                   color: isCurrentTrack ? orange : cs.surfaceVariant,
-                                  borderRadius: BorderRadius.circular(14.r),
+                                  borderRadius: BorderRadius.circular(12.r),
                                   boxShadow: isCurrentTrack
                                       ? [
                                           BoxShadow(
                                             color: orange.withOpacity(0.35),
-                                            blurRadius: 12,
+                                            blurRadius: 10,
                                             offset: const Offset(0, 4),
                                           )
                                         ]

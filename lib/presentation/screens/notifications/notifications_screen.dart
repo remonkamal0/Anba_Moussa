@@ -4,20 +4,23 @@ import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../domain/entities/notification.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../core/constants/app_constants.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/notifications_provider.dart';
 
-class NotificationsScreen extends StatefulWidget {
+class NotificationsScreen extends ConsumerStatefulWidget {
   const NotificationsScreen({super.key});
 
   @override
-  State<NotificationsScreen> createState() => _NotificationsScreenState();
+  ConsumerState<NotificationsScreen> createState() => _NotificationsScreenState();
 }
 
-class _NotificationsScreenState extends State<NotificationsScreen> {
+class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   List<AppNotification> _notifications = [];
   bool _isLoading = true;
   String? _errorMessage;
@@ -52,12 +55,100 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
+  /// Handles navigation when a notification is tapped.
+  /// Supports: internal routes (with optional ID), external URLs, and no-action.
+  Future<void> _handleNotificationTap(AppNotification n) async {
+    // 1. Mark as read
+    if (!n.isRead) {
+      // Optimistic update
+      setState(() {
+        final index = _notifications.indexWhere((element) => element.id == n.id);
+        if (index != -1) {
+          _notifications[index] = _notifications[index].copyWith(isRead: true);
+        }
+      });
+
+      try {
+        await sl.notificationRepository.markAsRead(n.id);
+        ref.invalidate(unreadNotificationsCountProvider);
+      } catch (e) {
+        // Rollback if needed
+        _fetchNotifications();
+      }
+    }
+
+    if (!mounted) return;
+    final actionType = n.actionType ?? 'none';
+
+    // 2. Handle external URL
+    if (actionType == 'external' && n.externalUrl != null) {
+      final uri = Uri.tryParse(n.externalUrl!);
+      if (uri != null && await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+      return;
+    }
+
+    // 3. Handle internal route
+    if (actionType == 'internal' && n.internalRoute != null) {
+      final route = _buildInternalRoute(n.internalRoute!, n.internalId);
+      if (route != null) {
+        context.push(route);
+      }
+    }
+  }
+
+  /// Builds the correct GoRouter path from the stored route pattern + optional ID.
+  ///
+  /// Supported patterns in `internal_route` column:
+  ///   /home, /library, /search, /favorites, /downloads,
+  ///   /photo-gallery, /video-gallery,
+  ///   /album/:id       → needs internal_id
+  ///   /playlist/:id    → needs internal_id
+  ///   /player          → needs internal_id (used as trackId query param)
+  String? _buildInternalRoute(String routePattern, String? id) {
+    switch (routePattern) {
+      // Simple routes — no ID needed
+      case '/home':
+      case '/library':
+      case '/search':
+      case '/favorites':
+      case '/downloads':
+      case '/photo-gallery':
+      case '/video-gallery':
+      case '/notifications':
+        return routePattern;
+
+      // Routes that require an ID
+      case '/album/:id':
+        return id != null ? '/album/$id' : null;
+      case '/photo-album/:id':
+        return id != null ? '/photo-album/$id' : null;
+      case '/video-album/:id':
+        return id != null ? '/video-album/$id' : null;
+      case '/playlist/:id':
+        return id != null ? '/playlist/$id' : null;
+      case '/player':
+        return id != null ? '/player?trackId=$id' : null;
+
+      default:
+        // Fallback: try using the route as-is (for future routes)
+        return routePattern;
+    }
+  }
+
+
   Future<void> _markAllAsRead() async {
+    // Optimistic update
+    setState(() {
+      _notifications = _notifications.map((n) => n.copyWith(isRead: true)).toList();
+    });
+
     try {
       await sl.notificationRepository.markAllAsRead();
-      _fetchNotifications();
+      ref.invalidate(unreadNotificationsCountProvider);
     } catch (e) {
-      // Handle error
+      _fetchNotifications();
     }
   }
 
@@ -133,15 +224,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             final n = _notifications[index];
                             return NotificationTile(
                               notification: n,
-                              onTap: () {
-                                if (!n.isRead) {
-                                  sl.notificationRepository.markAsRead(n.id);
-                                }
-                                // Handle deep link if any
-                                if (n.internalRoute != null) {
-                                  context.push(n.internalRoute!);
-                                }
-                              },
+                              onTap: () => _handleNotificationTap(n),
                             ).animate().fadeIn(delay: Duration(milliseconds: index * 50)).slideX(begin: -0.05);
                           },
                         ),

@@ -13,7 +13,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
     
     return raw.map((map) {
       final n = map['notifications'] as Map<String, dynamic>;
-      final r = map['notification_recipients'] as Map<String, dynamic>?;
+      final r = map;
       
       return AppNotification(
         id: n['id'],

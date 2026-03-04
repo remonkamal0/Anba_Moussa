@@ -397,6 +397,39 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                   SizedBox(height: 18.h),
 
+                  // ── Admin Tools (only visible to admins) ──
+                  if (userProfile.isAdmin) ...[
+                    _SectionTitle("ADMIN TOOLS"),
+                    SizedBox(height: 10.h),
+
+                    _CardContainer(
+                      child: _RowTile(
+                        icon: Icons.notifications_active_rounded,
+                        iconBg: accent.withOpacity(.12),
+                        iconColor: accent,
+                        title: "إرسال إشعار",
+                        trailing: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                          decoration: BoxDecoration(
+                            color: accent.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Text(
+                            'Admin',
+                            style: TextStyle(
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w700,
+                              color: accent,
+                            ),
+                          ),
+                        ),
+                        onTap: () => context.push('/admin/send-notification'),
+                      ),
+                    ),
+
+                    SizedBox(height: 18.h),
+                  ],
+
                   // Log out
                   TextButton.icon(
                     onPressed: () async {

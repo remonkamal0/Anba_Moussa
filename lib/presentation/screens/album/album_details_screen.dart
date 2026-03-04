@@ -416,19 +416,6 @@ class _TrackTile extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
               child: Row(
                 children: [
-                  // Index number
-                  SizedBox(
-                    width: 30.w,
-                    child: Text(
-                      index.toString().padLeft(2, '0'),
-                      style: AppTextStyles.getHeadlineSmall(context).copyWith(
-                        color: isCurrent ? orange : cs.onSurface.withValues(alpha: 0.2),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 8.w),
-
                   // Thumbnail with Visualizer
                   Stack(
                     alignment: Alignment.center,
@@ -535,11 +522,11 @@ class _TrackTile extends StatelessWidget {
                         color: isLiked ? orange : cs.onSurface.withValues(alpha: 0.3),
                         onTap: onLike,
                       ),
-                      SizedBox(width: 8.w),
+                      SizedBox(width: 2.w),
                       progress != null
                           ? SizedBox(
-                              width: 22.w,
-                              height: 22.w,
+                              width: 20.w,
+                              height: 20.w,
                               child: CircularProgressIndicator(
                                 value: progress,
                                 strokeWidth: 2,
@@ -551,17 +538,17 @@ class _TrackTile extends StatelessWidget {
                               color: isDownloaded ? orange : cs.onSurface.withValues(alpha: 0.3),
                               onTap: onDownload,
                             ),
-                      SizedBox(width: 12.w),
+                      SizedBox(width: 6.w),
                       Container(
-                        padding: EdgeInsets.all(10.w),
+                        padding: EdgeInsets.all(8.w),
                         decoration: BoxDecoration(
                           color: isCurrent ? orange : cs.surfaceVariant,
-                          borderRadius: BorderRadius.circular(14.r),
+                          borderRadius: BorderRadius.circular(12.r),
                           boxShadow: isCurrent
                               ? [
                                   BoxShadow(
                                     color: orange.withOpacity(0.35),
-                                    blurRadius: 12,
+                                    blurRadius: 10,
                                     offset: const Offset(0, 4),
                                   )
                                 ]

@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -103,13 +104,11 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
         bottomNavigationBar: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Mini Player: only shown when a track is active
             Consumer(
               builder: (context, ref, _) {
                 final miniState = ref.watch(miniPlayerProvider);
                 final location = GoRouterState.of(context).uri.path;
                 final isPlayerScreen = location.contains('player');
-                
                 if (!miniState.isVisible || miniState.track == null || isPlayerScreen) {
                   return const SizedBox.shrink();
                 }
@@ -127,11 +126,11 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       ),
       borderRadius: 24.0,
       showShadow: true,
-      angle: isRtl ? 12.0 : -12.0,
-      drawerShadowsBackgroundColor: Theme.of(context).brightness == Brightness.dark 
-          ? Colors.black26 
+      angle: -12.0,
+      drawerShadowsBackgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? Colors.black26
           : Colors.grey[300]!,
-      slideWidth: MediaQuery.of(context).size.width * 0.75,
+      slideWidth: MediaQuery.of(context).size.width * 0.65,
       menuBackgroundColor: Theme.of(context).colorScheme.surface,
     );
   }

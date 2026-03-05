@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/user_profile_provider.dart';
@@ -60,19 +61,19 @@ class AppDrawer extends ConsumerWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontSize: 20.sp,
+                            fontSize: 13.sp,
                             fontWeight: FontWeight.w800,
                             color: cs.onSurface,
                           ),
                         ),
-                        SizedBox(height: 6.h),
+                        SizedBox(height: 4.h),
                         if (userProfile.email.isNotEmpty)
                           Text(
                             userProfile.email,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 13.sp,
+                              fontSize: 11.sp,
                               color: cs.onSurface.withValues(alpha: 0.54),
                             ),
                           ),
@@ -468,16 +469,16 @@ class AppDrawer extends ConsumerWidget {
 
     return ListTile(
       onTap: onTap,
-      contentPadding: EdgeInsetsDirectional.symmetric(horizontal: 22.w, vertical: 6.h),
+      contentPadding: EdgeInsetsDirectional.symmetric(horizontal: 14.w, vertical: 2.h),
 
       leading: Container(
-        width: 44.r,
-        height: 44.r,
+        width: 36.r,
+        height: 36.r,
         decoration: BoxDecoration(
           color: accentColor.withValues(alpha: 0.12),
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, color: accentColor, size: 22.r),
+        child: Icon(icon, color: accentColor, size: 18.r),
       ),
 
       title: Text(
@@ -485,7 +486,7 @@ class AppDrawer extends ConsumerWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
-          fontSize: 16.sp,
+          fontSize: 12.sp,
           fontWeight: FontWeight.w600,
           color: titleColor ?? defaultTitleColor,
         ),
@@ -504,7 +505,7 @@ class AppDrawer extends ConsumerWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 14.sp,
+                        fontSize: 11.sp,
                         color: subColor,
                         fontWeight: FontWeight.w600,
                       ),
@@ -537,29 +538,30 @@ class AppDrawer extends ConsumerWidget {
     final cs = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(22.w, 8.h, 22.w, 10.h),
+      padding: EdgeInsetsDirectional.fromSTEB(14.w, 4.h, 14.w, 4.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header row
           Row(
             children: [
               Container(
-                width: 44.r,
-                height: 44.r,
+                width: 36.r,
+                height: 36.r,
                 decoration: BoxDecoration(
                   color: accentColor.withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.palette_outlined, color: accentColor, size: 22.r),
+                child: Icon(Icons.palette_outlined, color: accentColor, size: 18.r),
               ),
-              SizedBox(width: 14.w),
+              SizedBox(width: 12.w),
               Expanded(
                 child: Text(
                   label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 16.sp,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w600,
                     color: cs.onSurface,
                   ),
@@ -567,11 +569,9 @@ class AppDrawer extends ConsumerWidget {
               ),
             ],
           ),
-          SizedBox(height: 12.h),
-          Padding(
-            padding: EdgeInsetsDirectional.only(start: 58.w),
-            child: _buildColorDots(ref),
-          ),
+          SizedBox(height: 10.h),
+          // Dots — no indent, full width
+          _buildColorDots(ref),
         ],
       ),
     );
@@ -579,58 +579,50 @@ class AppDrawer extends ConsumerWidget {
 
   // ================= Dots =================
   Widget _buildColorDots(WidgetRef ref) {
-    final colors = [
-      {'name': 'orange', 'color': const Color(0xFFF16122)},
-      {'name': 'blue', 'color': const Color(0xFF2E88FF)},
-      {'name': 'green', 'color': const Color(0xFF00E676)},
-      {'name': 'purple', 'color': const Color(0xFF8A2BE2)},
-      {'name': 'red', 'color': const Color(0xFFEB5757)},
-    ];
-
+    // Use the SAME color values as AppTheme.accentColors so comparison works
+    final colors = AppTheme.accentColors.entries.toList();
     final currentAccent = ref.watch(accentColorProvider);
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: colors.map((c) {
-          final color = c['color'] as Color;
-          final name = c['name'] as String;
-          final isSelected = currentAccent == color;
+    return Wrap(
+      spacing: 7.w,
+      runSpacing: 6.h,
+      children: colors.map((entry) {
+        final color = entry.value;
+        final name = entry.key;
+        final isSelected = currentAccent == color;
 
-          return GestureDetector(
-            onTap: () =>
-                ref.read(accentColorProvider.notifier).changeAccentColor(name),
-            child: Container(
-              margin: EdgeInsetsDirectional.symmetric(horizontal: 6.w),
-              width: 26.r,
-              height: 26.r,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-                border: isSelected ? Border.all(color: Colors.white, width: 2) : null,
-                boxShadow: [
-                  if (isSelected)
-                    BoxShadow(
-                      color: color.withValues(alpha: 0.60),
-                      blurRadius: 14,
-                      spreadRadius: 3,
-                    )
-                  else
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
-                    ),
-                ],
-              ),
-              child: isSelected 
-                ? Icon(Icons.check, color: Colors.white, size: 16.r) 
-                : null,
+        return GestureDetector(
+          onTap: () => ref.read(accentColorProvider.notifier).changeAccentColor(name),
+          child: Container(
+            width: 22.r,
+            height: 22.r,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+              border: isSelected
+                  ? Border.all(color: Colors.white, width: 2.0)
+                  : null,
+              boxShadow: [
+                if (isSelected)
+                  BoxShadow(
+                    color: color.withValues(alpha: 0.55),
+                    blurRadius: 8,
+                    spreadRadius: 2,
+                  )
+                else
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+              ],
             ),
-          );
-        }).toList(),
-      ),
+            child: isSelected
+                ? Icon(Icons.check_rounded, color: Colors.white, size: 13.r)
+                : null,
+          ),
+        );
+      }).toList(),
     );
   }
 }

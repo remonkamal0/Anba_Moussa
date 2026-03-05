@@ -76,6 +76,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/artist/:artistId',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
           final artistId = state.pathParameters['artistId']!;
           return ArtistDetailsScreen(artistId: artistId);
@@ -83,6 +84,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/playlist/:playlistId',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
           final playlistId = state.pathParameters['playlistId']!;
           return PlaylistDetailsScreen(playlistId: playlistId);
@@ -137,6 +139,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/album/:albumId',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
           final albumId = state.pathParameters['albumId']!;
           final title = state.uri.queryParameters['title'] ?? 'Album';

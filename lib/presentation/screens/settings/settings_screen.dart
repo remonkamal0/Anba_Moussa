@@ -12,6 +12,9 @@ import '../playlist/create_playlist_screen.dart';
 import '../../providers/theme_provider.dart';
 import '../../../core/theme/app_theme.dart';
 
+import '../../providers/playlists_provider.dart';
+import '../../../core/constants/app_constants.dart';
+
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
@@ -21,27 +24,6 @@ class SettingsScreen extends ConsumerStatefulWidget {
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   int selectedThemeIndex = 0;
-
-  final List<_PlaylistItem> playlists = const [
-    _PlaylistItem(
-      title: "Vibe Check",
-      subtitle: "24 songs",
-      imageUrl:
-          "https://images.unsplash.com/photo-1526481280695-3c687fd5432c?w=800&q=80",
-    ),
-    _PlaylistItem(
-      title: "Sunset Beats",
-      subtitle: "18 songs",
-      imageUrl:
-          "https://images.unsplash.com/photo-1520975958225-84ea3e1aa7a5?w=800&q=80",
-    ),
-    _PlaylistItem(
-      title: "Deep Focus",
-      subtitle: "42 songs",
-      imageUrl:
-          "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80",
-    ),
-  ];
 
   final List<String> themeColorKeys = const [
     'orange',
@@ -62,6 +44,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final currentAccent = ref.watch(accentColorProvider);
     final accentName = _getAccentName(currentAccent);
     final userProfile = ref.watch(userProfileProvider);
+    final playlistState = ref.watch(playlistsProvider);
+    final playlists = playlistState.playlists;
+    final locale = ref.watch(localeProvider).languageCode;
 
     return Scaffold(
       body: Stack(
@@ -179,7 +164,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     rightText: "See All",
                     accent: accent,
                     onAdd: () async {
-                      final newPlaylist = await Navigator.of(context).push(
+                      final newPlaylist = await Navigator.of(context, rootNavigator: true).push(
                         MaterialPageRoute(
                           builder: (context) => const CreatePlaylistScreen(),
                         ),
@@ -197,16 +182,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   SizedBox(height: 10.h),
 
                   SizedBox(
-                    height: 145.h,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: playlists.length,
-                      separatorBuilder: (_, __) => SizedBox(width: 12.w),
-                      itemBuilder: (context, index) {
-                        final p = playlists[index];
-                        return _PlaylistCard(item: p);
-                      },
-                    ),
+                    height: 120.h,
+                    child: playlists.isEmpty 
+                      ? Center(
+                          child: Text(
+                            "No playlists yet",
+                            style: TextStyle(color: cs.onSurface.withValues(alpha: 0.4), fontSize: 13.sp),
+                          ),
+                        )
+                      : ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: playlists.length,
+                        separatorBuilder: (_, __) => SizedBox(width: 12.w),
+                        itemBuilder: (context, index) {
+                          final p = playlists[index];
+                          return _PlaylistCard(playlist: p, locale: locale);
+                        },
+                      ),
                   ),
 
                   SizedBox(height: 18.h),
@@ -1020,72 +1012,80 @@ class _PlaylistItem {
 }
 
 class _PlaylistCard extends StatelessWidget {
-  final _PlaylistItem item;
-  const _PlaylistCard({required this.item});
+  final PlaylistModel playlist;
+  final String locale;
+  const _PlaylistCard({required this.playlist, required this.locale});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        context.push('/playlist/1'); // Using dummy ID 1 for now
+        context.push('/playlist/${playlist.id}');
       },
       borderRadius: BorderRadius.circular(18.r),
       child: Container(
-        width: 150.w,
+        width: 130.w,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(18.r),
           boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: .05),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      padding: EdgeInsets.all(10.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(14.r),
-              child: CachedNetworkImage(
-                imageUrl: item.imageUrl,
+            BoxShadow(
+              color: Colors.black.withValues(alpha: .04),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        padding: EdgeInsets.all(10.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Container(
                 width: double.infinity,
-                fit: BoxFit.cover,
-                placeholder: (_, __) => Container(color: Colors.black12),
-                errorWidget: (_, __, ___) => Container(
-                  color: Colors.black12,
-                  child: const Icon(Icons.image_not_supported),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12.r),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Theme.of(context).colorScheme.primary.withValues(alpha: 0.9),
+                      Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
+                    ],
+                  ),
+                ),
+                child: Icon(
+                  playlistIcon(playlist.iconName),
+                  color: Colors.white,
+                  size: 24.sp,
                 ),
               ),
             ),
-          ),
-          SizedBox(height: 6.h),
-          Text(
-            item.title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w900,
-              color: Theme.of(context).colorScheme.onSurface,
+            SizedBox(height: 8.h),
+            Text(
+              playlist.getLocalizedTitle(locale),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w900,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
-          ),
-          SizedBox(height: 2.h),
-          Text(
-            item.subtitle,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 11.5.sp,
-              fontWeight: FontWeight.w700,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+            SizedBox(height: 2.h),
+            Text(
+              '${playlist.trackCount} Tracks',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 11.sp,
+                fontWeight: FontWeight.w700,
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ));
+    );
   }
 }

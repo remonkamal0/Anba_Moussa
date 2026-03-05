@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import '../../domain/entities/track.dart';
 import 'tag_model.dart';
 
 part 'track_model.g.dart';
@@ -94,5 +95,28 @@ class TrackModel {
     final minutes = duration.inMinutes;
     final seconds = duration.inSeconds % 60;
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  Track toEntity() {
+    return Track(
+      id: id,
+      categoryId: categoryId,
+      titleAr: titleAr ?? '',
+      titleEn: titleEn ?? '',
+      subtitleAr: subtitleAr,
+      subtitleEn: subtitleEn,
+      descriptionAr: descriptionAr,
+      descriptionEn: descriptionEn,
+      speakerAr: speakerAr,
+      speakerEn: speakerEn,
+      imageUrl: coverImageUrl,
+      audioUrl: audioUrl ?? '',
+      durationSeconds: durationSeconds,
+      publishedAt: publishedAt,
+      isActive: isActive,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      tags: tags?.map((t) => t.toEntity()).toList() ?? [],
+    );
   }
 }

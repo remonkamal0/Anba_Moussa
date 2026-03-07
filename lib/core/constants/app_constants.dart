@@ -29,6 +29,8 @@ class AppConstants {
   static const String playerRoute = '/player';
   static const String profileRoute = '/profile';
   static const String settingsRoute = '/settings';
+  static const String photoGalleryRoute = '/photo-gallery';
+  static const String videoGalleryRoute = '/video-gallery';
   
   // Assets
   static const String logoPath = 'assets/images/logo.png';

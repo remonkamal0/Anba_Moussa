@@ -701,6 +701,7 @@ class _BottomNav extends StatelessWidget {
       ),
       child: BottomNavigationBar(
         backgroundColor: cs.surface,
+        elevation: 0,
         currentIndex: currentIndex,
         type: BottomNavigationBarType.fixed,
         selectedItemColor: orange,

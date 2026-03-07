@@ -124,11 +124,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const LibraryScreen(),
           ),
           GoRoute(
-            path: '/photo-gallery',
+            path: AppConstants.photoGalleryRoute,
             builder: (context, state) => const PhotoGalleryScreen(),
           ),
           GoRoute(
-            path: '/video-gallery',
+            path: AppConstants.videoGalleryRoute,
             builder: (context, state) => const VideoGalleryScreen(),
           ),
           GoRoute(

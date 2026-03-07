@@ -20,6 +20,7 @@ class VideoGalleryScreen extends ConsumerStatefulWidget {
 
 class _VideoGalleryScreenState extends ConsumerState<VideoGalleryScreen> {
   final ZoomDrawerController _drawerController = ZoomDrawerController();
+  String _sortOrder = 'A-Z'; // Default sort order
 
   void _onAlbumTapped(VideoAlbum album) {
     Navigator.push(
@@ -30,11 +31,84 @@ class _VideoGalleryScreenState extends ConsumerState<VideoGalleryScreen> {
     );
   }
 
-  void _onSortTapped() {
-    // TODO: sort action / bottom sheet
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Sort clicked')),
+  List<VideoAlbum> _sortAlbums(List<VideoAlbum> albums) {
+    final sortedAlbums = List<VideoAlbum>.from(albums);
+    final locale = Localizations.localeOf(context).languageCode;
+    
+    sortedAlbums.sort((a, b) {
+      final titleA = a.getLocalizedTitle(locale).toLowerCase();
+      final titleB = b.getLocalizedTitle(locale).toLowerCase();
+      
+      if (_sortOrder == 'A-Z') {
+        return titleA.compareTo(titleB);
+      } else {
+        return titleB.compareTo(titleA);
+      }
+    });
+    
+    return sortedAlbums;
+  }
+
+  void _showSortOptions() {
+    final locale = Localizations.localeOf(context).languageCode;
+    
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        MediaQuery.of(context).size.width - 100.w,
+        MediaQuery.of(context).padding.top + 60.h,
+        MediaQuery.of(context).size.width,
+        MediaQuery.of(context).padding.top + 200.h,
+      ),
+      items: [
+        PopupMenuItem<String>(
+          value: 'A-Z',
+          child: Row(
+            children: [
+              Radio<String>(
+                value: 'A-Z',
+                groupValue: _sortOrder,
+                onChanged: (value) {
+                  setState(() {
+                    _sortOrder = value!;
+                  });
+                },
+              ),
+              SizedBox(width: 8.w),
+              Text(
+                locale == 'ar' ? 'من أ إلى ي' : 'A to Z',
+                style: TextStyle(fontSize: 14.sp),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'Z-A',
+          child: Row(
+            children: [
+              Radio<String>(
+                value: 'Z-A',
+                groupValue: _sortOrder,
+                onChanged: (value) {
+                  setState(() {
+                    _sortOrder = value!;
+                  });
+                },
+              ),
+              SizedBox(width: 8.w),
+              Text(
+                locale == 'ar' ? 'من ي إلى أ' : 'Z to A',
+                style: TextStyle(fontSize: 14.sp),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
+  }
+
+  void _onSortTapped() {
+    _showSortOptions();
   }
 
   @override
@@ -64,35 +138,15 @@ class _VideoGalleryScreenState extends ConsumerState<VideoGalleryScreen> {
             icon: Icon(Icons.menu_rounded, color: cs.primary, size: 22.w),
             onPressed: () => _drawerController.toggle?.call(),
           ),
-          title: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                locale == 'ar' ? 'معرض الفيديو' : 'Video Gallery',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w900,
-                      color: cs.onSurface,
-                    ),
-              ),
-              Text(
-                locale == 'ar' ? 'المجموعات' : 'COLLECTIONS',
-                style: TextStyle(
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1.2,
-                  color: cs.onSurface.withValues(alpha: 0.4),
+          title: Text(
+            locale == 'ar' ? 'معرض الفيديو' : 'Video Gallery',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: cs.onSurface,
                 ),
-              ),
-            ],
           ),
           centerTitle: true,
-          actions: [
-            IconButton(
-              icon: Icon(Icons.search_rounded, color: cs.onSurface, size: 24.w),
-              onPressed: () {},
-            ),
-            SizedBox(width: 8.w),
-          ],
+          actions: [],
         ),
         body: SafeArea(
           child: Padding(
@@ -111,54 +165,6 @@ class _VideoGalleryScreenState extends ConsumerState<VideoGalleryScreen> {
                   ),
                 ),
                 SizedBox(height: 4.h),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        locale == 'ar' ? 'مجموعات الفيديو' : 'Video Collections',
-                        style: TextStyle(
-                          fontSize: 28.sp,
-                          fontWeight: FontWeight.w900,
-                          color: cs.onSurface,
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: _onSortTapped,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(color: cs.primary.withOpacity(0.1)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: cs.primary.withOpacity(0.08),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.filter_list_rounded, size: 16.w, color: cs.primary),
-                            SizedBox(width: 8.w),
-                            Text(
-                              locale == 'ar' ? 'ترتيب' : 'Sort',
-                              style: TextStyle(
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.w900,
-                                color: cs.primary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
                 SizedBox(height: 14.h),
                 Expanded(
                   child: albumsAsync.when(
@@ -171,6 +177,7 @@ class _VideoGalleryScreenState extends ConsumerState<VideoGalleryScreen> {
                           ),
                         );
                       }
+                      final sortedAlbums = _sortAlbums(albums);
                       return GridView.builder(
                         padding: EdgeInsets.only(bottom: 14.h),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -179,9 +186,9 @@ class _VideoGalleryScreenState extends ConsumerState<VideoGalleryScreen> {
                           mainAxisSpacing: 14.h,
                           childAspectRatio: 0.72, // Balanced for 1:1 image + text
                         ),
-                        itemCount: albums.length,
+                        itemCount: sortedAlbums.length,
                         itemBuilder: (context, index) {
-                          final album = albums[index];
+                          final album = sortedAlbums[index];
                           return VideoAlbumCard(
                             album: album,
                             onTap: () => _onAlbumTapped(album),

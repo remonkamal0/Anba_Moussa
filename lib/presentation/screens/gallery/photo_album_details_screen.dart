@@ -22,35 +22,22 @@ class PhotoAlbumDetailsScreen extends ConsumerWidget {
     final photosAsync = ref.watch(albumPhotosProvider(album.id));
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.primary, size: 20.w),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              album.getLocalizedTitle(locale),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w900,
-                    color: cs.onSurface,
-                  ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            Text(
-              locale == 'ar' ? 'عرض المعرض' : 'GALLERY VIEW',
-              style: TextStyle(
-                fontSize: 10.sp,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1.2,
-                color: cs.onSurface.withValues(alpha: 0.4),
+        title: Text(
+          album.getLocalizedTitle(locale),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w900,
+                color: cs.onSurface,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         centerTitle: true,
       ),
@@ -78,14 +65,14 @@ class PhotoAlbumDetailsScreen extends ConsumerWidget {
                     error: (_, __) => const SizedBox.shrink(),
                   ),
                   SizedBox(height: 4.h),
-                  Text(
-                    locale == 'ar' ? 'أبرز الألبوم' : 'Album Highlights',
-                    style: TextStyle(
-                      fontSize: 26.sp,
-                      fontWeight: FontWeight.w900,
-                      color: cs.onSurface,
-                    ),
-                  ),
+                  // Text(
+                  //   locale == 'ar' ? 'أبرز الألبوم' : 'Album Highlights',
+                  //   style: TextStyle(
+                  //     fontSize: 26.sp,
+                  //     fontWeight: FontWeight.w900,
+                  //     color: cs.onSurface,
+                  //   ),
+                  // ),
                   SizedBox(height: 16.h),
                 ],
               ),

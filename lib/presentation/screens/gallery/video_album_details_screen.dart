@@ -11,16 +11,98 @@ import '../../../domain/entities/video.dart';
 import '../../providers/video_provider.dart';
 import '../../widgets/common/error_handle_widget.dart';
 
-class VideoAlbumDetailsScreen extends ConsumerWidget {
+class VideoAlbumDetailsScreen extends ConsumerStatefulWidget {
   final VideoAlbum album;
 
   const VideoAlbumDetailsScreen({super.key, required this.album});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<VideoAlbumDetailsScreen> createState() => _VideoAlbumDetailsScreenState();
+}
+
+class _VideoAlbumDetailsScreenState extends ConsumerState<VideoAlbumDetailsScreen> {
+  String _sortOrder = 'A-Z';
+
+  List<Video> _sortVideos(List<Video> videos, String sortOrder, String locale) {
+    final sortedVideos = List<Video>.from(videos);
+    
+    sortedVideos.sort((a, b) {
+      final titleA = a.getLocalizedTitle(locale).toLowerCase();
+      final titleB = b.getLocalizedTitle(locale).toLowerCase();
+      
+      if (sortOrder == 'A-Z') {
+        return titleA.compareTo(titleB);
+      } else {
+        return titleB.compareTo(titleA);
+      }
+    });
+    
+    return sortedVideos;
+  }
+
+  void _showSortOptions() {
+    final locale = Localizations.localeOf(context).languageCode;
+    
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        MediaQuery.of(context).size.width - 100.w,
+        MediaQuery.of(context).padding.top + 60.h,
+        MediaQuery.of(context).size.width,
+        MediaQuery.of(context).padding.top + 200.h,
+      ),
+      items: [
+        PopupMenuItem<String>(
+          value: 'A-Z',
+          child: Row(
+            children: [
+              Radio<String>(
+                value: 'A-Z',
+                groupValue: _sortOrder,
+                onChanged: (value) {
+                  setState(() {
+                    _sortOrder = value!;
+                  });
+                },
+              ),
+              SizedBox(width: 8.w),
+              Text(
+                locale == 'ar' ? 'من أ إلى ي' : 'A to Z',
+                style: TextStyle(fontSize: 14.sp),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'Z-A',
+          child: Row(
+            children: [
+              Radio<String>(
+                value: 'Z-A',
+                groupValue: _sortOrder,
+                onChanged: (value) {
+                  setState(() {
+                    _sortOrder = value!;
+                  });
+                },
+              ),
+              SizedBox(width: 8.w),
+              Text(
+                locale == 'ar' ? 'من ي إلى أ' : 'Z to A',
+                style: TextStyle(fontSize: 14.sp),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final locale = Localizations.localeOf(context).languageCode;
-    final videosAsync = ref.watch(albumVideosProvider(album.id));
+    final videosAsync = ref.watch(albumVideosProvider(widget.album.id));
 
     return Scaffold(
       appBar: AppBar(
@@ -28,32 +110,17 @@ class VideoAlbumDetailsScreen extends ConsumerWidget {
           icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.primary, size: 20.w),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              album.getLocalizedTitle(locale),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w900,
-                    color: cs.onSurface,
-                  ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            Text(
-              locale == 'ar' ? 'ألبوم فيديو' : 'VIDEO ALBUM',
-              style: TextStyle(
-                fontSize: 10.sp,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1.2,
-                color: cs.onSurface.withValues(alpha: 0.4),
+        title: Text(
+          widget.album.getLocalizedTitle(locale),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w900,
+                color: cs.onSurface,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         centerTitle: true,
+        actions: [],
       ),
       body: SafeArea(
         child: Column(
@@ -65,63 +132,7 @@ class VideoAlbumDetailsScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 12.h),
-                  Text(
-                    locale == 'ar' ? 'فيديوهات' : 'VIDEOS',
-                    style: TextStyle(
-                      fontSize: 11.sp,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1.1,
-                      color: cs.primary,
-                    ),
-                  ),
                   SizedBox(height: 4.h),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          album.getLocalizedTitle(locale),
-                          style: TextStyle(
-                            fontSize: 26.sp,
-                            fontWeight: FontWeight.w900,
-                            color: cs.onSurface,
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
-                          decoration: BoxDecoration(
-                            color: cs.surface,
-                            borderRadius: BorderRadius.circular(18.r),
-                            border: Border.all(color: cs.outlineVariant),
-                            boxShadow: [
-                              BoxShadow(
-                                color: cs.onSurface.withValues(alpha: 0.05),
-                                blurRadius: 10,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.swap_vert_rounded, size: 16.w, color: cs.primary),
-                              SizedBox(width: 6.w),
-                              Text(
-                                locale == 'ar' ? 'ترتيب' : 'Sort',
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w800,
-                                  color: cs.primary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                   SizedBox(height: 16.h),
                 ],
               ),
@@ -137,12 +148,13 @@ class VideoAlbumDetailsScreen extends ConsumerWidget {
                       ),
                     );
                   }
+                  final sortedVideos = _sortVideos(videos, _sortOrder, locale);
                   return ListView.separated(
                     padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 80.h),
-                    itemCount: videos.length,
+                    itemCount: sortedVideos.length,
                     separatorBuilder: (context, index) => SizedBox(height: 24.h),
                     itemBuilder: (context, index) {
-                      final video = videos[index];
+                      final video = sortedVideos[index];
 
                       return GestureDetector(
                         onTap: () {
@@ -263,7 +275,7 @@ class VideoAlbumDetailsScreen extends ConsumerWidget {
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stack) => ErrorHandleWidget(
           error: error,
-          onRetry: () => ref.refresh(albumVideosProvider(album.id)),
+          onRetry: () => ref.refresh(albumVideosProvider(widget.album.id)),
         ),      ),
             ),
           ],

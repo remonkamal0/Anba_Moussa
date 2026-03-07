@@ -98,12 +98,13 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       menuScreen: const AppDrawer(),
       isRtl: isRtl,
       mainScreen: Scaffold(
-        backgroundColor: Colors.transparent,
-        extendBody: true,
-        body: widget.child,
-        bottomNavigationBar: Column(
-          mainAxisSize: MainAxisSize.min,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        extendBody: false,
+        body: Column(
           children: [
+            Expanded(
+              child: widget.child,
+            ),
             Consumer(
               builder: (context, ref, _) {
                 final miniState = ref.watch(miniPlayerProvider);

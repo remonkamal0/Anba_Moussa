@@ -21,6 +21,7 @@ class PhotoGalleryScreen extends ConsumerStatefulWidget {
 
 class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
   final ZoomDrawerController _drawerController = ZoomDrawerController();
+  String _sortOrder = 'A-Z'; // Default sort order
 
   void _onAlbumTapped(PhotoAlbum album) {
     Navigator.push(
@@ -29,6 +30,80 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
         builder: (context) => PhotoAlbumDetailsScreen(album: album),
       ),
     );
+  }
+
+  List<PhotoAlbum> _sortAlbums(List<PhotoAlbum> albums) {
+    final sortedAlbums = List<PhotoAlbum>.from(albums);
+    final locale = Localizations.localeOf(context).languageCode;
+    
+    sortedAlbums.sort((a, b) {
+      final titleA = a.getLocalizedTitle(locale).toLowerCase();
+      final titleB = b.getLocalizedTitle(locale).toLowerCase();
+      
+      if (_sortOrder == 'A-Z') {
+        return titleA.compareTo(titleB);
+      } else {
+        return titleB.compareTo(titleA);
+      }
+    });
+    
+    return sortedAlbums;
+  }
+
+  void _showSortOptions() {
+    final locale = Localizations.localeOf(context).languageCode;
+    
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        MediaQuery.of(context).size.width - 100.w,
+        MediaQuery.of(context).padding.top + 60.h,
+        MediaQuery.of(context).size.width,
+        MediaQuery.of(context).padding.top + 200.h,
+      ),
+      items: [
+        PopupMenuItem<String>(
+          value: 'A-Z',
+          child: Row(
+            children: [
+              Radio<String>(
+                value: 'A-Z',
+                groupValue: _sortOrder,
+                onChanged: (value) {},
+              ),
+              SizedBox(width: 8.w),
+              Text(
+                locale == 'ar' ? 'من أ إلى ي' : 'A to Z',
+                style: TextStyle(fontSize: 14.sp),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'Z-A',
+          child: Row(
+            children: [
+              Radio<String>(
+                value: 'Z-A',
+                groupValue: _sortOrder,
+                onChanged: (value) {},
+              ),
+              SizedBox(width: 8.w),
+              Text(
+                locale == 'ar' ? 'من ي إلى أ' : 'Z to A',
+                style: TextStyle(fontSize: 14.sp),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ).then((value) {
+      if (value != null) {
+        setState(() {
+          _sortOrder = value;
+        });
+      }
+    });
   }
 
   @override
@@ -65,14 +140,8 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
                   color: cs.onSurface,
                 ),
           ),
-          centerTitle: false,
-          actions: [
-            IconButton(
-              icon: Icon(Icons.more_vert_rounded, color: cs.primary, size: 24.w),
-              onPressed: () {},
-            ),
-            SizedBox(width: 8.w),
-          ],
+          centerTitle: true,
+          actions: [],
         ),
         body: SafeArea(
           child: Padding(
@@ -101,6 +170,7 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
                           ),
                         );
                       }
+                      final sortedAlbums = _sortAlbums(albums);
                       return GridView.builder(
                         padding: EdgeInsets.only(bottom: 14.h),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -109,9 +179,9 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
                           mainAxisSpacing: 14.h,
                           childAspectRatio: 0.72, // Balanced for 1:1 image + text
                         ),
-                        itemCount: albums.length,
+                        itemCount: sortedAlbums.length,
                         itemBuilder: (context, index) {
-                          final album = albums[index];
+                          final album = sortedAlbums[index];
 
                           return PhotoAlbumCard(
                             album: album,

@@ -107,21 +107,16 @@ class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
             onPressed: () => context.pop(),
           ),
           title: Text(
-            'ALBUM DETAILS',
+            widget.title,
             style: TextStyle(
-              fontSize: 12.sp,
-              letterSpacing: 1.2,
+              fontSize: 16.sp,
               fontWeight: FontWeight.w800,
-              color: cs.onSurface.withValues(alpha: 0.7),
+              color: cs.onSurface,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           centerTitle: true,
-          actions: [
-            IconButton(
-              icon: Icon(Icons.notifications_outlined, color: cs.onSurface),
-              onPressed: () => context.push('/notifications'),
-            ),
-          ],
         ),
         body: state.isLoading
             ? const Center(child: CircularProgressIndicator())

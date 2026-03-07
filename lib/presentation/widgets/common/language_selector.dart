@@ -13,6 +13,7 @@ class LanguageSelector extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final currentLocale = ref.watch(localeProvider);
     final localeNotifier = ref.read(localeProvider.notifier);
+    final cs = Theme.of(context).colorScheme;
 
     final languages = [
       {'code': 'en', 'name': currentLocale.languageCode == 'ar' ? 'الإنجليزية' : 'English'},
@@ -46,13 +47,13 @@ class LanguageSelector extends ConsumerWidget {
                   ),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? const Color(0xFFFF6B35)
-                        : Colors.grey[100],
+                        ? cs.primary
+                        : cs.surfaceVariant,
                     borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(
                       color: isSelected
-                          ? const Color(0xFFFF6B35)
-                          : Colors.grey[300]!,
+                          ? cs.primary
+                          : cs.outline,
                     ),
                   ),
                   child: Text(

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/theme_provider.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../../core/constants/app_constants.dart';
 
 class ThemeSelector extends ConsumerWidget {
@@ -58,7 +57,7 @@ class _ThemeOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final orange = AppTheme.accentColors['orange']!;
+    final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -66,16 +65,16 @@ class _ThemeOption extends StatelessWidget {
         height: 44.w,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: isSelected ? orange : Colors.grey[100],
+          color: isSelected ? cs.primary : cs.surfaceVariant,
           border: Border.all(
-            color: isSelected ? orange : Colors.grey[300]!,
+            color: isSelected ? cs.primary : cs.outline,
             width: 1,
           ),
         ),
         child: Icon(
           icon,
           size: 24.w,
-          color: isSelected ? Colors.white : Colors.grey[600],
+          color: isSelected ? Colors.white : cs.onSurface.withValues(alpha: 0.5),
         ),
       ),
     );

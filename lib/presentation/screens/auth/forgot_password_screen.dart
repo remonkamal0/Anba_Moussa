@@ -142,7 +142,21 @@ class _ForgotPasswordScreenState extends State<_ForgotPasswordScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 70.h),
+                SizedBox(height: 16.h),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back, color: _navy, size: 28.sp),
+                    onPressed: () {
+                      if (context.canPop()) {
+                        context.pop();
+                      } else {
+                        context.go('/login');
+                      }
+                    },
+                  ),
+                ),
+                SizedBox(height: 16.h),
 
                 // Logo square (orange + shadow)
                 Container(
@@ -255,30 +269,30 @@ class _ForgotPasswordScreenState extends State<_ForgotPasswordScreen> {
                 SizedBox(height: 140.h),
 
                 // Back to Login
-                GestureDetector(
-                  onTap: () => context.pop(),
-                  child: RichText(
-                    text: TextSpan(
-                      style: TextStyle(
-                        color: _muted,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      children: [
-                        const TextSpan(text: 'Back to '),
-                        TextSpan(
-                          text: 'Login',
-                          style: TextStyle(
-                            color: _orange,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ).animate().fadeIn(delay: 520.ms, duration: 350.ms),
-
-                SizedBox(height: 24.h),
+                // GestureDetector(
+                //   onTap: () => context.pop(),
+                //   child: RichText(
+                //     text: TextSpan(
+                //       style: TextStyle(
+                //         color: _muted,
+                //         fontSize: 16.sp,
+                //         fontWeight: FontWeight.w600,
+                //       ),
+                //       children: [
+                //         const TextSpan(text: 'Back to '),
+                //         TextSpan(
+                //           text: 'Login',
+                //           style: TextStyle(
+                //             color: _orange,
+                //             fontWeight: FontWeight.w900,
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ).animate().fadeIn(delay: 520.ms, duration: 350.ms),
+                //
+                // SizedBox(height: 24.h),
               ],
             ),
           ),

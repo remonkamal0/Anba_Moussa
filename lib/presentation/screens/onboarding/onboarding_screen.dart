@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:anba_moussa/l10n/app_localizations.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../models/onboarding_page_data.dart';
-import '../../widgets/common/language_selector.dart';
-import '../../widgets/common/theme_selector.dart';
-import '../../widgets/common/accent_color_selector.dart';
 import '../../widgets/common/onboarding_page.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -29,7 +23,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     OnboardingPageData(
       titleKey: 'onboarding.welcome',
       subtitleKey: 'onboarding.welcomeSubtitle',
-      imagePath: 'assets/images/onboarding_welcome.png',
+      imagePath: 'assets/images/YB.png',
       showLanguageSelector: true,
       showThemeSelector: true,
       showAccentColorSelector: true,
@@ -37,19 +31,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     OnboardingPageData(
       titleKey: 'onboarding.discover',
       subtitleKey: 'onboarding.discoverSubtitle',
-      imagePath: 'assets/images/onboarding_discover.png',
+      imagePath: 'assets/images/Pope-Tawadros.png',
     ),
     OnboardingPageData(
       titleKey: 'onboarding.personalize',
       subtitleKey: 'onboarding.personalizeSubtitle',
-      imagePath: 'assets/images/onboarding_personalize.png',
+      imagePath: 'assets/images/Bishop_Moussa.png',
     ),
     OnboardingPageData(
       titleKey: 'onboarding.listen',
       subtitleKey: 'onboarding.listenSubtitle',
-      imagePath: 'assets/images/onboarding_listen.png',
+      imagePath: 'assets/images/YB.png',
     ),
   ];
+
 
   @override
   void dispose() {

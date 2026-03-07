@@ -67,18 +67,19 @@ class OnboardingPage extends ConsumerWidget {
                       ),
                     ),
                   ),
+          SizedBox(height: isSmallScreen ? 24.h : 48.h),
           // Image
           Flexible(
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                maxHeight: isLargeScreen ? 280.h : 240.h,
-                maxWidth:  isLargeScreen ? 280.h : 240.h,
+                maxHeight: isLargeScreen ? 760.h : 700.h,
+                maxWidth:  isLargeScreen ? 760.h : 700.h,
               ),
               child: AspectRatio(
                 aspectRatio: 1,
                 child: Container(
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
+                    borderRadius: BorderRadius.circular(28.r),
                     border: Border.all(
                       color: Colors.white,
                       width: isSmallScreen ? 2.w : 4.w,
@@ -91,22 +92,16 @@ class OnboardingPage extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  child: ClipOval(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(24.r),
                     child: Container(
                       decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Color(0xFFE8DDD5),
-                            Color(0xFFD4C4B5),
-                          ],
-                        ),
+                        color: Colors.white,
                       ),
                       child: pageData.imagePath.startsWith('http')
                           ? CachedNetworkImage(
                               imageUrl: pageData.imagePath,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.contain,
                               placeholder: (context, url) => Center(
                                 child: CircularProgressIndicator(
                                   color: Theme.of(context).colorScheme.primary,
@@ -120,7 +115,7 @@ class OnboardingPage extends ConsumerWidget {
                             )
                           : Image.asset(
                               pageData.imagePath,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.contain,
                               errorBuilder: (context, error, stackTrace) => Icon(
                                 Icons.image,
                                 size: 80.w,
@@ -219,41 +214,21 @@ class OnboardingPage extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(28.r),
                 ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    isLastPage 
-                        ? l10n.onboardingGetStarted
-                        : l10n.onboardingNext,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(width: 8.w),
-                  Icon(
-                    locale.languageCode == 'ar' ? Icons.arrow_back : Icons.arrow_forward,
-                    size: 20.w,
-                    color: Colors.white,
-                  ),
-                ],
+              child: Text(
+                isLastPage 
+                    ? l10n.onboardingGetStarted
+                    : l10n.onboardingNext,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
 
           SizedBox(height: 16.h),
 
-          // Footer text
-          Text(
-            'SOULSYNC APP V.1.0 • CUSTOMIZE ANYTIME IN SETTINGS',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Colors.grey[400],
-              fontSize: 10.sp,
-              letterSpacing: 0.5,
-            ),
-            textAlign: TextAlign.center,
-          ),
+          // Footer text completely removed
         ],
           ),
         );

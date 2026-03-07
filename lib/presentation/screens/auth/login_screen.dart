@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/network/supabase_service.dart';
@@ -332,19 +333,19 @@ class _LoginScreenState extends State<_LoginScreen> {
 
                               SizedBox(height: 14.h),
 
-                              // Skip
-                              Center(
-                                child: InkWell(
-                                  onTap: () => context.go('/home'),
-                                  borderRadius: BorderRadius.circular(20.r),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-                                    child: Text('Skip', style: TextStyle(color: _muted, fontSize: 14.sp, fontWeight: FontWeight.w600)),
-                                  ),
-                                ),
-                              ).animate().fadeIn(delay: 200.ms, duration: 300.ms),
-
-                              SizedBox(height: 14.h),
+                              // // Skip
+                              // Center(
+                              //   child: InkWell(
+                              //     onTap: () => context.go('/home'),
+                              //     borderRadius: BorderRadius.circular(20.r),
+                              //     child: Padding(
+                              //       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+                              //       child: Text('Skip', style: TextStyle(color: _muted, fontSize: 14.sp, fontWeight: FontWeight.w600)),
+                              //     ),
+                              //   ),
+                              // ).animate().fadeIn(delay: 200.ms, duration: 300.ms),
+                              //
+                              // SizedBox(height: 14.h),
 
                               // OR divider
                               Row(

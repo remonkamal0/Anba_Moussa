@@ -51,25 +51,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // soft gradient header background
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: 260.h,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    isDark ? cs.surfaceContainerHigh : const Color(0xFFFFF4EE),
-                    cs.surface,
-                  ],
-                ),
-              ),
-            ),
-          ),
+          // Background completely handled by Scaffold
 
           SafeArea(
             child: SingleChildScrollView(

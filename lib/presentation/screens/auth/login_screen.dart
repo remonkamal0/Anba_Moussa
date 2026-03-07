@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/network/supabase_service.dart';
+import '../../../l10n/app_localizations.dart';
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
@@ -207,6 +208,7 @@ class _LoginScreenState extends State<_LoginScreen> {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
+            final l10n = AppLocalizations.of(context)!;
             final h = constraints.maxHeight;
             final isSmall  = h < 680;
             final isTablet = constraints.maxWidth >= 600;
@@ -247,7 +249,7 @@ class _LoginScreenState extends State<_LoginScreen> {
                         SizedBox(height: vGap),
 
                         Text(
-                          'Welcome Back',
+                          l10n.welcomeBack,
                           style: TextStyle(color: _navy, fontSize: titleSz, fontWeight: FontWeight.w900),
                           textAlign: TextAlign.center,
                         ).animate().fadeIn(delay: 120.ms, duration: 350.ms),
@@ -255,7 +257,7 @@ class _LoginScreenState extends State<_LoginScreen> {
                         SizedBox(height: 8.h),
 
                         Text(
-                          'Discover and stream your favorite hits',
+                          l10n.welcomeBackSubtitle,
                           style: TextStyle(color: const Color(0xFF7E8798), fontSize: 15.sp, fontWeight: FontWeight.w500),
                           textAlign: TextAlign.center,
                         ).animate().fadeIn(delay: 220.ms, duration: 350.ms),
@@ -268,34 +270,37 @@ class _LoginScreenState extends State<_LoginScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              _fieldLabel('EMAIL ADDRESS'),
+                              _fieldLabel(l10n.emailAddress),
                               TextFormField(
                                 controller: _emailController,
                                 autofocus: true,
                                 keyboardType: TextInputType.emailAddress,
-                                decoration: _inputDecoration(hint: 'hello@example.com', prefix: Icons.email_outlined),
+                                decoration: _inputDecoration(
+                                  hint: l10n.emailHint,
+                                  prefix: Icons.email_outlined,
+                                ),
                                 validator: (v) {
-                                  if (v == null || v.isEmpty) return 'Please enter your email address';
-                                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(v)) return 'Please enter a valid email address';
+                                  if (v == null || v.isEmpty) return l10n.emptyEmail;
+                                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(v)) return l10n.invalidEmail;
                                   return null;
                                 },
                               ).animate().slideX(begin: -0.08, duration: 350.ms),
 
                               SizedBox(height: vGap),
 
-                              _fieldLabel('PASSWORD'),
+                              _fieldLabel(l10n.password),
                               TextFormField(
                                 controller: _passwordController,
                                 obscureText: _obscurePassword,
                                 decoration: _inputDecoration(
-                                  hint: '••••••••',
+                                  hint: l10n.passwordHint,
                                   prefix: Icons.lock_outline,
                                   suffix: IconButton(
                                     onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                                     icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility, color: const Color(0xFFA7B0C0)),
                                   ),
                                 ),
-                                validator: (v) => (v == null || v.isEmpty) ? 'Please enter your password' : null,
+                                validator: (v) => (v == null || v.isEmpty) ? l10n.emptyPassword : null,
                               ).animate().slideX(begin: -0.08, duration: 350.ms, delay: 90.ms),
 
                               SizedBox(height: 10.h),
@@ -307,7 +312,7 @@ class _LoginScreenState extends State<_LoginScreen> {
                                   borderRadius: BorderRadius.circular(8.r),
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
-                                    child: Text('Forgot Password?', style: TextStyle(color: _orange, fontSize: 14.sp, fontWeight: FontWeight.w800)),
+                                    child: Text(l10n.forgotPasswordTitle, style: TextStyle(color: _orange, fontSize: 14.sp, fontWeight: FontWeight.w800)),
                                   ),
                                 ),
                               ),
@@ -327,25 +332,11 @@ class _LoginScreenState extends State<_LoginScreen> {
                                   ).copyWith(shadowColor: WidgetStatePropertyAll(Colors.black.withOpacity(0.12))),
                                   child: _isLoading
                                       ? SizedBox(width: 22.w, height: 22.w, child: const CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)))
-                                      : Text('Login', style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.w900)),
+                                      : Text(l10n.login, style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.w900)),
                                 ),
                               ).animate().fadeIn(delay: 220.ms, duration: 350.ms),
 
                               SizedBox(height: 14.h),
-
-                              // // Skip
-                              // Center(
-                              //   child: InkWell(
-                              //     onTap: () => context.go('/home'),
-                              //     borderRadius: BorderRadius.circular(20.r),
-                              //     child: Padding(
-                              //       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-                              //       child: Text('Skip', style: TextStyle(color: _muted, fontSize: 14.sp, fontWeight: FontWeight.w600)),
-                              //     ),
-                              //   ),
-                              // ).animate().fadeIn(delay: 200.ms, duration: 300.ms),
-                              //
-                              // SizedBox(height: 14.h),
 
                               // OR divider
                               Row(
@@ -353,7 +344,7 @@ class _LoginScreenState extends State<_LoginScreen> {
                                   Expanded(child: Container(height: 1.h, color: _border)),
                                   Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 14.w),
-                                    child: Text('OR CONTINUE WITH', style: TextStyle(color: const Color(0xFFB0B7C4), fontSize: 12.sp, fontWeight: FontWeight.w800, letterSpacing: 1.2)),
+                                    child: Text(l10n.orContinueWith, style: TextStyle(color: const Color(0xFFB0B7C4), fontSize: 12.sp, fontWeight: FontWeight.w800, letterSpacing: 1.2)),
                                   ),
                                   Expanded(child: Container(height: 1.h, color: _border)),
                                 ],
@@ -367,7 +358,7 @@ class _LoginScreenState extends State<_LoginScreen> {
                                     child: _socialButton(
                                       onTap: _signInWithGoogle,
                                       leading: Image.asset('assets/images/google-color-svgrepo-com.png', width: 22.w, height: 22.w, errorBuilder: (_, __, ___) => Icon(Icons.g_mobiledata, size: 26.sp, color: _navy)),
-                                      text: 'Google',
+                                      text: l10n.google,
                                     ).animate().slideX(begin: -0.08, duration: 350.ms),
                                   ),
                                   SizedBox(width: 14.w),
@@ -375,7 +366,7 @@ class _LoginScreenState extends State<_LoginScreen> {
                                     child: _socialButton(
                                       onTap: _signInWithApple,
                                       leading: Image.asset('assets/images/apple-svgrepo-com.png', width: 22.w, height: 22.w, errorBuilder: (_, __, ___) => Icon(Icons.apple, color: Colors.black, size: 22.sp)),
-                                      text: 'Apple',
+                                      text: l10n.apple,
                                     ).animate().slideX(begin: 0.08, duration: 350.ms),
                                   ),
                                 ],
@@ -386,13 +377,13 @@ class _LoginScreenState extends State<_LoginScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text("Don't have an account? ", style: TextStyle(color: const Color(0xFF8A93A3), fontSize: 14.sp, fontWeight: FontWeight.w600)),
+                                  Text(l10n.dontHaveAccount, style: TextStyle(color: const Color(0xFF8A93A3), fontSize: 14.sp, fontWeight: FontWeight.w600)),
                                   InkWell(
                                     onTap: _onSignUp,
                                     borderRadius: BorderRadius.circular(8.r),
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
-                                      child: Text('Sign Up', style: TextStyle(color: _orange, fontSize: 14.sp, fontWeight: FontWeight.w900)),
+                                      child: Text(l10n.signUp, style: TextStyle(color: _orange, fontSize: 14.sp, fontWeight: FontWeight.w900)),
                                     ),
                                   ),
                                 ],

@@ -192,4 +192,86 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get playlistCreateButton => 'إنشاء قائمة تشغيل';
+
+  @override
+  String get forgotPasswordTitle => 'نسيت كلمة المرور؟';
+
+  @override
+  String get forgotPasswordSubtitle =>
+      'أدخل بريدك الإلكتروني وسنرسل لك\nرابطاً لإعادة تعيين\nكلمة المرور.';
+
+  @override
+  String get emailAddress => 'البريد الإلكتروني';
+
+  @override
+  String get emailHint => 'hello@example.com';
+
+  @override
+  String get sendLink => 'إرسال الرابط';
+
+  @override
+  String get backTo => 'العودة إلى ';
+
+  @override
+  String get login => 'تسجيل الدخول';
+
+  @override
+  String get signUp => 'إنشاء حساب';
+
+  @override
+  String get password => 'كلمة المرور';
+
+  @override
+  String get dontHaveAccount => 'ليس لديك حساب؟ ';
+
+  @override
+  String get alreadyHaveAccount => 'لديك حساب بالفعل؟ ';
+
+  @override
+  String get welcomeBack => 'مرحباً بعودتك';
+
+  @override
+  String get welcomeBackSubtitle => 'اكتشف واستمع لأفضل الألحان';
+
+  @override
+  String get passwordHint => '••••••••';
+
+  @override
+  String get invalidEmail => 'الرجاء إدخال بريد إلكتروني صحيح';
+
+  @override
+  String get emptyEmail => 'الرجاء إدخال بريدك الإلكتروني';
+
+  @override
+  String get emptyPassword => 'الرجاء إدخال كلمة المرور';
+
+  @override
+  String get orContinueWith => 'أو المتابعة باستخدام';
+
+  @override
+  String get google => 'جوجل';
+
+  @override
+  String get apple => 'أبل';
+
+  @override
+  String get createAccount => 'إنشاء حساب';
+
+  @override
+  String get createAccountSubtitle => 'انضم إلينا وابدأ رحلتك الروحية';
+
+  @override
+  String get fullName => 'الاسم بالكامل';
+
+  @override
+  String get fullNameHint => 'أدخل اسمك بالكامل';
+
+  @override
+  String get emptyName => 'الرجاء إدخال اسمك';
+
+  @override
+  String get confirmPassword => 'تأكيد كلمة المرور';
+
+  @override
+  String get passwordsNotMatch => 'كلمات المرور غير متطابقة';
 }

@@ -192,4 +192,86 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get playlistCreateButton => 'Create Playlist';
+
+  @override
+  String get forgotPasswordTitle => 'Forgot Password?';
+
+  @override
+  String get forgotPasswordSubtitle =>
+      'Enter your email address and we will\nsend you a link to reset your\npassword.';
+
+  @override
+  String get emailAddress => 'EMAIL ADDRESS';
+
+  @override
+  String get emailHint => 'hello@example.com';
+
+  @override
+  String get sendLink => 'Send Link';
+
+  @override
+  String get backTo => 'Back to ';
+
+  @override
+  String get login => 'Login';
+
+  @override
+  String get signUp => 'Sign Up';
+
+  @override
+  String get password => 'PASSWORD';
+
+  @override
+  String get dontHaveAccount => 'Don\'t have an account? ';
+
+  @override
+  String get alreadyHaveAccount => 'Already have an account? ';
+
+  @override
+  String get welcomeBack => 'Welcome Back';
+
+  @override
+  String get welcomeBackSubtitle => 'Discover and stream your favorite hits';
+
+  @override
+  String get passwordHint => '••••••••';
+
+  @override
+  String get invalidEmail => 'Please enter a valid email address';
+
+  @override
+  String get emptyEmail => 'Please enter your email address';
+
+  @override
+  String get emptyPassword => 'Please enter your password';
+
+  @override
+  String get orContinueWith => 'OR CONTINUE WITH';
+
+  @override
+  String get google => 'Google';
+
+  @override
+  String get apple => 'Apple';
+
+  @override
+  String get createAccount => 'Create Account';
+
+  @override
+  String get createAccountSubtitle => 'Join us to start your spiritual journey';
+
+  @override
+  String get fullName => 'FULL NAME';
+
+  @override
+  String get fullNameHint => 'Enter your full name';
+
+  @override
+  String get emptyName => 'Please enter your name';
+
+  @override
+  String get confirmPassword => 'CONFIRM PASSWORD';
+
+  @override
+  String get passwordsNotMatch => 'Passwords do not match';
 }

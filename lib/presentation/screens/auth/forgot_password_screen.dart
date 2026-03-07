@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import '../../../l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../presentation/providers/theme_provider.dart';
 import '../../../core/network/supabase_service.dart';
@@ -85,9 +86,10 @@ class _ForgotPasswordScreenState extends State<_ForgotPasswordScreen> {
     }
   }
 
-  InputDecoration _inputDecoration() {
+  InputDecoration _inputDecoration(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return InputDecoration(
-      hintText: 'hello@example.com',
+      hintText: l10n.emailHint,
       hintStyle: TextStyle(
         color: const Color(0xFFB3BBC8),
         fontSize: 16.sp,
@@ -133,6 +135,8 @@ class _ForgotPasswordScreenState extends State<_ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       backgroundColor: _bg,
       body: SafeArea(
@@ -179,7 +183,7 @@ class _ForgotPasswordScreenState extends State<_ForgotPasswordScreen> {
                 SizedBox(height: 28.h),
 
                 Text(
-                  'Forgot Password?',
+                  l10n.forgotPasswordTitle,
                   style: TextStyle(
                     color: _navy,
                     fontSize: 34.sp,
@@ -192,7 +196,7 @@ class _ForgotPasswordScreenState extends State<_ForgotPasswordScreen> {
 
                 // Subtitle split in lines like the mock
                 Text(
-                  'Enter your email address and we will\nsend you a link to reset your\npassword.',
+                  l10n.forgotPasswordSubtitle,
                   style: TextStyle(
                     color: const Color(0xFF7E8798),
                     fontSize: 16.sp,
@@ -210,12 +214,12 @@ class _ForgotPasswordScreenState extends State<_ForgotPasswordScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _fieldLabel('EMAIL ADDRESS'),
+                      _fieldLabel(l10n.emailAddress),
                       TextFormField(
                         controller: _emailController,
                         autofocus: true,
                         keyboardType: TextInputType.emailAddress,
-                        decoration: _inputDecoration(),
+                        decoration: _inputDecoration(context),
                         validator: (value) {
                           if (value == null || value.isEmpty) return 'Please enter your email address';
                           if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
@@ -256,7 +260,7 @@ class _ForgotPasswordScreenState extends State<_ForgotPasswordScreen> {
                       ),
                     )
                         : Text(
-                      'Send Link',
+                      l10n.sendLink,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18.sp,

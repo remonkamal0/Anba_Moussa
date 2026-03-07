@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/supabase_service.dart';
+import '../../../l10n/app_localizations.dart';
 
 class SignupScreen extends ConsumerWidget {
   const SignupScreen({super.key});
@@ -295,6 +296,8 @@ class _SignupScreenState extends State<_SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       backgroundColor: _bg,
       body: SafeArea(
@@ -324,7 +327,7 @@ class _SignupScreenState extends State<_SignupScreen> {
                 SizedBox(height: 20.h),
 
                 Text(
-                  'Create Account',
+                  l10n.createAccount,
                   style: TextStyle(
                     color: _navy,
                     fontSize: 28.sp,
@@ -335,7 +338,7 @@ class _SignupScreenState extends State<_SignupScreen> {
                 SizedBox(height: 8.h),
 
                 Text(
-                  'Join our religious community of music lovers',
+                  l10n.createAccountSubtitle,
                   style: TextStyle(
                     color: const Color(0xFF7E8798),
                     fontSize: 14.sp,
@@ -351,34 +354,34 @@ class _SignupScreenState extends State<_SignupScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _fieldLabel('Full Name'),
+                      _fieldLabel(l10n.fullName),
                       TextFormField(
                         controller: _fullNameController,
                         autofocus: true,
                         decoration: _pillDecoration(
-                          hint: 'John Doe',
+                          hint: l10n.fullNameHint,
                           prefix: Icons.person_outline,
                         ),
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) return 'Please enter your full name';
+                          if (v == null || v.trim().isEmpty) return l10n.emptyName;
                           return null;
                         },
                       ),
 
                       SizedBox(height: 10.h),
 
-                      _fieldLabel('Email Address'),
+                      _fieldLabel(l10n.emailAddress),
                       TextFormField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         decoration: _pillDecoration(
-                          hint: 'hello@example.com',
+                          hint: l10n.emailHint,
                           prefix: Icons.email_outlined,
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return 'Please enter your email address';
+                          if (v == null || v.isEmpty) return l10n.emptyEmail;
                           if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(v)) {
-                            return 'Please enter a valid email address';
+                            return l10n.invalidEmail;
                           }
                           return null;
                         },
@@ -493,12 +496,12 @@ class _SignupScreenState extends State<_SignupScreen> {
 
                       SizedBox(height: 10.h),
 
-                      _fieldLabel('Password'),
+                      _fieldLabel(l10n.password),
                       TextFormField(
                         controller: _passwordController,
                         obscureText: _obscurePassword,
                         decoration: _pillDecoration(
-                          hint: '•••••••••',
+                          hint: l10n.passwordHint,
                           prefix: Icons.lock_outline,
                           suffix: IconButton(
                             onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
@@ -509,7 +512,7 @@ class _SignupScreenState extends State<_SignupScreen> {
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return 'Please enter your password';
+                          if (v == null || v.isEmpty) return l10n.emptyPassword;
                           if (v.length < 6) return 'Password must be at least 6 characters';
                           return null;
                         },
@@ -517,12 +520,12 @@ class _SignupScreenState extends State<_SignupScreen> {
 
                       SizedBox(height: 14.h),
 
-                      _fieldLabel('Confirm Password'),
+                      _fieldLabel(l10n.confirmPassword),
                       TextFormField(
                         controller: _confirmPasswordController,
                         obscureText: _obscureConfirmPassword,
                         decoration: _pillDecoration(
-                          hint: '•••••••••',
+                          hint: l10n.passwordHint,
                           prefix: Icons.lock_reset_outlined,
                           suffix: IconButton(
                             onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
@@ -533,7 +536,8 @@ class _SignupScreenState extends State<_SignupScreen> {
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return 'Please confirm your password';
+                          if (v == null || v.isEmpty) return l10n.emptyPassword;
+                          if (v != _passwordController.text) return l10n.passwordsNotMatch;
                           return null;
                         },
                       ),
@@ -569,7 +573,7 @@ class _SignupScreenState extends State<_SignupScreen> {
                             ),
                           )
                               : Text(
-                            'Sign Up',
+                            l10n.signUp,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18.sp,
@@ -588,7 +592,7 @@ class _SignupScreenState extends State<_SignupScreen> {
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 14.w),
                             child: Text(
-                              'OR SIGN UP WITH',
+                              l10n.orContinueWith,
                               style: TextStyle(
                                 color: const Color(0xFFB0B7C4),
                                 fontSize: 12.sp,
@@ -615,7 +619,7 @@ class _SignupScreenState extends State<_SignupScreen> {
                                 errorBuilder: (_, __, ___) =>
                                     Icon(Icons.g_mobiledata, size: 26.sp, color: _navy),
                               ),
-                              text: 'Google',
+                              text: l10n.google,
                             ),
                           ),
                           SizedBox(width: 14.w),
@@ -629,7 +633,7 @@ class _SignupScreenState extends State<_SignupScreen> {
                                 errorBuilder: (_, __, ___) =>
                                     Icon(Icons.apple, color: Colors.black, size: 22.sp),
                               ),
-                              text: 'Apple',
+                              text: l10n.apple,
                             ),
                           ),
                         ],
@@ -641,7 +645,7 @@ class _SignupScreenState extends State<_SignupScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Already have an account? ',
+                            l10n.alreadyHaveAccount,
                             style: TextStyle(
                               color: _muted,
                               fontSize: 13.sp,
@@ -654,7 +658,7 @@ class _SignupScreenState extends State<_SignupScreen> {
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
                               child: Text(
-                                'Login',
+                                l10n.login,
                                 style: TextStyle(
                                   color: _orange,
                                   fontSize: 13.sp,

@@ -109,7 +109,10 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
                 final miniState = ref.watch(miniPlayerProvider);
                 final location = GoRouterState.of(context).uri.path;
                 final isPlayerScreen = location.contains('player');
-                if (!miniState.isVisible || miniState.track == null || isPlayerScreen) {
+                if (!miniState.isVisible || miniState.track == null) {
+                  return const SizedBox.shrink();
+                }
+                if (isPlayerScreen) {
                   return const SizedBox.shrink();
                 }
                 return const MiniPlayer();

@@ -135,25 +135,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: '/settings',
             builder: (context, state) => const SettingsScreen(),
           ),
+          GoRoute(
+            path: '/album/:albumId',
+            builder: (context, state) {
+              final albumId = state.pathParameters['albumId']!;
+              final title = state.uri.queryParameters['title'] ?? 'Album';
+              final imageUrl = state.uri.queryParameters['imageUrl'] ?? '';
+              final artist = state.uri.queryParameters['artist'] ?? '';
+              final year = state.uri.queryParameters['year'] ?? '';
+              return AlbumDetailsScreen(
+                albumId: albumId,
+                title: title,
+                imageUrl: imageUrl,
+                artist: artist,
+                year: year,
+              );
+            },
+          ),
         ],
-      ),
-      GoRoute(
-        path: '/album/:albumId',
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) {
-          final albumId = state.pathParameters['albumId']!;
-          final title = state.uri.queryParameters['title'] ?? 'Album';
-          final imageUrl = state.uri.queryParameters['imageUrl'] ?? '';
-          final artist = state.uri.queryParameters['artist'] ?? '';
-          final year = state.uri.queryParameters['year'] ?? '';
-          return AlbumDetailsScreen(
-            albumId: albumId,
-            title: title,
-            imageUrl: imageUrl,
-            artist: artist,
-            year: year,
-          );
-        },
       ),
       GoRoute(
         path: '/profile/edit',

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -15,6 +14,7 @@ import 'package:anba_moussa/presentation/providers/album_details_provider.dart';
 import 'package:anba_moussa/presentation/providers/audio_provider.dart';
 import 'package:anba_moussa/presentation/providers/favorites_provider.dart';
 import 'package:anba_moussa/presentation/providers/downloads_provider.dart';
+import 'package:anba_moussa/presentation/providers/mini_player_provider.dart';
 
 class AlbumDetailsScreen extends ConsumerStatefulWidget {
   final String albumId;
@@ -37,8 +37,6 @@ class AlbumDetailsScreen extends ConsumerStatefulWidget {
 }
 
 class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
-  final ZoomDrawerController _drawerController = ZoomDrawerController();
-
   void _toast(String msg) {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -97,22 +95,9 @@ class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(albumDetailsProvider(widget.albumId));
-    final isRtl = Directionality.of(context) == TextDirection.rtl;
-
     final cs = Theme.of(context).colorScheme;
 
-    return ZoomDrawer(
-      controller: _drawerController,
-      style: DrawerStyle.defaultStyle,
-      menuScreen: const _DrawerPlaceholder(),
-      isRtl: isRtl,
-      borderRadius: 24.0,
-      showShadow: true,
-      angle: isRtl ? 10.0 : -10.0,
-      drawerShadowsBackgroundColor: cs.onSurface.withValues(alpha: 0.1),
-      slideWidth: MediaQuery.of(context).size.width * 0.75,
-      menuBackgroundColor: cs.surface,
-      mainScreen: Scaffold(
+    return Scaffold(
         backgroundColor: cs.surface,
         appBar: AppBar(
           backgroundColor: cs.surface,
@@ -177,7 +162,9 @@ class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
                           _TagsFilterRow(
                             tags: state.tags,
                             selectedTagId: state.selectedTagId,
-                            onTagSelected: (tagId) => ref.read(albumDetailsProvider(widget.albumId).notifier).filterByTag(tagId),
+                            onTagSelected: (tagId) => ref
+                                .read(albumDetailsProvider(widget.albumId).notifier)
+                                .filterByTag(tagId),
                           ),
 
                         SizedBox(height: 12.h),
@@ -233,18 +220,18 @@ class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
                               onTap: () => _onTrackTapped(t),
                               onLike: () => _toggleLike(t),
                               onDownload: () => _toggleDownload(t),
-                            ).animate()
-                             .fadeIn(duration: 220.ms, delay: (index * 50).ms)
-                             .slideX(begin: -0.05, end: 0, duration: 220.ms, delay: (index * 50).ms);
+                            )
+                                .animate()
+                                .fadeIn(duration: 220.ms, delay: (index * 50).ms)
+                                .slideX(begin: -0.05, end: 0, duration: 220.ms, delay: (index * 50).ms);
                           },
                         ),
 
-                        SizedBox(height: 18.h),
+                        SizedBox(height: 100.h),
                       ],
                     ),
                   ),
-      ),
-    );
+      );
   }
 }
 
@@ -687,38 +674,6 @@ class _IconAction extends StatelessWidget {
       onTap: onTap,
       radius: 18.r,
       child: Icon(icon, size: 22.w, color: color),
-    );
-  }
-}
-
-// Placeholder Drawer (بدل AppDrawer لو مش موجود)
-class _DrawerPlaceholder extends StatelessWidget {
-  const _DrawerPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.all(18.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Menu', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w900)),
-            SizedBox(height: 14.h),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
-              onTap: () => ZoomDrawer.of(context)?.close(),
-            ),
-            ListTile(
-              leading: const Icon(Icons.library_music),
-              title: const Text('Library'),
-              onTap: () => ZoomDrawer.of(context)?.close(),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

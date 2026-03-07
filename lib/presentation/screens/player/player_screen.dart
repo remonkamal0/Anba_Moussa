@@ -37,6 +37,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
   bool _isShuffled = false;
   bool _isRepeating = false;
   double _volume = 0.7;
+  double _volumeBeforeMute = 0.7;
+  bool _isMuted = false;
+
+  final GlobalKey _volumeIconKey = GlobalKey();
+  OverlayEntry? _volumeOverlay;
 
   // Cached notifier references — must be set in initState, NOT accessed in dispose().
   late final MiniPlayerNotifier _miniPlayerNotifier;
@@ -113,6 +118,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
 
   @override
   void dispose() {
+    _hideVolumeOverlay();
     // Cancel volume listener safely — flutter_volume_controller may throw
     // MissingPluginException on some platforms/emulators.
     try {
@@ -127,6 +133,127 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
   }
 
   void _togglePlay() => _audioNotifier.togglePlayPause();
+
+  void _hideVolumeOverlay() {
+    _volumeOverlay?.remove();
+    _volumeOverlay = null;
+  }
+
+  void _showVolumeOverlay() {
+    final overlay = Overlay.of(context);
+    if (overlay == null) return;
+    final renderObject = _volumeIconKey.currentContext?.findRenderObject();
+    if (renderObject is! RenderBox) return;
+
+    final iconBox = renderObject;
+    final iconSize = iconBox.size;
+    final iconOffset = iconBox.localToGlobal(Offset.zero);
+    final screen = MediaQuery.of(context).size;
+
+    const popupWidth = 220.0;
+    const popupHeight = 52.0;
+    const verticalGap = 10.0;
+
+    final left = (iconOffset.dx + (iconSize.width / 2) - (popupWidth / 2))
+        .clamp(12.0, screen.width - popupWidth - 12.0);
+    final top = (iconOffset.dy - popupHeight - verticalGap).clamp(12.0, screen.height - popupHeight - 12.0);
+
+    _volumeOverlay = OverlayEntry(
+      builder: (ctx) {
+        final cs = Theme.of(ctx).colorScheme;
+        return Stack(
+          children: [
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: _hideVolumeOverlay,
+                behavior: HitTestBehavior.translucent,
+              ),
+            ),
+            Positioned(
+              left: left,
+              top: top,
+              width: popupWidth,
+              height: popupHeight,
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                  decoration: BoxDecoration(
+                    color: cs.surface,
+                    borderRadius: BorderRadius.circular(16.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.15),
+                        blurRadius: 18,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: SliderTheme(
+                      data: SliderTheme.of(ctx).copyWith(
+                        trackHeight: 4.h,
+                        activeTrackColor: cs.primary,
+                        inactiveTrackColor: cs.outlineVariant,
+                        thumbColor: cs.primary,
+                        overlayColor: cs.primary.withOpacity(0.15),
+                        thumbShape: RoundSliderThumbShape(
+                          enabledThumbRadius: 7.r,
+                        ),
+                      ),
+                      child: Slider(
+                        value: _volume.clamp(0.0, 1.0),
+                        min: 0,
+                        max: 1,
+                        onChanged: (v) {
+                          final vv = v.clamp(0.0, 1.0);
+                          setState(() {
+                            _volume = vv;
+                            _isMuted = vv == 0;
+                            if (!_isMuted) _volumeBeforeMute = vv;
+                          });
+                          _audioNotifier.setVolume(vv);
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+    overlay.insert(_volumeOverlay!);
+  }
+
+  void _onVolumeIconPressed() {
+    if (_volumeOverlay == null) {
+      _showVolumeOverlay();
+      return;
+    }
+    _toggleMute();
+  }
+
+  void _toggleMute() {
+    if (_isMuted) {
+      final restored = _volumeBeforeMute.clamp(0.0, 1.0);
+      setState(() {
+        _isMuted = false;
+        _volume = restored;
+      });
+      _audioNotifier.setVolume(restored);
+      return;
+    }
+
+    final current = _volume.clamp(0.0, 1.0);
+    if (current > 0) _volumeBeforeMute = current;
+    setState(() {
+      _isMuted = true;
+      _volume = 0;
+    });
+    _audioNotifier.setVolume(0);
+  }
 
   void _onSeek(double v) => _audioNotifier.seek(Duration(seconds: v.round()));
 
@@ -149,7 +276,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
 
     final isRtl = Directionality.of(context) == TextDirection.rtl;
     final sw = MediaQuery.of(context).size.width;
-    final artSize = (sw * 0.72).clamp(180.0, 320.0);
+    final artSize = (sw * 0.60).clamp(160.0, 280.0);
 
     return ZoomDrawer(
       controller: _drawerController,
@@ -164,6 +291,25 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
       menuBackgroundColor: cs.surface,
       mainScreen: Scaffold(
         backgroundColor: cs.surface,
+        appBar: AppBar(
+          backgroundColor: cs.surface,
+          elevation: 0,
+          centerTitle: true,
+          title: Text(
+            audioState.currentTrack?.getLocalizedTitle(locale) ?? '...',
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w800,
+              color: cs.onSurface,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.onSurface),
+            onPressed: () => context.pop(),
+          ),
+        ),
         body: SafeArea(
           child: LayoutBuilder(
             builder: (ctx, box) => SingleChildScrollView(
@@ -173,122 +319,48 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                 child: IntrinsicHeight(
                   child: Column(
                     children: [
-                      SizedBox(height: 8.h),
-
-                      // ── Top row ──────────────────────────────────
-                      // Always: [☰ menu | center | ← back]
-                      // LTR → menu LEFT, back RIGHT  ✓
-                      // RTL → Row reverses → menu RIGHT, back LEFT ✓
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.w),
-                        child: Row(
-                          children: [
-                            IconButton(
-                              onPressed: () => context.pop(),
-                              icon: Icon(
-                                isRtl
-                                    ? Icons.arrow_back_ios_rounded
-                                    : Icons.arrow_back_ios_rounded,
-                                color: cs.onSurface,
-                                size: 20.sp,
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'PLAYING FROM',
-                                    style: TextStyle(
-                                      fontSize: 11.sp,
-                                      letterSpacing: 2,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.grey[500],
+                      // ── Fixed square album art ───────────────────
+                      SizedBox(
+                        width: artSize,
+                        height: artSize,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(26.r),
+                          child: audioState.currentTrack?.coverImageUrl != null
+                              ? CachedNetworkImage(
+                                  imageUrl: audioState.currentTrack!.coverImageUrl,
+                                  fit: BoxFit.cover,
+                                  placeholder: (_, __) => Container(
+                                    color: cs.surfaceVariant,
+                                    child: Center(
+                                      child: SizedBox(
+                                        width: 22.w,
+                                        height: 22.w,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: cs.primary,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                  SizedBox(height: 3.h),
-                                  Text(
-                                    'Album', // You might want to add album name to MiniPlayerTrack later
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w800,
-                                      color: cs.onSurface,
+                                  errorWidget: (_, __, ___) => Container(
+                                    color: cs.surfaceVariant,
+                                    alignment: Alignment.center,
+                                    child: Icon(
+                                      Icons.music_note,
+                                      size: artSize * 0.4,
+                                      color: cs.primary,
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                            // ← Back
-
-                          ],
-                        ),
-                      ),
-
-                      // ── Spinning vinyl album art ─────────────────
-                      AnimatedBuilder(
-                        animation: _vinylCtrl,
-                        builder: (_, child) => Transform.rotate(
-                          angle: _vinylCtrl.value * 2 * math.pi,
-                          child: child,
-                        ),
-                        child: SizedBox(
-                          width: artSize,
-                          height: artSize,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              // Orange ring
-                              Container(
-                                width: artSize,
-                                height: artSize,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                      color: cs.primary, width: 6),
-                                ),
-                              ),
-                              // White gap
-                              Container(
-                                width: artSize * 0.87,
-                                height: artSize * 0.87,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: cs.surface,
-                                ),
-                              ),
-                              // Cover image
-                                Container(
-                                  width: artSize * 0.75,
-                                  height: artSize * 0.75,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    image: audioState.currentTrack?.coverImageUrl != null
-                                        ? DecorationImage(
-                                            image: CachedNetworkImageProvider(
-                                                audioState.currentTrack!.coverImageUrl),
-                                            fit: BoxFit.cover,
-                                          )
-                                        : null,
+                                )
+                              : Container(
+                                  color: cs.surfaceVariant,
+                                  alignment: Alignment.center,
+                                  child: Icon(
+                                    Icons.music_note,
+                                    size: artSize * 0.4,
+                                    color: cs.primary,
                                   ),
-                                  child: audioState.currentTrack?.coverImageUrl == null
-                                      ? Icon(Icons.music_note, size: artSize * 0.4, color: cs.primary)
-                                      : null,
                                 ),
-                              // Centre hole
-                              Container(
-                                width: artSize * 0.08,
-                                height: artSize * 0.08,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: cs.surface,
-                                  border: Border.all(
-                                      color: cs.primary, width: 2),
-                                ),
-                              ),
-                            ],
-                          ),
                         ),
                       ),
 
@@ -303,9 +375,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                               audioState.currentTrack?.getLocalizedTitle(locale) ?? '...',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize:
-                                    (sw * 0.085).clamp(24, 42).toDouble(),
-                                fontWeight: FontWeight.w900,
+                                fontSize: 24.sp,
+                                fontWeight: FontWeight.w800,
                                 color: cs.onSurface,
                               ),
                             ),
@@ -313,7 +384,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                             Text(
                               audioState.currentTrack?.getLocalizedSpeaker(locale) ?? '...',
                               style: TextStyle(
-                                fontSize: 15.sp,
+                                fontSize: 13.sp,
                                 fontWeight: FontWeight.w600,
                                 color: cs.onSurface.withValues(alpha: 0.6),
                               ),
@@ -563,8 +634,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                         padding: EdgeInsets.symmetric(horizontal: 24.w),
                         child: Row(
                           children: [
-                            Icon(Icons.volume_down_rounded,
-                                color: cs.onSurface.withValues(alpha: 0.4), size: 20.sp),
+                            Icon(
+                              Icons.volume_down_rounded,
+                              color: cs.onSurface.withValues(alpha: 0.4),
+                              size: 20.sp,
+                            ),
                             Expanded(
                               child: SliderTheme(
                                 data: SliderTheme.of(context).copyWith(
@@ -574,21 +648,30 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                   thumbColor: cs.primary,
                                   overlayColor: cs.primary.withOpacity(0.15),
                                   thumbShape: RoundSliderThumbShape(
-                                      enabledThumbRadius: 7.r),
+                                    enabledThumbRadius: 7.r,
+                                  ),
                                 ),
                                 child: Slider(
-                                  value: _volume,
+                                  value: _volume.clamp(0.0, 1.0),
                                   min: 0,
                                   max: 1,
                                   onChanged: (v) {
-                                    setState(() => _volume = v);
-                                    _audioNotifier.setVolume(v);
+                                    final vv = v.clamp(0.0, 1.0);
+                                    setState(() {
+                                      _volume = vv;
+                                      _isMuted = vv == 0;
+                                      if (!_isMuted) _volumeBeforeMute = vv;
+                                    });
+                                    _audioNotifier.setVolume(vv);
                                   },
                                 ),
                               ),
                             ),
-                            Icon(Icons.volume_up_rounded,
-                                color: cs.onSurface.withValues(alpha: 0.4), size: 20.sp),
+                            Icon(
+                              Icons.volume_up_rounded,
+                              color: cs.onSurface.withValues(alpha: 0.4),
+                              size: 20.sp,
+                            ),
                           ],
                         ),
                       ),

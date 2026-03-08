@@ -31,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
     _SliderItem(
       title: "Top Praise:\nKoinonia",
-      subtitle: "Fellowship songs for your day",
+      subtitle: "Fellowship tracks for your day",
       imageUrl: "https://images.unsplash.com/photo-1522780209446-3f30c0a4c69d?w=1200&q=80",
     ),
     _SliderItem(
@@ -138,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(height: 16.h),
 
                       _SectionHeader(
-                        title: "Top 10 Songs",
+                        title: "Top 10 Tracks",
                         actionText: "",
                         onAction: null,
                         trailingIcon: Icons.tune,

@@ -9,6 +9,7 @@ import '../../../domain/entities/track.dart';
 import '../../../domain/entities/category.dart';
 import '../../../domain/entities/slider.dart' as entity_slider;
 import '../../widgets/common/app_drawer.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../providers/home_provider.dart';
@@ -104,8 +105,8 @@ class _HomeViewContentState extends riverpod.ConsumerState<_HomeViewContent> {
                                 ).animate().slideY(begin: 0.05, duration: 300.ms),
                                 SizedBox(height: 16.h),
                                 _SectionHeader(
-                                  title: "Categories",
-                                  actionText: "VIEW ALL",
+                                  title: AppLocalizations.of(context)!.homeCategories,
+                                  actionText: AppLocalizations.of(context)!.homeViewAll,
                                   onAction: () => context.push('/library'),
                                 ).animate().fadeIn(delay: 120.ms, duration: 250.ms),
                                 SizedBox(height: 8.h),
@@ -114,7 +115,7 @@ class _HomeViewContentState extends riverpod.ConsumerState<_HomeViewContent> {
                                 ).animate().slideX(begin: -0.04, duration: 300.ms),
                                 SizedBox(height: 16.h),
                                 _SectionHeader(
-                                  title: "Top 10 Songs",
+                                  title: AppLocalizations.of(context)!.homeTopTracks,
                                   actionText: "",
                                   trailingIcon: Icons.tune,
                                   onTrailing: () {},
@@ -180,7 +181,7 @@ class _TopBar extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'WELCOME BACK,',
+                  AppLocalizations.of(context)!.homeWelcomeBack,
                   style: AppTextStyles.getBodySmall(context).copyWith(
                     color: cs.onSurface.withValues(alpha: 0.5),
                   ),
@@ -699,7 +700,7 @@ class _TopTracksList extends riverpod.ConsumerWidget {
                             ),
                             SizedBox(height: 4.h),
                             Text(
-                              track.getLocalizedSpeaker(Localizations.localeOf(context).languageCode) ?? 'Unknown Speaker',
+                              track.getLocalizedSpeaker(Localizations.localeOf(context).languageCode) ?? AppLocalizations.of(context)!.unknownSpeaker,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTextStyles.getBodyMedium(context).copyWith(

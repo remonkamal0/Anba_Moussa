@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/supabase_service.dart';
 import '../../providers/user_profile_provider.dart';
+import '../../../l10n/app_localizations.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -86,8 +87,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     final newPassword = _passwordController.text;
     if (newPassword.isNotEmpty && newPassword != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Passwords do not match'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.passwordsNotMatch),
           backgroundColor: Colors.red,
         ),
       );
@@ -117,8 +118,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           SnackBar(
             content: Text(
               newPassword.isNotEmpty
-                  ? 'Profile and password updated successfully!'
-                  : 'Profile updated successfully!'
+                  ? AppLocalizations.of(context)!.profileAndPasswordUpdated
+                  : AppLocalizations.of(context)!.profileUpdated
             ),
             backgroundColor: Colors.green,
           ),
@@ -129,7 +130,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error updating profile: $e'),
+            content: Text('${AppLocalizations.of(context)!.profileUpdateError}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -199,7 +200,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           onPressed: () => context.pop(),
         ),
         title: Text(
-          'Edit Profile',
+          AppLocalizations.of(context)!.editProfile,
           style: TextStyle(
             color: _navy,
             fontSize: 20.sp,
@@ -221,59 +222,59 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 children: [
 
 
-                  _fieldLabel('Full Name'),
+                  _fieldLabel(AppLocalizations.of(context)!.fullName),
                   TextFormField(
                     controller: _fullNameController,
                     decoration: _pillDecoration(
-                      hint: 'John Doe',
+                      hint: AppLocalizations.of(context)!.fullNameHint,
                       prefix: Icons.person_outline,
                     ),
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty) return 'Please enter your full name';
+                      if (v == null || v.trim().isEmpty) return AppLocalizations.of(context)!.emptyName;
                       return null;
                     },
                   ),
 
                   SizedBox(height: 14.h),
 
-                  _fieldLabel('Email Address (Cannot be changed)'),
+                  _fieldLabel(AppLocalizations.of(context)!.emailCannotBeChanged),
                   TextFormField(
                     controller: _emailController,
                     enabled: false,
                     style: TextStyle(color: _navy.withValues(alpha: 0.5)),
                     decoration: _pillDecoration(
-                      hint: 'hello@example.com',
+                      hint: AppLocalizations.of(context)!.emailHint,
                       prefix: Icons.email_outlined,
                     ),
                   ),
 
                   SizedBox(height: 14.h),
 
-                  _fieldLabel('Phone Number'),
+                  _fieldLabel(AppLocalizations.of(context)!.phoneNumber),
                   TextFormField(
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
                     decoration: _pillDecoration(
-                      hint: '+1 (555) 000-0000',
+                      hint: AppLocalizations.of(context)!.phoneHint,
                       prefix: Icons.call_outlined,
                     ),
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty) return 'Please enter your phone number';
+                      if (v == null || v.trim().isEmpty) return AppLocalizations.of(context)!.required;
                       return null;
                     },
                   ),
 
                   SizedBox(height: 14.h),
 
-                  _fieldLabel('Church Name'),
+                  _fieldLabel(AppLocalizations.of(context)!.churchName),
                   TextFormField(
                     controller: _churchController,
                     decoration: _pillDecoration(
-                      hint: 'Grace Community Church',
+                      hint: AppLocalizations.of(context)!.churchHint,
                       prefix: Icons.church_outlined,
                     ),
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty) return 'Please enter your church name';
+                      if (v == null || v.trim().isEmpty) return AppLocalizations.of(context)!.required;
                       return null;
                     },
                   ),
@@ -286,18 +287,18 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _fieldLabel('Gender'),
+                            _fieldLabel(AppLocalizations.of(context)!.gender),
                             DropdownButtonFormField<String>(
                               value: _selectedGender,
                               items: ['male', 'female']
                                   .map((g) => DropdownMenuItem(
                                         value: g,
-                                        child: Text(g[0].toUpperCase() + g.substring(1)),
+                                        child: Text(g == 'male' ? AppLocalizations.of(context)!.genderMale : AppLocalizations.of(context)!.genderFemale),
                                       ))
                                   .toList(),
                               onChanged: (v) => setState(() => _selectedGender = v),
                               decoration: _pillDecoration(
-                                hint: 'Select',
+                                hint: AppLocalizations.of(context)!.select,
                                 prefix: Icons.transgender,
                               ),
                             ),
@@ -309,7 +310,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _fieldLabel('Birth Date'),
+                            _fieldLabel(AppLocalizations.of(context)!.birthDate),
                             InkWell(
                               onTap: () async {
                                 final picked = await showDatePicker(
@@ -335,7 +336,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                     SizedBox(width: 10.w),
                                     Text(
                                       _selectedBirthDate == null
-                                          ? 'Pick Date'
+                                          ? AppLocalizations.of(context)!.pickDate
                                           : '${_selectedBirthDate!.day}/${_selectedBirthDate!.month}/${_selectedBirthDate!.year}',
                                       style: TextStyle(
                                         color: _selectedBirthDate == null ? const Color(0xFFB6BECB) : _navy,
@@ -360,7 +361,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   SizedBox(height: 8.h),
                   
                   Text(
-                    'Change Password (Optional)',
+                    AppLocalizations.of(context)!.changePasswordOptional,
                     style: TextStyle(
                       color: _navy,
                       fontSize: 16.sp,
@@ -369,28 +370,28 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   ),
                   SizedBox(height: 14.h),
 
-                  _fieldLabel('New Password'),
+                  _fieldLabel(AppLocalizations.of(context)!.newPassword),
                   TextFormField(
                     controller: _passwordController,
                     obscureText: true,
                     decoration: _pillDecoration(
-                      hint: 'Leave blank to keep current',
+                      hint: AppLocalizations.of(context)!.leaveBlankToKeep,
                       prefix: Icons.lock_outline,
                     ),
                     validator: (v) {
-                      if (v != null && v.isNotEmpty && v.length < 6) return 'Password must be at least 6 characters';
+                      if (v != null && v.isNotEmpty && v.length < 6) return AppLocalizations.of(context)!.signupPasswordLength;
                       return null;
                     },
                   ),
 
                   SizedBox(height: 14.h),
 
-                  _fieldLabel('Confirm New Password'),
+                  _fieldLabel(AppLocalizations.of(context)!.confirmNewPassword),
                   TextFormField(
                     controller: _confirmPasswordController,
                     obscureText: true,
                     decoration: _pillDecoration(
-                      hint: 'Confirm new password',
+                      hint: AppLocalizations.of(context)!.confirmNewPasswordHint,
                       prefix: Icons.lock_reset_outlined,
                     ),
                   ),
@@ -422,7 +423,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                               ),
                             )
                           : Text(
-                              'Save Changes',
+                              AppLocalizations.of(context)!.saveChanges,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18.sp,

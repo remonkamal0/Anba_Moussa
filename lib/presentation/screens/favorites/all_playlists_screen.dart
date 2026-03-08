@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:anba_moussa/l10n/app_localizations.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../providers/playlists_provider.dart';
 import '../playlist/create_playlist_screen.dart';
@@ -65,7 +66,7 @@ class _AllPlaylistsScreenState extends ConsumerState<AllPlaylistsScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                locale == 'ar' ? 'حذف قائمة التشغيل' : 'Delete Playlist',
+                AppLocalizations.of(context)!.playlistDelete,
                 style: TextStyle(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.w900,
@@ -75,9 +76,7 @@ class _AllPlaylistsScreenState extends ConsumerState<AllPlaylistsScreen> {
               ),
               SizedBox(height: 12.h),
               Text(
-                locale == 'ar' 
-                  ? 'هل أنت متأكد من حذف "${playlist.titleAr}"؟'
-                  : 'Are you sure you want to delete "${playlist.titleEn}"?',
+                  AppLocalizations.of(context)!.playlistDeleteConfirm(locale == 'ar' ? playlist.titleAr : playlist.titleEn),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14.sp,
@@ -98,7 +97,7 @@ class _AllPlaylistsScreenState extends ConsumerState<AllPlaylistsScreen> {
                         padding: EdgeInsets.symmetric(vertical: 14.h),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
                       ),
-                      child: Text(locale == 'ar' ? 'إلغاء' : 'Cancel', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      child: Text(AppLocalizations.of(context)!.dialogCancel, style: const TextStyle(fontWeight: FontWeight.bold)),
                     ),
                   ),
                   SizedBox(width: 16.w),
@@ -112,7 +111,7 @@ class _AllPlaylistsScreenState extends ConsumerState<AllPlaylistsScreen> {
                         padding: EdgeInsets.symmetric(vertical: 14.h),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
                       ),
-                      child: Text(locale == 'ar' ? 'تأكيد' : 'Confirm', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      child: Text(AppLocalizations.of(context)!.dialogConfirm, style: const TextStyle(fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ],
@@ -147,7 +146,7 @@ class _AllPlaylistsScreenState extends ConsumerState<AllPlaylistsScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'My Playlists',
+          AppLocalizations.of(context)!.profileMyPlaylists,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -169,7 +168,7 @@ class _AllPlaylistsScreenState extends ConsumerState<AllPlaylistsScreen> {
                   controller: _searchController,
                   onChanged: (v) => setState(() => _query = v),
                   decoration: InputDecoration(
-                    hintText: 'Search playlists…',
+                    hintText: AppLocalizations.of(context)!.playlistSearchHint,
                     hintStyle: TextStyle(color: cs.onSurface.withValues(alpha: 0.4), fontSize: 14.sp),
                     prefixIcon: Icon(Icons.search, color: cs.onSurface.withValues(alpha: 0.4), size: 20.sp),
                     border: InputBorder.none,
@@ -233,11 +232,11 @@ class _EmptyView extends StatelessWidget {
         children: [
           Icon(Icons.queue_music_rounded, size: 72.sp, color: cs.onSurface.withValues(alpha: 0.2)),
           SizedBox(height: 16.h),
-          Text('No playlists yet', style: TextStyle(fontSize: 16.sp, color: cs.onSurface.withValues(alpha: 0.5))),
+          Text(AppLocalizations.of(context)!.playlistNoPlaylists, style: TextStyle(fontSize: 16.sp, color: cs.onSurface.withValues(alpha: 0.5))),
           SizedBox(height: 8.h),
           TextButton(
             onPressed: onAdd,
-            child: Text('Create your first playlist', style: TextStyle(color: cs.primary, fontWeight: FontWeight.w700)),
+            child: Text(AppLocalizations.of(context)!.playlistCreateFirst, style: TextStyle(color: cs.primary, fontWeight: FontWeight.w700)),
           ),
         ],
       ),
@@ -260,9 +259,9 @@ class _ErrorView extends StatelessWidget {
         children: [
           Icon(Icons.wifi_off_rounded, size: 56.sp, color: cs.onSurface.withValues(alpha: 0.3)),
           SizedBox(height: 12.h),
-          Text('Failed to load playlists', style: TextStyle(color: cs.onSurface.withValues(alpha: 0.6))),
+          Text(AppLocalizations.of(context)!.playlistFailedToLoad, style: TextStyle(color: cs.onSurface.withValues(alpha: 0.6))),
           SizedBox(height: 8.h),
-          ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
+          ElevatedButton(onPressed: onRetry, child: Text(AppLocalizations.of(context)!.retry)),
         ],
       ),
     );
@@ -357,14 +356,14 @@ class PlaylistCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20.r),
                           ),
                           child: Text(
-                            'Public',
+                            AppLocalizations.of(context)!.playlistPublic,
                             style: TextStyle(color: cs.primary, fontSize: 9.sp, fontWeight: FontWeight.bold),
                           ),
                         ),
                         SizedBox(width: 8.w),
                       ],
                       Text(
-                        '${playlist.trackCount} Tracks',
+                        AppLocalizations.of(context)!.playlistTracksCount(playlist.trackCount),
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: cs.onSurface.withValues(alpha: 0.5),
@@ -416,13 +415,13 @@ class PlaylistCard extends StatelessWidget {
             if (onEdit != null)
               ListTile(
                 leading: Icon(Icons.edit_rounded, color: cs.primary),
-                title: const Text('Edit Playlist'),
+                title: Text(AppLocalizations.of(context)!.playlistEdit),
                 onTap: () { Navigator.pop(ctx); onEdit!(); },
               ),
             if (onDelete != null)
               ListTile(
                 leading: Icon(Icons.delete_outline_rounded, color: Colors.red.shade400),
-                title: Text('Delete', style: TextStyle(color: Colors.red.shade400)),
+                title: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: Colors.red.shade400)),
                 onTap: () { Navigator.pop(ctx); onDelete!(); },
               ),
             SizedBox(height: 24.h),

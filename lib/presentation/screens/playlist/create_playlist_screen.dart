@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../providers/playlists_provider.dart';
 import '../../../core/network/supabase_service.dart';
 import '../../../domain/entities/track.dart';
+import '../../../l10n/app_localizations.dart';
 
 class CreatePlaylistScreen extends ConsumerStatefulWidget {
   final PlaylistModel? existingPlaylist;
@@ -108,7 +109,7 @@ class _CreatePlaylistScreenState extends ConsumerState<CreatePlaylistScreen> {
     final titleAr = _nameArController.text.trim();
     if (titleEn.isEmpty && titleAr.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a playlist name')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.playlistEnterNameError)),
       );
       return;
     }
@@ -136,7 +137,7 @@ class _CreatePlaylistScreenState extends ConsumerState<CreatePlaylistScreen> {
               decoration: BoxDecoration(color: cs.onSurface.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(4.r)),
             ),
             SizedBox(height: 16.h),
-            Text('Choose Icon', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold)),
+            Text(AppLocalizations.of(context)!.playlistChooseIcon, style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold)),
             SizedBox(height: 20.h),
             GridView.builder(
               shrinkWrap: true,
@@ -259,7 +260,7 @@ class _CreatePlaylistScreenState extends ConsumerState<CreatePlaylistScreen> {
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text(isEditing ? 'Edit Playlist' : 'New Playlist',
+        title: Text(isEditing ? AppLocalizations.of(context)!.playlistEdit : AppLocalizations.of(context)!.playlistCreateTitle,
             style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
@@ -306,19 +307,19 @@ class _CreatePlaylistScreenState extends ConsumerState<CreatePlaylistScreen> {
                 ),
               ),
               SizedBox(height: 8.h),
-              Center(child: Text('Tap to change icon', style: TextStyle(fontSize: 11.sp, color: cs.onSurface.withValues(alpha: 0.4)))),
+              Center(child: Text(AppLocalizations.of(context)!.playlistTapToChangeIcon, style: TextStyle(fontSize: 11.sp, color: cs.onSurface.withValues(alpha: 0.4)))),
               SizedBox(height: 28.h),
 
               // Name EN
-              _label('Playlist Name (English)', cs),
+              _label(AppLocalizations.of(context)!.playlistNameEnLabel, cs),
               SizedBox(height: 8.h),
-              _textField(controller: _nameEnController, hint: 'e.g. Morning Praise', cs: cs),
+              _textField(controller: _nameEnController, hint: AppLocalizations.of(context)!.playlistNameEnHint, cs: cs),
               SizedBox(height: 16.h),
 
               // Name AR
-              _label('اسم البلاى لست (عربى)', cs),
+              _label(AppLocalizations.of(context)!.playlistNameArLabel, cs),
               SizedBox(height: 8.h),
-              _textField(controller: _nameArController, hint: 'مثال: تسبيح الصباح', cs: cs, textDirection: TextDirection.rtl),
+              _textField(controller: _nameArController, hint: AppLocalizations.of(context)!.playlistNameArHint, cs: cs, textDirection: TextDirection.rtl),
               SizedBox(height: 20.h),
 
               // Public toggle
@@ -333,8 +334,8 @@ class _CreatePlaylistScreenState extends ConsumerState<CreatePlaylistScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Public Playlist', style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700)),
-                          Text('Others can discover this', style: TextStyle(fontSize: 11.sp, color: cs.onSurface.withValues(alpha: 0.5))),
+                          Text(AppLocalizations.of(context)!.playlistPublicLabel, style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700)),
+                          Text(AppLocalizations.of(context)!.playlistPublicSubtitle, style: TextStyle(fontSize: 11.sp, color: cs.onSurface.withValues(alpha: 0.5))),
                         ],
                       ),
                     ),
@@ -362,7 +363,7 @@ class _CreatePlaylistScreenState extends ConsumerState<CreatePlaylistScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Next: Tracks & Save',
+                Text(AppLocalizations.of(context)!.playlistNextTracksSave,
                     style: TextStyle(color: Colors.white, fontSize: 15.sp, fontWeight: FontWeight.bold)),
                 SizedBox(width: 8.w), Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 20.sp),
               ],
@@ -383,7 +384,7 @@ class _CreatePlaylistScreenState extends ConsumerState<CreatePlaylistScreen> {
           icon: Icon(Icons.arrow_back, color: cs.onSurface),
           onPressed: () => setState(() => _step = 0),
         ),
-        title: Text('Add Tracks', style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.of(context)!.playlistAddTracks, style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold)),
         centerTitle: true,
         actions: [
           if (_selectedTrackIds.isNotEmpty)
@@ -393,7 +394,7 @@ class _CreatePlaylistScreenState extends ConsumerState<CreatePlaylistScreen> {
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                   decoration: BoxDecoration(color: cs.primary.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(20.r)),
-                  child: Text('${_selectedTrackIds.length} selected', style: TextStyle(color: cs.primary, fontWeight: FontWeight.w700, fontSize: 12.sp)),
+                  child: Text(AppLocalizations.of(context)!.playlistSelectedCount(_selectedTrackIds.length), style: TextStyle(color: cs.primary, fontWeight: FontWeight.w700, fontSize: 12.sp)),
                 ),
               ),
             ),
@@ -412,7 +413,7 @@ class _CreatePlaylistScreenState extends ConsumerState<CreatePlaylistScreen> {
                 controller: _searchController,
                 onChanged: _filterTracks,
                 decoration: InputDecoration(
-                  hintText: 'Search tracks…',
+                  hintText: AppLocalizations.of(context)!.playlistSearchTracksHint,
                   hintStyle: TextStyle(fontSize: 13.sp, color: cs.onSurface.withValues(alpha: 0.4)),
                   prefixIcon: Icon(Icons.search, size: 20.sp, color: cs.onSurface.withValues(alpha: 0.4)),
                   filled: true,
@@ -428,7 +429,7 @@ class _CreatePlaylistScreenState extends ConsumerState<CreatePlaylistScreen> {
                       child: _loadingTracks
                           ? const Center(child: CircularProgressIndicator())
                           : _filteredTrackData.isEmpty
-                              ? Center(child: Text('No tracks found', style: TextStyle(color: cs.onSurface.withValues(alpha: 0.4))))
+                              ? Center(child: Text(AppLocalizations.of(context)!.playlistNoTracksFound, style: TextStyle(color: cs.onSurface.withValues(alpha: 0.4))))
                               : ListView.builder(
                                   itemCount: _filteredTrackData.length,
                                   padding: EdgeInsets.symmetric(horizontal: 12.w),
@@ -442,7 +443,7 @@ class _CreatePlaylistScreenState extends ConsumerState<CreatePlaylistScreen> {
                                     final categories = track['categories'] as Map<String, dynamic>?;
                                     final albumTitle = categories != null 
                                       ? (locale == 'ar' ? (categories['title_ar'] as String? ?? '') : (categories['title_en'] as String? ?? ''))
-                                      : 'No Album';
+                                      : AppLocalizations.of(context)!.playlistNoAlbum;
                                     
                                     final imageUrl = track['cover_image_url'] as String?;
 
@@ -515,7 +516,9 @@ class _CreatePlaylistScreenState extends ConsumerState<CreatePlaylistScreen> {
             child: _isSaving
                 ? SizedBox(width: 22.w, height: 22.w, child: const CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5))
                 : Text(
-                    _selectedTrackIds.isEmpty ? 'Create Playlist (Empty)' : 'Create with ${_selectedTrackIds.length} Tracks',
+                    _selectedTrackIds.isEmpty 
+                        ? AppLocalizations.of(context)!.playlistCreateEmpty 
+                        : AppLocalizations.of(context)!.playlistCreateWithCount(_selectedTrackIds.length),
                     style: TextStyle(color: Colors.white, fontSize: 15.sp, fontWeight: FontWeight.bold),
                   ),
           ),

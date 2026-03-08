@@ -107,49 +107,49 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingWelcome.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to SoulSync'**
+  /// **'Welcome to Anba Moussa App'**
   String get onboardingWelcome;
 
   /// No description provided for @onboardingWelcomeSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Connect through rhythm and faith. Personalize your sacred space.'**
+  /// **'Discover a rich spiritual library of sermons by His Grace Anba Moussa in audio, video, and images to inspire and strengthen youth spiritually..'**
   String get onboardingWelcomeSubtitle;
 
   /// No description provided for @onboardingDiscover.
   ///
   /// In en, this message translates to:
-  /// **'Discover Sacred Melodies'**
+  /// **'His Holiness Pope Tawadros II'**
   String get onboardingDiscover;
 
   /// No description provided for @onboardingDiscoverSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Explore a vast collection of spiritual hymns and contemporary worship music curated for your soul\'s journey.'**
+  /// **'Pope and Patriarch of the See of Saint Mark.'**
   String get onboardingDiscoverSubtitle;
 
   /// No description provided for @onboardingPersonalize.
   ///
   /// In en, this message translates to:
-  /// **'Personalize Your Spirit'**
+  /// **'His Grace Anba Moussa'**
   String get onboardingPersonalize;
 
   /// No description provided for @onboardingPersonalizeSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Create your own playlists and save your favorite hymns for anytime listening.'**
+  /// **'General Bishop of Youth in the Coptic Orthodox Church.'**
   String get onboardingPersonalizeSubtitle;
 
   /// No description provided for @onboardingListen.
   ///
   /// In en, this message translates to:
-  /// **'Listen Anywhere'**
+  /// **'Youth Bishopric'**
   String get onboardingListen;
 
   /// No description provided for @onboardingListenSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Download tracks and watch videos offline without interruptions.'**
+  /// **'A ministry dedicated to spiritually and intellectually building youth in the Coptic Orthodox Church through teaching, activities, and service..'**
   String get onboardingListenSubtitle;
 
   /// No description provided for @onboardingGetStarted.
@@ -253,6 +253,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search'**
   String get navigationSearch;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for audio track'**
+  String get searchHint;
+
+  /// No description provided for @searchTracksSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for your favorite tracks'**
+  String get searchTracksSubtitle;
 
   /// No description provided for @navigationLibrary.
   ///
@@ -619,6 +631,678 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Passwords do not match'**
   String get passwordsNotMatch;
+
+  /// No description provided for @signupAgreement.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the '**
+  String get signupAgreement;
+
+  /// No description provided for @signupTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get signupTerms;
+
+  /// No description provided for @signupAnd.
+  ///
+  /// In en, this message translates to:
+  /// **' and '**
+  String get signupAnd;
+
+  /// No description provided for @signupPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy\nPolicy.'**
+  String get signupPrivacy;
+
+  /// No description provided for @signupAgreeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please agree to Terms of Service and Privacy Policy.'**
+  String get signupAgreeError;
+
+  /// No description provided for @signupSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created successfully! Please check your email to verify your account, then login.'**
+  String get signupSuccess;
+
+  /// No description provided for @signupFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Signup failed. Please try again.'**
+  String get signupFailed;
+
+  /// No description provided for @signupEmailExists.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with this email already exists'**
+  String get signupEmailExists;
+
+  /// No description provided for @signupWeakPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is too weak. Please choose a stronger password.'**
+  String get signupWeakPassword;
+
+  /// No description provided for @signupPasswordLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get signupPasswordLength;
+
+  /// No description provided for @churchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Grace Community Church'**
+  String get churchHint;
+
+  /// No description provided for @gender.
+  ///
+  /// In en, this message translates to:
+  /// **'GENDER'**
+  String get gender;
+
+  /// No description provided for @genderMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get genderMale;
+
+  /// No description provided for @genderFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get genderFemale;
+
+  /// No description provided for @birthDate.
+  ///
+  /// In en, this message translates to:
+  /// **'BIRTH DATE'**
+  String get birthDate;
+
+  /// No description provided for @pickDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick Date'**
+  String get pickDate;
+
+  /// No description provided for @select.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get select;
+
+  /// No description provided for @required.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get required;
+
+  /// No description provided for @editProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfile;
+
+  /// No description provided for @myPlaylistsHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'MY PLAYLISTS'**
+  String get myPlaylistsHeader;
+
+  /// No description provided for @seeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See All'**
+  String get seeAll;
+
+  /// No description provided for @noPlaylistsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No playlists yet'**
+  String get noPlaylistsYet;
+
+  /// No description provided for @preferences.
+  ///
+  /// In en, this message translates to:
+  /// **'PREFERENCES'**
+  String get preferences;
+
+  /// No description provided for @themeCustomization.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Customization'**
+  String get themeCustomization;
+
+  /// No description provided for @myLibraryHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'MY LIBRARY'**
+  String get myLibraryHeader;
+
+  /// No description provided for @securityAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'SECURITY & ALERTS'**
+  String get securityAlerts;
+
+  /// No description provided for @aboutDeveloper.
+  ///
+  /// In en, this message translates to:
+  /// **'About Developer'**
+  String get aboutDeveloper;
+
+  /// No description provided for @aboutTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'About the Team'**
+  String get aboutTeam;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'PHONE NUMBER'**
+  String get phoneNumber;
+
+  /// No description provided for @phoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'+1 (555) 000-0000'**
+  String get phoneHint;
+
+  /// No description provided for @churchName.
+  ///
+  /// In en, this message translates to:
+  /// **'CHURCH NAME'**
+  String get churchName;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// No description provided for @profileUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully!'**
+  String get profileUpdated;
+
+  /// No description provided for @profileAndPasswordUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile and password updated successfully!'**
+  String get profileAndPasswordUpdated;
+
+  /// No description provided for @profileUpdateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error updating profile'**
+  String get profileUpdateError;
+
+  /// No description provided for @emailCannotBeChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address (Cannot be changed)'**
+  String get emailCannotBeChanged;
+
+  /// No description provided for @changePasswordOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password (Optional)'**
+  String get changePasswordOptional;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get newPassword;
+
+  /// No description provided for @confirmNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm New Password'**
+  String get confirmNewPassword;
+
+  /// No description provided for @leaveBlankToKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave blank to keep current'**
+  String get leaveBlankToKeep;
+
+  /// No description provided for @confirmNewPasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm new password'**
+  String get confirmNewPasswordHint;
+
+  /// No description provided for @adminSendNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Notification'**
+  String get adminSendNotification;
+
+  /// No description provided for @adminLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin'**
+  String get adminLabel;
+
+  /// No description provided for @homeCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get homeCategories;
+
+  /// No description provided for @homeViewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'VIEW ALL'**
+  String get homeViewAll;
+
+  /// No description provided for @homeTopTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'Top 10 Tracks'**
+  String get homeTopTracks;
+
+  /// No description provided for @homeWelcomeBack.
+  ///
+  /// In en, this message translates to:
+  /// **'WELCOME BACK,'**
+  String get homeWelcomeBack;
+
+  /// No description provided for @unknownSpeaker.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Speaker'**
+  String get unknownSpeaker;
+
+  /// No description provided for @errorOccurred.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred'**
+  String get errorOccurred;
+
+  /// No description provided for @noCategoriesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories found'**
+  String get noCategoriesFound;
+
+  /// No description provided for @playAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Play All'**
+  String get playAll;
+
+  /// No description provided for @shuffle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shuffle'**
+  String get shuffle;
+
+  /// No description provided for @likedTracksCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} LIKED TRACKS'**
+  String likedTracksCount(int count);
+
+  /// No description provided for @noFavoritesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorites yet'**
+  String get noFavoritesYet;
+
+  /// No description provided for @noDownloadsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No downloads yet'**
+  String get noDownloadsYet;
+
+  /// No description provided for @deleteAllDownloadsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete All Downloads'**
+  String get deleteAllDownloadsTitle;
+
+  /// No description provided for @deleteAllDownloadsContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove all downloaded tracks from your device?'**
+  String get deleteAllDownloadsContent;
+
+  /// No description provided for @deleteAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete All'**
+  String get deleteAll;
+
+  /// No description provided for @offlineTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'OFFLINE TRACKS'**
+  String get offlineTracks;
+
+  /// No description provided for @tracksCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracks'**
+  String get tracksCount;
+
+  /// No description provided for @offline.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline'**
+  String get offline;
+
+  /// No description provided for @deleteDownloadTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Download'**
+  String get deleteDownloadTitle;
+
+  /// No description provided for @deleteDownloadContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this download from your device?'**
+  String get deleteDownloadContent;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @markAllAsRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all as read'**
+  String get markAllAsRead;
+
+  /// No description provided for @noNotificationsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications found'**
+  String get noNotificationsFound;
+
+  /// No description provided for @viewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View all'**
+  String get viewAll;
+
+  /// No description provided for @timeMinutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}m ago'**
+  String timeMinutesAgo(int count);
+
+  /// No description provided for @timeHoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}h ago'**
+  String timeHoursAgo(int count);
+
+  /// No description provided for @timeDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}d ago'**
+  String timeDaysAgo(int count);
+
+  /// No description provided for @playlistEnterNameError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a playlist name'**
+  String get playlistEnterNameError;
+
+  /// No description provided for @playlistChooseIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Icon'**
+  String get playlistChooseIcon;
+
+  /// No description provided for @playlistTapToChangeIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to change icon'**
+  String get playlistTapToChangeIcon;
+
+  /// No description provided for @playlistNameEnLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Playlist Name (English)'**
+  String get playlistNameEnLabel;
+
+  /// No description provided for @playlistNameEnHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Morning Praise'**
+  String get playlistNameEnHint;
+
+  /// No description provided for @playlistNameArLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Playlist Name (Arabic)'**
+  String get playlistNameArLabel;
+
+  /// No description provided for @playlistNameArHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Morning Praise'**
+  String get playlistNameArHint;
+
+  /// No description provided for @playlistPublicLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Public Playlist'**
+  String get playlistPublicLabel;
+
+  /// No description provided for @playlistPublicSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Others can discover this'**
+  String get playlistPublicSubtitle;
+
+  /// No description provided for @playlistNextTracksSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: Tracks & Save'**
+  String get playlistNextTracksSave;
+
+  /// No description provided for @playlistAddTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Tracks'**
+  String get playlistAddTracks;
+
+  /// No description provided for @playlistSelectedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String playlistSelectedCount(int count);
+
+  /// No description provided for @playlistNoTracksFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No tracks found'**
+  String get playlistNoTracksFound;
+
+  /// No description provided for @playlistNoAlbum.
+  ///
+  /// In en, this message translates to:
+  /// **'No Album'**
+  String get playlistNoAlbum;
+
+  /// No description provided for @playlistCreateEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Playlist (Empty)'**
+  String get playlistCreateEmpty;
+
+  /// No description provided for @playlistCreateWithCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create with {count} Tracks'**
+  String playlistCreateWithCount(int count);
+
+  /// No description provided for @playlistCreatedByOfficial.
+  ///
+  /// In en, this message translates to:
+  /// **'Created by Official'**
+  String get playlistCreatedByOfficial;
+
+  /// No description provided for @playlistCreatedByMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Created by Me'**
+  String get playlistCreatedByMe;
+
+  /// No description provided for @playlistTracksCount.
+  ///
+  /// In en, this message translates to:
+  /// **'• {count} Tracks'**
+  String playlistTracksCount(int count);
+
+  /// No description provided for @playlistPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get playlistPlay;
+
+  /// No description provided for @playlistShuffle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shuffle'**
+  String get playlistShuffle;
+
+  /// No description provided for @playlistErrorLoadingTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading tracks'**
+  String get playlistErrorLoadingTracks;
+
+  /// No description provided for @playlistEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Playlist'**
+  String get playlistEdit;
+
+  /// No description provided for @playlistSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search playlists…'**
+  String get playlistSearchHint;
+
+  /// No description provided for @playlistNoPlaylists.
+  ///
+  /// In en, this message translates to:
+  /// **'No playlists yet'**
+  String get playlistNoPlaylists;
+
+  /// No description provided for @playlistCreateFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first playlist'**
+  String get playlistCreateFirst;
+
+  /// No description provided for @playlistFailedToLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load playlists'**
+  String get playlistFailedToLoad;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @playlistDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Playlist'**
+  String get playlistDelete;
+
+  /// No description provided for @playlistDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete \"{name}\"?'**
+  String playlistDeleteConfirm(Object name);
+
+  /// No description provided for @playlistPublic.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
+  String get playlistPublic;
+
+  /// No description provided for @logoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logoutTitle;
+
+  /// No description provided for @logoutConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout?'**
+  String get logoutConfirm;
+
+  /// No description provided for @profileMyPlaylists.
+  ///
+  /// In en, this message translates to:
+  /// **'My Playlists'**
+  String get profileMyPlaylists;
+
+  /// No description provided for @profileLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get profileLanguage;
+
+  /// No description provided for @profileDarkMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get profileDarkMode;
+
+  /// No description provided for @profileTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get profileTheme;
+
+  /// No description provided for @profileFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get profileFavorites;
+
+  /// No description provided for @profileDownloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads'**
+  String get profileDownloads;
+
+  /// No description provided for @profileNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get profileNotifications;
+
+  /// No description provided for @profileLogOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Out'**
+  String get profileLogOut;
 }
 
 class _AppLocalizationsDelegate

@@ -64,16 +64,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final shouldLogout = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
+        title: Text(l10n.logoutTitle),
+        content: Text(l10n.logoutConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.dialogCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Logout'),
+            child: Text(l10n.dialogConfirm),
           ),
         ],
       ),
@@ -162,20 +162,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   children: [
                     _buildMenuItem(
                       icon: Icons.playlist_play,
-                      title: 'My Playlists',
+                      title: l10n.profileMyPlaylists,
                       onTap: _onMyPlaylists,
                       delay: const Duration(milliseconds: 600),
                     ),
                     _buildMenuItem(
                       icon: Icons.language,
-                      title: 'Language',
+                      title: l10n.profileLanguage,
                       subtitle: _selectedLanguage,
                       onTap: _onLanguageTap,
                       delay: const Duration(milliseconds: 800),
                     ),
                     _buildMenuItem(
                       icon: isDark ? Icons.dark_mode : Icons.light_mode,
-                      title: 'Dark Mode',
+                      title: l10n.profileDarkMode,
                       onTap: () {
                         ref.read(themeProvider.notifier).toggleTheme();
                       },
@@ -183,26 +183,26 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                     _buildMenuItem(
                       icon: Icons.palette,
-                      title: 'Theme',
+                      title: l10n.profileTheme,
                       customWidget: _buildAccentColorSelector(),
                       onTap: _onThemeTap,
                       delay: const Duration(milliseconds: 1200),
                     ),
                     _buildMenuItem(
                       icon: Icons.favorite,
-                      title: 'Favorites',
+                      title: l10n.profileFavorites,
                       onTap: _onFavorites,
                       delay: const Duration(milliseconds: 1400),
                     ),
                     _buildMenuItem(
                       icon: Icons.download,
-                      title: 'Downloads',
+                      title: l10n.profileDownloads,
                       onTap: _onDownloads,
                       delay: const Duration(milliseconds: 1600),
                     ),
                     _buildMenuItem(
                       icon: Icons.notifications,
-                      title: 'Notifications',
+                      title: l10n.profileNotifications,
                       onTap: _onNotifications,
                       delay: const Duration(milliseconds: 1800),
                     ),
@@ -224,7 +224,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                   ),
                   child: Text(
-                    'Log Out',
+                    l10n.profileLogOut,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),

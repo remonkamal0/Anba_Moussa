@@ -125,7 +125,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             onChanged: _onSearchChanged,
             autofocus: true,
             decoration: InputDecoration(
-              hintText: 'Search songs, artists, albums...',
+              hintText: AppLocalizations.of(context)!.searchHint,
               hintStyle: TextStyle(color: cs.onSurface.withValues(alpha: 0.4)),
               prefixIcon: Icon(Icons.search, color: cs.onSurface.withValues(alpha: 0.4)),
               suffixIcon: _searchQuery.isNotEmpty
@@ -154,7 +154,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     children: [
                       Icon(Icons.search, size: 64.w, color: cs.onSurface.withValues(alpha: 0.1)),
                       SizedBox(height: 16.h),
-                      Text('Search for your favorite songs', 
+                      Text(AppLocalizations.of(context)!.searchTracksSubtitle, 
                         style: AppTextStyles.getBodyLarge(context).copyWith(color: cs.onSurface.withValues(alpha: 0.5))),
                     ],
                   ),
@@ -241,7 +241,7 @@ class SearchResultTile extends ConsumerWidget {
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(
-        track.getLocalizedSpeaker(locale) ?? 'Unknown Speaker',
+        track.getLocalizedSpeaker(locale) ?? AppLocalizations.of(context)!.unknownSpeaker,
         style: AppTextStyles.getBodySmall(context).copyWith(color: cs.onSurface.withValues(alpha: 0.5)),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,

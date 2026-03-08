@@ -199,7 +199,7 @@ class AppDrawer extends ConsumerWidget {
                       context,
                       accentColor: accentColor,
                       icon: Icons.info_outline_rounded,
-                      title: 'About Developer',
+                      title: l10n.aboutDeveloper,
                       onTap: () {
                         _closeDrawer(context);
                         _showAboutDialog(context, accentColor);
@@ -262,6 +262,7 @@ class AppDrawer extends ConsumerWidget {
 
   void _showAboutDialog(BuildContext context, Color accent) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.55),
@@ -308,7 +309,7 @@ class AppDrawer extends ConsumerWidget {
                     ),
                     SizedBox(height: 10.h),
                     Text(
-                      'Anba Moussa',
+                      l10n.appTitle,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20.sp,
@@ -323,7 +324,7 @@ class AppDrawer extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(20.r),
                       ),
                       child: Text(
-                        'About the Team',
+                        l10n.aboutTeam,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 12.sp,
@@ -375,7 +376,7 @@ class AppDrawer extends ConsumerWidget {
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                     ),
                     child: Text(
-                      'Close',
+                      l10n.close,
                       style: TextStyle(
                         color: cs.onSurface.withValues(alpha: 0.54),
                         fontSize: 14.sp,

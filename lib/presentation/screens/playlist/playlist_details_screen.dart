@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../providers/playlists_provider.dart';
 import '../../providers/audio_provider.dart';
 import '../../providers/favorites_provider.dart';
@@ -145,7 +146,7 @@ class _PlaylistDetailsScreenState extends ConsumerState<PlaylistDetailsScreen> {
             SizedBox(height: 8.h),
 
             Text(
-              'Created by ${playlist.ownerType == 'official' ? 'Official' : 'Me'} • ${playlist.trackCount} Tracks',
+              '${playlist.ownerType == 'official' ? AppLocalizations.of(context)!.playlistCreatedByOfficial : AppLocalizations.of(context)!.playlistCreatedByMe} ${AppLocalizations.of(context)!.playlistTracksCount(playlist.trackCount)}',
               style: TextStyle(
                 fontSize: 13.sp,
                 color: cs.onSurface.withValues(alpha: 0.5),
@@ -170,7 +171,7 @@ class _PlaylistDetailsScreenState extends ConsumerState<PlaylistDetailsScreen> {
                         });
                       },
                       icon: const Icon(Icons.play_arrow_rounded, color: Colors.white),
-                      label: const Text('Play', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      label: Text(AppLocalizations.of(context)!.playlistPlay, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: cs.primary,
                         foregroundColor: Colors.white,
@@ -193,7 +194,7 @@ class _PlaylistDetailsScreenState extends ConsumerState<PlaylistDetailsScreen> {
                         });
                       },
                       icon: Icon(Icons.shuffle_rounded, color: cs.onSurface, size: 20.sp),
-                      label: Text('Shuffle', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: cs.onSurface)),
+                      label: Text(AppLocalizations.of(context)!.playlistShuffle, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: cs.onSurface)),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: cs.onSurface,
                         padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -321,7 +322,7 @@ class _PlaylistDetailsScreenState extends ConsumerState<PlaylistDetailsScreen> {
                                       ),
                                       SizedBox(height: 4.h),
                                       Text(
-                                        track.getLocalizedSpeaker(locale) ?? 'Unknown Speaker',
+                                        track.getLocalizedSpeaker(locale) ?? AppLocalizations.of(context)!.unknownSpeaker,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
@@ -417,7 +418,7 @@ class _PlaylistDetailsScreenState extends ConsumerState<PlaylistDetailsScreen> {
                 padding: EdgeInsets.all(40.0),
                 child: CircularProgressIndicator(),
               )),
-              error: (err, stack) => Center(child: Text('Error loading tracks')),
+              error: (err, stack) => Center(child: Text(AppLocalizations.of(context)!.playlistErrorLoadingTracks)),
             ),
           ],
         ),

@@ -168,7 +168,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           onPressed: () => context.pop(),
         ),
         title: Text(
-          'NOTIFICATIONS',
+          AppLocalizations.of(context)!.drawerNotifications.toUpperCase(),
           style: TextStyle(
             fontSize: 12.sp,
             letterSpacing: 1.2,
@@ -181,7 +181,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           IconButton(
             icon: Icon(Icons.done_all_rounded, color: cs.primary),
             onPressed: _markAllAsRead,
-            tooltip: 'Mark all as read',
+            tooltip: AppLocalizations.of(context)!.markAllAsRead,
           ),
         ],
       ),
@@ -205,7 +205,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                             ),
                             SizedBox(height: 16.h),
                             Text(
-                              'No notifications found', 
+                              AppLocalizations.of(context)!.noNotificationsFound, 
                               style: AppTextStyles.getTitleMedium(context).copyWith(
                                 color: cs.onSurface.withValues(alpha: 0.5),
                                 fontWeight: FontWeight.w600,
@@ -254,7 +254,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
               ),
             ),
             Text(
-              'View all',
+              AppLocalizations.of(context)!.viewAll,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: cs.primary,
               ),
@@ -375,7 +375,7 @@ class NotificationTile extends StatelessWidget {
                   ),
                   SizedBox(height: 6.h),
                   Text(
-                    _formatDateTime(notification.sentAt),
+                    _formatDateTime(notification.sentAt, context),
                     style: AppTextStyles.getLabelSmall(context).copyWith(
                       color: cs.onSurface.withValues(alpha: 0.4),
                       fontWeight: FontWeight.w500,
@@ -399,13 +399,14 @@ class NotificationTile extends StatelessWidget {
     }
   }
 
-  String _formatDateTime(DateTime dt) {
+  String _formatDateTime(DateTime dt, BuildContext context) {
     final now = DateTime.now();
     final diff = now.difference(dt);
+    final l10n = AppLocalizations.of(context)!;
 
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
-    if (diff.inDays < 7) return '${diff.inDays}d ago';
+    if (diff.inMinutes < 60) return l10n.timeMinutesAgo(diff.inMinutes);
+    if (diff.inHours < 24) return l10n.timeHoursAgo(diff.inHours);
+    if (diff.inDays < 7) return l10n.timeDaysAgo(diff.inDays);
     
     return '${dt.day}/${dt.month}/${dt.year}';
   }

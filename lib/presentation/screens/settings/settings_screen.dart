@@ -88,7 +88,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ),
                       Expanded(
                         child: Text(
-                          "Settings",
+                          AppLocalizations.of(context)!.navigationSettings,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 20.sp,
@@ -132,7 +132,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                   // Edit Profile button
                   _PrimarySoftButton(
-                    text: "Edit Profile",
+                    text: AppLocalizations.of(context)!.editProfile,
                     onTap: () {
                       context.push('/profile/edit');
                     },
@@ -142,8 +142,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                   // MY PLAYLISTS header row
                   _SectionHeaderRow(
-                    leftText: "MY PLAYLISTS",
-                    rightText: "See All",
+                    leftText: AppLocalizations.of(context)!.myPlaylistsHeader,
+                    rightText: AppLocalizations.of(context)!.seeAll,
                     accent: accent,
                     onAdd: () async {
                       final newPlaylist = await Navigator.of(context, rootNavigator: true).push(
@@ -168,7 +168,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     child: playlists.isEmpty 
                       ? Center(
                           child: Text(
-                            "No playlists yet",
+                            AppLocalizations.of(context)!.noPlaylistsYet,
                             style: TextStyle(color: cs.onSurface.withValues(alpha: 0.4), fontSize: 13.sp),
                           ),
                         )
@@ -185,7 +185,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                   SizedBox(height: 18.h),
 
-                  _SectionTitle("PREFERENCES"),
+                  _SectionTitle(AppLocalizations.of(context)!.preferences),
                   SizedBox(height: 10.h),
 
                   _CardContainer(
@@ -210,7 +210,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           icon: Icons.dark_mode_outlined,
                           iconBg: accent.withValues(alpha: .12),
                           iconColor: accent,
-                          title: "Dark Mode",
+                          title: AppLocalizations.of(context)!.drawerDarkMode,
                           trailing: Switch(
                             value: darkMode,
                             onChanged: (v) => ref.read(themeProvider.notifier).toggleTheme(),
@@ -234,7 +234,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               SizedBox(width: 12.w),
                               Expanded(
                                 child: Text(
-                                  "Theme Customization",
+                                  AppLocalizations.of(context)!.themeCustomization,
                                   style: TextStyle(
                                     fontSize: 14.sp,
                                     fontWeight: FontWeight.w700,
@@ -306,7 +306,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                   SizedBox(height: 18.h),
 
-                  _SectionTitle("MY LIBRARY"),
+                  _SectionTitle(AppLocalizations.of(context)!.myLibraryHeader),
                   SizedBox(height: 10.h),
 
                   _CardContainer(
@@ -316,7 +316,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           icon: Icons.favorite_border,
                           iconBg: accent.withOpacity(.12),
                           iconColor: accent,
-                          title: "Favorites",
+                          title: AppLocalizations.of(context)!.playerFavorite,
                           onTap: () {
                             context.push('/favorites');
                           },
@@ -326,7 +326,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           icon: Icons.download_outlined,
                           iconBg: accent.withOpacity(.12),
                           iconColor: accent,
-                          title: "Downloads",
+                          title: AppLocalizations.of(context)!.playerDownload,
                           onTap: () {
                             context.push('/downloads');
                           },
@@ -337,7 +337,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                   SizedBox(height: 18.h),
 
-                  _SectionTitle("SECURITY & ALERTS"),
+                  _SectionTitle(AppLocalizations.of(context)!.securityAlerts),
                   SizedBox(height: 10.h),
 
                   _CardContainer(
@@ -364,7 +364,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       icon: Icons.info_outline_rounded,
                       iconBg: accent.withOpacity(.12),
                       iconColor: accent,
-                      title: "About Developer",
+                      title: AppLocalizations.of(context)!.aboutDeveloper,
                       onTap: () => _showAboutDeveloper(context, accent),
                     ),
                   ),
@@ -381,7 +381,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         icon: Icons.notifications_active_rounded,
                         iconBg: accent.withOpacity(.12),
                         iconColor: accent,
-                        title: "إرسال إشعار",
+                        title: AppLocalizations.of(context)!.adminSendNotification,
                         trailing: Container(
                           padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
                           decoration: BoxDecoration(
@@ -389,7 +389,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             borderRadius: BorderRadius.circular(8.r),
                           ),
                           child: Text(
-                            'Admin',
+                            AppLocalizations.of(context)!.adminLabel,
                             style: TextStyle(
                               fontSize: 10.sp,
                               fontWeight: FontWeight.w700,
@@ -538,7 +538,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                     SizedBox(height: 10.h),
                     Text(
-                      'Anba Moussa',
+                      AppLocalizations.of(context)!.appTitle,
                       style: TextStyle(color: Colors.white, fontSize: 20.sp, fontWeight: FontWeight.w900),
                     ),
                     SizedBox(height: 4.h),
@@ -549,7 +549,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         borderRadius: BorderRadius.circular(20.r),
                       ),
                       child: Text(
-                        'About the Team',
+                        AppLocalizations.of(context)!.aboutTeam,
                         style: TextStyle(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.w600, letterSpacing: 0.8),
                       ),
                     ),
@@ -595,7 +595,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.r)),
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                     ),
-                    child: Text('Close', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 14.sp, fontWeight: FontWeight.w700)),
+                    child: Text(AppLocalizations.of(context)!.close, style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 14.sp, fontWeight: FontWeight.w700)),
                   ),
                 ),
               ),
@@ -658,7 +658,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   String _getAccentName(Color color) {
     for (var entry in AppTheme.accentColors.entries) {
       if (entry.value.value == color.value) {
-        return entry.key[0].toUpperCase() + entry.key.substring(1);
+        return AppLocalizations.of(context)!.select;
       }
     }
     return "Custom";
@@ -1056,7 +1056,7 @@ class _PlaylistCard extends StatelessWidget {
             ),
             SizedBox(height: 2.h),
             Text(
-              '${playlist.trackCount} Tracks',
+              AppLocalizations.of(context)!.playlistTracksCount(playlist.trackCount),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(

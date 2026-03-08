@@ -11,7 +11,7 @@ class SignupScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const _SignupScreen();
+    return _SignupScreen();
   }
 }
 
@@ -66,8 +66,8 @@ class _SignupScreenState extends State<_SignupScreen> {
   Future<void> _signUp() async {
     if (!_agree) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please agree to Terms of Service and Privacy Policy.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.signupAgreeError),
           backgroundColor: Colors.red,
         ),
       );
@@ -78,8 +78,8 @@ class _SignupScreenState extends State<_SignupScreen> {
 
     if (_passwordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Passwords do not match'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.passwordsNotMatch),
           backgroundColor: Colors.red,
         ),
       );
@@ -111,9 +111,9 @@ class _SignupScreenState extends State<_SignupScreen> {
 
       if (response.user != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(
-              'Account created successfully! Please check your email to verify your account, then login.',
+              AppLocalizations.of(context)!.signupSuccess,
             ),
             backgroundColor: Colors.green,
           ),
@@ -122,8 +122,8 @@ class _SignupScreenState extends State<_SignupScreen> {
         context.go('/login');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Signup failed. Please try again.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.signupFailed),
             backgroundColor: Colors.red,
           ),
         );
@@ -131,15 +131,15 @@ class _SignupScreenState extends State<_SignupScreen> {
     } catch (e) {
       if (!mounted) return;
 
-      String errorMessage = 'Signup failed';
+      String errorMessage = AppLocalizations.of(context)!.signupFailed;
       final s = e.toString();
 
       if (s.contains('User already registered')) {
-        errorMessage = 'An account with this email already exists';
+        errorMessage = AppLocalizations.of(context)!.signupEmailExists;
       } else if (s.toLowerCase().contains('weak password')) {
-        errorMessage = 'Password is too weak. Please choose a stronger password.';
+        errorMessage = AppLocalizations.of(context)!.signupWeakPassword;
       } else if (s.toLowerCase().contains('invalid email')) {
-        errorMessage = 'Please enter a valid email address';
+        errorMessage = AppLocalizations.of(context)!.invalidEmail;
       } else {
         errorMessage = 'An error occurred: $e';
       }
@@ -276,14 +276,14 @@ class _SignupScreenState extends State<_SignupScreen> {
                 height: 1.25,
               ),
               children: [
-                const TextSpan(text: 'I agree to the '),
+                TextSpan(text: AppLocalizations.of(context)!.signupAgreement),
                 TextSpan(
-                  text: 'Terms of Service',
+                  text: AppLocalizations.of(context)!.signupTerms,
                   style: TextStyle(color: _orange, fontWeight: FontWeight.w800),
                 ),
-                const TextSpan(text: ' and '),
+                TextSpan(text: AppLocalizations.of(context)!.signupAnd),
                 TextSpan(
-                  text: 'Privacy\nPolicy.',
+                  text: AppLocalizations.of(context)!.signupPrivacy,
                   style: TextStyle(color: _orange, fontWeight: FontWeight.w800),
                 ),
               ],
@@ -389,31 +389,31 @@ class _SignupScreenState extends State<_SignupScreen> {
 
                       SizedBox(height: 14.h),
 
-                      _fieldLabel('Phone Number'),
+                      _fieldLabel(l10n.phoneNumber),
                       TextFormField(
                         controller: _phoneController,
                         keyboardType: TextInputType.phone,
                         decoration: _pillDecoration(
-                          hint: '+1 (555) 000-0000',
+                          hint: l10n.phoneHint,
                           prefix: Icons.call_outlined,
                         ),
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) return 'Please enter your phone number';
+                          if (v == null || v.trim().isEmpty) return l10n.required;
                           return null;
                         },
                       ),
 
                       SizedBox(height: 14.h),
 
-                      _fieldLabel('Church Name'),
+                      _fieldLabel(l10n.churchName),
                       TextFormField(
                         controller: _churchController,
                         decoration: _pillDecoration(
-                          hint: 'Grace Community Church',
+                          hint: l10n.churchHint,
                           prefix: Icons.church_outlined,
                         ),
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) return 'Please enter your church name';
+                          if (v == null || v.trim().isEmpty) return l10n.required;
                           return null;
                         },
                       ),
@@ -426,21 +426,21 @@ class _SignupScreenState extends State<_SignupScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _fieldLabel('Gender'),
+                                _fieldLabel(l10n.gender),
                                 DropdownButtonFormField<String>(
                                   value: _selectedGender,
                                   items: ['male', 'female']
                                       .map((g) => DropdownMenuItem(
                                             value: g,
-                                            child: Text(g[0].toUpperCase() + g.substring(1)),
+                                            child: Text(g == 'male' ? l10n.genderMale : l10n.genderFemale),
                                           ))
                                       .toList(),
                                   onChanged: (v) => setState(() => _selectedGender = v),
                                   decoration: _pillDecoration(
-                                    hint: 'Select',
+                                    hint: l10n.select,
                                     prefix: Icons.transgender,
                                   ),
-                                  validator: (v) => v == null ? 'Required' : null,
+                                  validator: (v) => v == null ? l10n.required : null,
                                 ),
                               ],
                             ),
@@ -450,7 +450,7 @@ class _SignupScreenState extends State<_SignupScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _fieldLabel('Birth Date'),
+                                _fieldLabel(l10n.birthDate),
                                 InkWell(
                                   onTap: () async {
                                     final picked = await showDatePicker(
@@ -476,7 +476,7 @@ class _SignupScreenState extends State<_SignupScreen> {
                                         SizedBox(width: 10.w),
                                         Text(
                                           _selectedBirthDate == null
-                                              ? 'Pick Date'
+                                              ? l10n.pickDate
                                               : '${_selectedBirthDate!.day}/${_selectedBirthDate!.month}/${_selectedBirthDate!.year}',
                                           style: TextStyle(
                                             color: _selectedBirthDate == null ? const Color(0xFFB6BECB) : _navy,
@@ -513,7 +513,7 @@ class _SignupScreenState extends State<_SignupScreen> {
                         ),
                         validator: (v) {
                           if (v == null || v.isEmpty) return l10n.emptyPassword;
-                          if (v.length < 6) return 'Password must be at least 6 characters';
+                          if (v.length < 6) return l10n.signupPasswordLength;
                           return null;
                         },
                       ),

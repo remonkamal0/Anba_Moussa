@@ -6,6 +6,7 @@ import '../../providers/downloads_provider.dart';
 import '../../providers/audio_provider.dart';
 import '../../providers/mini_player_provider.dart';
 import '../../../domain/entities/track.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../widgets/common/mini_player.dart';
 import '../../widgets/common/confirm_dialog.dart';
 
@@ -26,7 +27,7 @@ class DownloadsScreen extends ConsumerWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'Downloads',
+          AppLocalizations.of(context)!.drawerDownloads,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w900,
             color: cs.onSurface,
@@ -39,10 +40,10 @@ class DownloadsScreen extends ConsumerWidget {
               onPressed: () async {
                 final confirm = await showConfirmDialog(
                   context,
-                  title: 'Delete All Downloads',
-                  content: 'Are you sure you want to remove all downloaded tracks from your device?',
-                  cancelText: 'Cancel',
-                  confirmText: 'Delete All',
+                  title: AppLocalizations.of(context)!.deleteAllDownloadsTitle,
+                  content: AppLocalizations.of(context)!.deleteAllDownloadsContent,
+                  cancelText: AppLocalizations.of(context)!.dialogCancel,
+                  confirmText: AppLocalizations.of(context)!.deleteAll,
                 );
 
                 if (confirm == true) {
@@ -52,7 +53,7 @@ class DownloadsScreen extends ConsumerWidget {
                 }
               },
               child: Text(
-                'Delete All',
+                AppLocalizations.of(context)!.deleteAll,
                 style: TextStyle(
                   color: cs.primary,
                   fontSize: 14.sp,
@@ -74,7 +75,7 @@ class DownloadsScreen extends ConsumerWidget {
                         Icon(Icons.download_for_offline_outlined, size: 64.sp, color: cs.onSurface.withValues(alpha: 0.2)),
                         SizedBox(height: 16.h),
                         Text(
-                          'No downloads yet',
+                          AppLocalizations.of(context)!.noDownloadsYet,
                           style: TextStyle(fontSize: 16.sp, color: cs.onSurface.withValues(alpha: 0.5)),
                         ),
                       ],
@@ -105,7 +106,7 @@ class DownloadsScreen extends ConsumerWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'OFFLINE TRACKS',
+                                    AppLocalizations.of(context)!.offlineTracks,
                                     style: TextStyle(
                                       fontSize: 10.sp,
                                       fontWeight: FontWeight.bold,
@@ -128,7 +129,7 @@ class DownloadsScreen extends ConsumerWidget {
                                       ),
                                       SizedBox(width: 4.w),
                                       Text(
-                                        'tracks',
+                                        AppLocalizations.of(context)!.tracksCount,
                                         style: TextStyle(
                                           fontSize: 14.sp,
                                           fontWeight: FontWeight.normal,
@@ -203,7 +204,7 @@ class DownloadsScreen extends ConsumerWidget {
                                       ),
                                       SizedBox(height: 4.h),
                                       Text(
-                                        track.getLocalizedSpeaker(locale) ?? 'Unknown Speaker',
+                                        track.getLocalizedSpeaker(locale) ?? AppLocalizations.of(context)!.unknownSpeaker,
                                         style: TextStyle(
                                           fontSize: 13.sp,
                                           color: cs.onSurface.withValues(alpha: 0.5),
@@ -216,14 +217,14 @@ class DownloadsScreen extends ConsumerWidget {
                                         children: [
                                           Icon(Icons.check_circle_rounded, color: cs.primary, size: 14.w),
                                           SizedBox(width: 4.w),
-                                          Text(
-                                            'Offline',
-                                            style: TextStyle(
-                                              fontSize: 12.sp,
-                                              fontWeight: FontWeight.w600,
-                                              color: cs.primary,
+                                            Text(
+                                              AppLocalizations.of(context)!.offline,
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w600,
+                                                color: cs.primary,
+                                              ),
                                             ),
-                                          ),
                                         ],
                                       ),
                                     ],
@@ -276,10 +277,10 @@ class DownloadsScreen extends ConsumerWidget {
                                   onTap: () async {
                                     final confirm = await showConfirmDialog(
                                       context,
-                                      title: track.getLocalizedTitle(locale),
-                                      content: 'Are you sure you want to delete this download from your device?',
-                                      cancelText: 'Cancel',
-                                      confirmText: 'Delete',
+                                      title: AppLocalizations.of(context)!.deleteDownloadTitle,
+                                      content: AppLocalizations.of(context)!.deleteDownloadContent,
+                                      cancelText: AppLocalizations.of(context)!.dialogCancel,
+                                      confirmText: AppLocalizations.of(context)!.delete,
                                     );
 
                                     if (confirm == true) {

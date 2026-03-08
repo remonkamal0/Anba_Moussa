@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:anba_moussa/l10n/app_localizations.dart';
 
 Future<String?> showCreatePlaylistDialog(
   BuildContext context, {
@@ -33,7 +34,7 @@ Future<String?> showCreatePlaylistDialog(
             children: [
               // Title
               Text(
-                "Create Playlist",
+                AppLocalizations.of(context)!.playlistCreateTitle,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 20.sp,
@@ -48,7 +49,7 @@ Future<String?> showCreatePlaylistDialog(
                 controller: controller,
                 autofocus: true,
                 decoration: InputDecoration(
-                  hintText: "Playlist Name",
+                  hintText: AppLocalizations.of(context)!.playlistNameHint,
                   hintStyle: TextStyle(
                     color: const Color(0xFF9CA3AF),
                     fontSize: 14.sp,
@@ -89,7 +90,7 @@ Future<String?> showCreatePlaylistDialog(
                         padding: EdgeInsets.symmetric(vertical: 14.h),
                       ),
                       child: Text(
-                        "Cancel",
+                        AppLocalizations.of(context)!.dialogCancel,
                         style: TextStyle(
                           color: const Color(0xFF6B7280),
                           fontSize: 14.sp,
@@ -115,7 +116,7 @@ Future<String?> showCreatePlaylistDialog(
                         padding: EdgeInsets.symmetric(vertical: 14.h),
                       ),
                       child: Text(
-                        "Create",
+                        AppLocalizations.of(context)!.select,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14.sp,

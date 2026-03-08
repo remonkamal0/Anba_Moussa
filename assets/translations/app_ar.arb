@@ -1,14 +1,14 @@
 {
   "@@locale": "ar",
   "appTitle": "أنبا موسى",
-  "onboardingWelcome": "مرحباً بك في أنبا موسى",
-  "onboardingWelcomeSubtitle": "تواصل من خلال الإيقاع والإيمان. شخصّن مساحتك الروحية.",
-  "onboardingDiscover": "اكتشف الألحان المقدسة",
-  "onboardingDiscoverSubtitle": "استكشف مجموعة واسعة من التراتيل الروحية والموسيقى العبادة المعاصرة المختارة لرحلة روحك.",
-  "onboardingPersonalize": "شخصّن روحك",
-  "onboardingPersonalizeSubtitle": "أنشئ قوائم التشغيل الخاصة بك واحفظ التراتيل المفضلة لديك للاستماع في أي وقت.",
-  "onboardingListen": "استمع في أي مكان",
-  "onboardingListenSubtitle": "قم بتنزيل المقاطع ومشاهدة الفيديوهات دون انقطاع.",
+  "onboardingWelcome": "مرحبًا بك في تطبيق الأنبا موسى",
+  "onboardingWelcomeSubtitle": "اكتشف مكتبة روحية غنية من عظات نيافة الأنبا موسى بالصوت والفيديو والصور، لتكون مصدر تشجيع وبناء روحي لكل الشباب..",
+  "onboardingDiscover": "قداسة البابا تواضروس الثاني",
+  "onboardingDiscoverSubtitle": "بابا وبطريرك الكرازة المرقسية.",
+  "onboardingPersonalize": "نيافة الأنبا موسى",
+  "onboardingPersonalizeSubtitle": "أسقف عام الشباب بالكنيسة القبطية الأرثوذكسية.",
+  "onboardingListen": "أسقفية الشباب",
+  "onboardingListenSubtitle": "خدمة تهتم ببناء الشباب روحيًا وفكريًا داخل الكنيسة القبطية الأرثوذكسية، من خلال التعليم والأنشطة والخدمة..",
   "onboardingGetStarted": "ابدأ",
   "onboardingNext": "التالي",
   "onboardingBack": "السابق",
@@ -26,6 +26,8 @@
   "appVersion": "تطبيق أنبا موسى V.1.0",
   "navigationHome": "الرئيسية",
   "navigationSearch": "البحث",
+  "searchHint": "ابحث عن تراك الصوت",
+  "searchTracksSubtitle": "ابحث عن تراكاتك المفضلة",
   "navigationLibrary": "المكتبة",
   "navigationGallery": "الصور",
   "navigationVideos": "الفيديوهات",
@@ -78,7 +80,7 @@
   "dontHaveAccount": "ليس لديك حساب؟ ",
   "alreadyHaveAccount": "لديك حساب بالفعل؟ ",
   "welcomeBack": "مرحباً بعودتك",
-  "welcomeBackSubtitle": "اكتشف واستمع لأفضل الألحان",
+  "welcomeBackSubtitle": "اكتشف واستمع لأفضل التراكات",
   "passwordHint": "••••••••",
   "invalidEmail": "الرجاء إدخال بريد إلكتروني صحيح",
   "emptyEmail": "الرجاء إدخال بريدك الإلكتروني",
@@ -92,5 +94,149 @@
   "fullNameHint": "أدخل اسمك بالكامل",
   "emptyName": "الرجاء إدخال اسمك",
   "confirmPassword": "تأكيد كلمة المرور",
-  "passwordsNotMatch": "كلمات المرور غير متطابقة"
+  "passwordsNotMatch": "كلمات المرور غير متطابقة",
+  "signupAgreement": "أوافق على ",
+  "signupTerms": "شروط الخدمة",
+  "signupAnd": " و ",
+  "signupPrivacy": "سياسة\nالخصوصية.",
+  "signupAgreeError": "يرجى الموافقة على شروط الخدمة وسياسة الخصوصية.",
+  "signupSuccess": "تم إنشاء الحساب بنجاح! يرجى التحقق من بريدك الإلكتروني لتنشيط الحساب، ثم قم بتسجيل الدخول.",
+  "signupFailed": "فشل إنشاء الحساب. حاول مرة أخرى.",
+  "signupEmailExists": "يوجد حساب مسجل بهذا البريد الإلكتروني بالفعل",
+  "signupWeakPassword": "كلمة المرور ضعيفة جداً. يرجى اختيار كلمة مرور أقوى.",
+  "signupPasswordLength": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+  "churchHint": "كنيسة النعمة",
+  "gender": "النوع",
+  "genderMale": "ذكر",
+  "genderFemale": "أنثى",
+  "birthDate": "تاريخ الميلاد",
+  "pickDate": "اختر التاريخ",
+  "select": "اختر",
+  "required": "مطلوب",
+  "editProfile": "تعديل البروفايل",
+  "myPlaylistsHeader": "قوائم التشغيل الخاصة بي",
+  "seeAll": "عرض الكل",
+  "noPlaylistsYet": "لا توجد قوائم تشغيل بعد",
+  "preferences": "التفضيلات",
+  "themeCustomization": "تخصيص السمة",
+  "myLibraryHeader": "مكتبتي",
+  "securityAlerts": "الأمان والتنبيهات",
+  "aboutDeveloper": "عن المطور",
+  "aboutTeam": "عن الفريق",
+  "close": "إغلاق",
+  "phoneNumber": "رقم الهاتف",
+  "phoneHint": "+1 (555) 000-0000",
+  "churchName": "اسم الكنيسة",
+  "saveChanges": "حفظ التغييرات",
+  "profileUpdated": "تم تحديث الملف الشخصي بنجاح!",
+  "profileAndPasswordUpdated": "تم تحديث الملف الشخصي وكلمة المرور بنجاح!",
+  "profileUpdateError": "خطأ في تحديث الملف الشخصي",
+  "emailCannotBeChanged": "البريد الإلكتروني (لا يمكن تغييره)",
+  "changePasswordOptional": "تغيير كلمة المرور (اختياري)",
+  "newPassword": "كلمة المرور الجديدة",
+  "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
+  "leaveBlankToKeep": "اتركه فارغاً للاحتفاظ بالحالية",
+  "confirmNewPasswordHint": "تأكيد كلمة المرور الجديدة",
+  "adminSendNotification": "إرسال إشعار",
+  "adminLabel": "مسؤول",
+  "homeCategories": "الفئات",
+  "homeViewAll": "عرض الكل",
+  "homeTopTracks": "أفضل 10 تراك",
+  "homeWelcomeBack": "مرحباً بعودتك،",
+  "unknownSpeaker": "متحدث غير معروف",
+  "errorOccurred": "حدث خطأ ما",
+  "noCategoriesFound": "لم يتم العثور على فئات",
+  "playAll": "تشغيل الكل",
+  "shuffle": "عشوائي",
+  "likedTracksCount": "{count} تراك أعجبك",
+  "@likedTracksCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noFavoritesYet": "لا يوجد مفضلات بعد",
+  "noDownloadsYet": "لا يوجد تحميلات بعد",
+  "deleteAllDownloadsTitle": "حذف جميع التحميلات",
+  "deleteAllDownloadsContent": "هل أنت متأكد أنك تريد إزالة جميع التراكات المحملة من جهازك؟",
+  "deleteAll": "حذف الكل",
+  "offlineTracks": "التراكات بدون إنترنت",
+  "tracksCount": "تراك",
+  "offline": "بدون إنترنت",
+  "deleteDownloadTitle": "حذف التحميل",
+  "deleteDownloadContent": "هل أنت متأكد أنك تريد حذف هذا التحميل من جهازك؟",
+  "delete": "حذف",
+  "markAllAsRead": "تحديد الكل كمقروء",
+  "noNotificationsFound": "لا يوجد إشعارات",
+  "viewAll": "عرض الكل",
+  "timeMinutesAgo": "منذ {count} دقيقة",
+  "@timeMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeHoursAgo": "منذ {count} ساعة",
+  "@timeHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeDaysAgo": "منذ {count} يوم",
+  "@timeDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playlistEnterNameError": "يرجى إدخال اسم قائمة التشغيل",
+  "playlistChooseIcon": "اختر أيقونة",
+  "playlistTapToChangeIcon": "انقر لتغيير الأيقونة",
+  "playlistNameEnLabel": "اسم القائمة (إنجليزي)",
+  "playlistNameEnHint": "مثال: Morning Praise",
+  "playlistNameArLabel": "اسم القائمة (عربي)",
+  "playlistNameArHint": "مثال: تسبيح الصباح",
+  "playlistPublicLabel": "قائمة عامة",
+  "playlistPublicSubtitle": "يمكن للآخرين اكتشاف هذه القائمة",
+  "playlistNextTracksSave": "التالي: اختيار التراكات وحفظ",
+  "playlistAddTracks": "إضافة تراكات",
+  "playlistSelectedCount": "{count} تم اختيارها",
+  "@playlistSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playlistNoTracksFound": "لم يتم العثور على تراكات",
+  "playlistNoAlbum": "لا يوجد ألبوم",
+  "playlistCreateEmpty": "إنشاء قائمة (فارغة)",
+  "playlistCreateWithCount": "إنشاء مع {count} تراك",
+  "@playlistCreateWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playlistCreatedByOfficial": "بواسطة القناة الرسمية",
+  "playlistCreatedByMe": "بواسطتي",
+  "playlistTracksCount": "• {count} تراك",
+  "@playlistTracksCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playlistPlay": "تشغيل",
+  "playlistShuffle": "عشوائي",
+  "playlistErrorLoadingTracks": "خطأ في تحميل التراكات",
+  "playlistEdit": "تعديل القائمة",
+  "playlistCreateTitle": "قائمة جديدة"
 }

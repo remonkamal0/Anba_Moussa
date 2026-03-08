@@ -7,6 +7,7 @@ import '../../providers/favorites_provider.dart';
 import '../../providers/downloads_provider.dart';
 import '../../providers/audio_provider.dart';
 import '../../../domain/entities/track.dart';
+import '../../../l10n/app_localizations.dart';
 
 class FavoritesScreen extends ConsumerWidget {
   const FavoritesScreen({super.key});
@@ -48,7 +49,7 @@ class FavoritesScreen extends ConsumerWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'Favorites',
+          AppLocalizations.of(context)!.drawerFavorites,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w900,
             color: cs.onSurface,
@@ -71,7 +72,7 @@ class FavoritesScreen extends ConsumerWidget {
                         onPressed: () => _playAll(ref, context, favorites),
                         icon: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
                         label: Text(
-                          'Play All',
+                          AppLocalizations.of(context)!.playAll,
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.bold,
@@ -95,7 +96,7 @@ class FavoritesScreen extends ConsumerWidget {
                         onPressed: () => _playAll(ref, context, favorites, shuffle: true),
                         icon: Icon(Icons.shuffle_rounded, color: cs.primary, size: 20),
                         label: Text(
-                          'Shuffle',
+                          AppLocalizations.of(context)!.shuffle,
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.bold,
@@ -120,7 +121,7 @@ class FavoritesScreen extends ConsumerWidget {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
                 child: Text(
-                  '${favorites.length} LIKED SONGS',
+                  AppLocalizations.of(context)!.likedTracksCount(favorites.length).toUpperCase(),
                   style: TextStyle(
                     fontSize: 11.sp,
                     fontWeight: FontWeight.bold,
@@ -138,7 +139,7 @@ class FavoritesScreen extends ConsumerWidget {
                   : favorites.isEmpty
                       ? Center(
                           child: Text(
-                            'No favorites yet',
+                            AppLocalizations.of(context)!.noFavoritesYet,
                             style: TextStyle(color: cs.onSurface.withOpacity(0.5)),
                           ),
                         )

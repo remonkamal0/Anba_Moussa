@@ -9,6 +9,7 @@ import '../../providers/library_provider.dart';
 import '../../widgets/common/error_handle_widget.dart';
 import '../../../core/di/service_locator.dart';
 import '../../../domain/entities/category.dart';
+import '../../../l10n/app_localizations.dart';
 
 class LibraryScreen extends StatelessWidget {
   const LibraryScreen({super.key});
@@ -61,7 +62,7 @@ class _LibraryScreenContentState extends State<_LibraryScreenContent> {
               },
             ),
             title: Text(
-              'LIBRARY',
+              AppLocalizations.of(context)!.navigationLibrary.toUpperCase(),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w800,
                     color: Theme.of(context).colorScheme.onSurface,
@@ -83,12 +84,12 @@ class _LibraryScreenContentState extends State<_LibraryScreenContent> {
         return const Center(child: CircularProgressIndicator());
       case LibraryStatus.error:
         return ErrorHandleWidget(
-          error: state.error ?? 'An error occurred',
+          error: state.error ?? AppLocalizations.of(context)!.errorOccurred,
           onRetry: () => provider.fetchCategories(),
         );
       case LibraryStatus.loaded:
         if (state.categories.isEmpty) {
-          return const Center(child: Text('No categories found'));
+          return Center(child: Text(AppLocalizations.of(context)!.noCategoriesFound));
         }
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),

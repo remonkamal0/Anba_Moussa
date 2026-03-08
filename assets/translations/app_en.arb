@@ -4,14 +4,14 @@
   "@appTitle": {
     "description": "The title of the application"
   },
-  "onboardingWelcome": "Welcome to SoulSync",
-  "onboardingWelcomeSubtitle": "Connect through rhythm and faith. Personalize your sacred space.",
-  "onboardingDiscover": "Discover Sacred Melodies",
-  "onboardingDiscoverSubtitle": "Explore a vast collection of spiritual hymns and contemporary worship music curated for your soul's journey.",
-  "onboardingPersonalize": "Personalize Your Spirit",
-  "onboardingPersonalizeSubtitle": "Create your own playlists and save your favorite hymns for anytime listening.",
-  "onboardingListen": "Listen Anywhere",
-  "onboardingListenSubtitle": "Download tracks and watch videos offline without interruptions.",
+  "onboardingWelcome": "Welcome to Anba Moussa App",
+  "onboardingWelcomeSubtitle": "Discover a rich spiritual library of sermons by His Grace Anba Moussa in audio, video, and images to inspire and strengthen youth spiritually..",
+  "onboardingDiscover": "His Holiness Pope Tawadros II",
+  "onboardingDiscoverSubtitle": "Pope and Patriarch of the See of Saint Mark.",
+  "onboardingPersonalize": "His Grace Anba Moussa",
+  "onboardingPersonalizeSubtitle": "General Bishop of Youth in the Coptic Orthodox Church.",
+  "onboardingListen": "Youth Bishopric",
+  "onboardingListenSubtitle": "A ministry dedicated to spiritually and intellectually building youth in the Coptic Orthodox Church through teaching, activities, and service..",
   "onboardingGetStarted": "Get Started",
   "onboardingNext": "Next",
   "onboardingBack": "Back",
@@ -29,6 +29,8 @@
   "appVersion": "ANBA MOUSSA APP V.1.0",
   "navigationHome": "Home",
   "navigationSearch": "Search",
+  "searchHint": "Search for audio track",
+  "searchTracksSubtitle": "Search for your favorite tracks",
   "navigationLibrary": "Library",
   "navigationGallery": "Gallery",
   "navigationVideos": "Videos",
@@ -95,5 +97,167 @@
   "fullNameHint": "Enter your full name",
   "emptyName": "Please enter your name",
   "confirmPassword": "CONFIRM PASSWORD",
-  "passwordsNotMatch": "Passwords do not match"
+  "passwordsNotMatch": "Passwords do not match",
+  "signupAgreement": "I agree to the ",
+  "signupTerms": "Terms of Service",
+  "signupAnd": " and ",
+  "signupPrivacy": "Privacy\nPolicy.",
+  "signupAgreeError": "Please agree to Terms of Service and Privacy Policy.",
+  "signupSuccess": "Account created successfully! Please check your email to verify your account, then login.",
+  "signupFailed": "Signup failed. Please try again.",
+  "signupEmailExists": "An account with this email already exists",
+  "signupWeakPassword": "Password is too weak. Please choose a stronger password.",
+  "signupPasswordLength": "Password must be at least 6 characters",
+  "churchHint": "Grace Community Church",
+  "gender": "GENDER",
+  "genderMale": "Male",
+  "genderFemale": "Female",
+  "birthDate": "BIRTH DATE",
+  "pickDate": "Pick Date",
+  "select": "Select",
+  "required": "Required",
+  "editProfile": "Edit Profile",
+  "myPlaylistsHeader": "MY PLAYLISTS",
+  "seeAll": "See All",
+  "noPlaylistsYet": "No playlists yet",
+  "preferences": "PREFERENCES",
+  "themeCustomization": "Theme Customization",
+  "myLibraryHeader": "MY LIBRARY",
+  "securityAlerts": "SECURITY & ALERTS",
+  "aboutDeveloper": "About Developer",
+  "aboutTeam": "About the Team",
+  "close": "Close",
+  "phoneNumber": "PHONE NUMBER",
+  "phoneHint": "+1 (555) 000-0000",
+  "churchName": "CHURCH NAME",
+  "saveChanges": "Save Changes",
+  "profileUpdated": "Profile updated successfully!",
+  "profileAndPasswordUpdated": "Profile and password updated successfully!",
+  "profileUpdateError": "Error updating profile",
+  "emailCannotBeChanged": "Email Address (Cannot be changed)",
+  "changePasswordOptional": "Change Password (Optional)",
+  "newPassword": "New Password",
+  "confirmNewPassword": "Confirm New Password",
+  "leaveBlankToKeep": "Leave blank to keep current",
+  "confirmNewPasswordHint": "Confirm new password",
+  "adminSendNotification": "Send Notification",
+  "adminLabel": "Admin",
+  "homeCategories": "Categories",
+  "homeViewAll": "VIEW ALL",
+  "homeTopTracks": "Top 10 Tracks",
+  "homeWelcomeBack": "WELCOME BACK,",
+  "unknownSpeaker": "Unknown Speaker",
+  "errorOccurred": "An error occurred",
+  "noCategoriesFound": "No categories found",
+  "playAll": "Play All",
+  "shuffle": "Shuffle",
+  "likedTracksCount": "{count} LIKED TRACKS",
+  "@likedTracksCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noFavoritesYet": "No favorites yet",
+  "noDownloadsYet": "No downloads yet",
+  "deleteAllDownloadsTitle": "Delete All Downloads",
+  "deleteAllDownloadsContent": "Are you sure you want to remove all downloaded tracks from your device?",
+  "deleteAll": "Delete All",
+  "offlineTracks": "OFFLINE TRACKS",
+  "tracksCount": "Tracks",
+  "offline": "Offline",
+  "deleteDownloadTitle": "Delete Download",
+  "deleteDownloadContent": "Are you sure you want to delete this download from your device?",
+  "delete": "Delete",
+  "markAllAsRead": "Mark all as read",
+  "noNotificationsFound": "No notifications found",
+  "viewAll": "View all",
+  "timeMinutesAgo": "{count}m ago",
+  "@timeMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeHoursAgo": "{count}h ago",
+  "@timeHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeDaysAgo": "{count}d ago",
+  "@timeDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playlistEnterNameError": "Please enter a playlist name",
+  "playlistChooseIcon": "Choose Icon",
+  "playlistTapToChangeIcon": "Tap to change icon",
+  "playlistNameEnLabel": "Playlist Name (English)",
+  "playlistNameEnHint": "e.g. Morning Praise",
+  "playlistNameArLabel": "Playlist Name (Arabic)",
+  "playlistNameArHint": "e.g. Morning Praise",
+  "playlistPublicLabel": "Public Playlist",
+  "playlistPublicSubtitle": "Others can discover this",
+  "playlistNextTracksSave": "Next: Tracks & Save",
+  "playlistAddTracks": "Add Tracks",
+  "playlistSelectedCount": "{count} selected",
+  "@playlistSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playlistNoTracksFound": "No tracks found",
+  "playlistNoAlbum": "No Album",
+  "playlistCreateEmpty": "Create Playlist (Empty)",
+  "playlistCreateWithCount": "Create with {count} Tracks",
+  "@playlistCreateWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playlistCreatedByOfficial": "Created by Official",
+  "playlistCreatedByMe": "Created by Me",
+  "playlistTracksCount": "• {count} Tracks",
+  "@playlistTracksCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "playlistPlay": "Play",
+  "playlistShuffle": "Shuffle",
+  "playlistErrorLoadingTracks": "Error loading tracks",
+  "playlistEdit": "Edit Playlist",
+  "playlistCreateTitle": "New Playlist",
+  "playlistSearchHint": "Search playlists…",
+  "playlistNoPlaylists": "No playlists yet",
+  "playlistCreateFirst": "Create your first playlist",
+  "playlistFailedToLoad": "Failed to load playlists",
+  "retry": "Retry",
+  "playlistDelete": "Delete Playlist",
+  "playlistDeleteConfirm": "Are you sure you want to delete \"{name}\"?",
+  "playlistPublic": "Public",
+  "logoutTitle": "Logout",
+  "logoutConfirm": "Are you sure you want to logout?",
+  "profileMyPlaylists": "My Playlists",
+  "profileLanguage": "Language",
+  "profileDarkMode": "Dark Mode",
+  "profileTheme": "Theme",
+  "profileFavorites": "Favorites",
+  "profileDownloads": "Downloads",
+  "profileNotifications": "Notifications",
+  "profileLogOut": "Log Out"
 }

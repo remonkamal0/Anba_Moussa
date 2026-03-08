@@ -21,49 +21,57 @@ class AccentColorSelector extends ConsumerWidget {
     ];
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           'ACCENT',
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: Colors.grey[400],
-            letterSpacing: 1,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            letterSpacing: 1.2,
           ),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: 8.h),
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: accentColors.map((accentColor) {
             final isSelected = currentAccentColor.value == accentColor.color.value;
             return Padding(
-              padding: EdgeInsets.only(right: 12.w),
+              padding: EdgeInsets.symmetric(horizontal: 6.w),
               child: GestureDetector(
                 onTap: () => accentColorNotifier.changeAccentColor(accentColor.name),
-                child: Container(
-                  width: 36.w,
-                  height: 36.w,
+                child: AnimatedContainer(
+                  duration: AppConstants.defaultAnimationDuration,
+                  width: isSelected ? 36.w : 28.w,
+                  height: isSelected ? 36.w : 28.w,
                   decoration: BoxDecoration(
                     color: accentColor.color,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isSelected ? Colors.white : Colors.transparent,
-                      width: 3.w,
+                      color: isSelected ? Theme.of(context).colorScheme.surface : Colors.transparent,
+                      width: isSelected ? 3.w : 0,
                     ),
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
                               color: accentColor.color.withOpacity(0.4),
                               blurRadius: 8,
-                              spreadRadius: 2,
+                              spreadRadius: 1,
                             ),
                           ]
-                        : null,
+                        : [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 3,
+                              spreadRadius: 0.5,
+                            ),
+                          ],
                   ),
                   child: isSelected
                       ? Icon(
                           Icons.check,
-                          color: Colors.white,
-                          size: 20.w,
+                          color: Theme.of(context).colorScheme.surface,
+                          size: 18.w,
                         )
                       : null,
                 ),

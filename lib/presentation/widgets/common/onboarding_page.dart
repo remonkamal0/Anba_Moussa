@@ -68,65 +68,68 @@ class OnboardingPage extends ConsumerWidget {
                     ),
                   ),
           SizedBox(height: isSmallScreen ? 24.h : 48.h),
-          // Image
-          Flexible(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: isLargeScreen ? 760.h : 700.h,
-                maxWidth:  isLargeScreen ? 760.h : 700.h,
-              ),
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(28.r),
-                    border: Border.all(
-                      color: Colors.white,
-                      width: isSmallScreen ? 2.w : 4.w,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 20,
-                        spreadRadius: 5,
-                      ),
-                    ],
+          Expanded(
+            flex: 3,
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 48.w),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: isLargeScreen ? 600.h : 450.h,
+                    maxWidth:  isLargeScreen ? 600.h : 450.h,
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(24.r),
+                  child: AspectRatio(
+                    aspectRatio: 1,
                     child: Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(28.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 20,
+                            spreadRadius: 5,
+                          ),
+                        ],
                       ),
-                      child: pageData.imagePath.startsWith('http')
-                          ? CachedNetworkImage(
-                              imageUrl: pageData.imagePath,
-                              fit: BoxFit.contain,
-                              placeholder: (context, url) => Center(
-                                child: CircularProgressIndicator(
-                                  color: Theme.of(context).colorScheme.primary,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(28.r),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                          ),
+                          child: pageData.imagePath.startsWith('http')
+                              ? CachedNetworkImage(
+                                  imageUrl: pageData.imagePath,
+                                  fit: BoxFit.contain,
+                                  alignment: Alignment.center,
+                                  placeholder: (context, url) => Center(
+                                    child: CircularProgressIndicator(
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) => Icon(
+                                    Icons.image,
+                                    size: 80.w,
+                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                                  ),
+                                )
+                              : Image.asset(
+                                  pageData.imagePath,
+                                  fit: BoxFit.contain,
+                                  alignment: Alignment.center,
+                                  errorBuilder: (context, error, stackTrace) => Icon(
+                                    Icons.image,
+                                    size: 80.w,
+                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                                  ),
                                 ),
-                              ),
-                              errorWidget: (context, url, error) => Icon(
-                                Icons.image,
-                                size: 80.w,
-                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-                              ),
-                            )
-                          : Image.asset(
-                              pageData.imagePath,
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) => Icon(
-                                Icons.image,
-                                size: 80.w,
-                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-                              ),
-                            ),
+                        ),
+                      ),
+                    ).animate().scale(
+                      duration: AppConstants.defaultAnimationDuration,
+                      curve: Curves.easeOut,
                     ),
                   ),
-                ).animate().scale(
-                  duration: AppConstants.defaultAnimationDuration,
-                  curve: Curves.easeOut,
                 ),
               ),
             ),
@@ -136,9 +139,8 @@ class OnboardingPage extends ConsumerWidget {
 
           // Title and subtitle
           Expanded(
-            flex: 2,
-            child: SingleChildScrollView(
-              child: Column(
+            flex: 4,
+            child: Column(
                 children: [
                   Text(
                     _getLocalizedText(l10n, pageData.titleKey, locale),
@@ -153,7 +155,7 @@ class OnboardingPage extends ConsumerWidget {
                     delay: const Duration(milliseconds: 200),
                   ),
 
-                  SizedBox(height: AppConstants.mediumSpacing.h),
+                  SizedBox(height: 8.h),
 
                   Text(
                     _getLocalizedText(l10n, pageData.subtitleKey, locale),
@@ -169,7 +171,7 @@ class OnboardingPage extends ConsumerWidget {
 
                   // Custom selectors for first page
                   if (pageData.showLanguageSelector) ...[
-                    SizedBox(height: AppConstants.largeSpacing.h),
+                    SizedBox(height: 12.h),
                     const LanguageSelector().animate().fadeIn(
                       duration: AppConstants.defaultAnimationDuration,
                       delay: const Duration(milliseconds: 600),
@@ -177,15 +179,17 @@ class OnboardingPage extends ConsumerWidget {
                   ],
 
                   if (pageData.showThemeSelector || pageData.showAccentColorSelector) ...[
-                    SizedBox(height: AppConstants.mediumSpacing.h),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
+                    SizedBox(height: 12.h),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           if (pageData.showThemeSelector)
                             const ThemeSelector(),
                           if (pageData.showThemeSelector && pageData.showAccentColorSelector)
-                            SizedBox(width: AppConstants.largeSpacing.w),
+                            SizedBox(width: 16.w),
                           if (pageData.showAccentColorSelector)
                             const AccentColorSelector(),
                         ],
@@ -198,7 +202,6 @@ class OnboardingPage extends ConsumerWidget {
                 ],
               ),
             ),
-          ),
 
           // Action buttons
           SizedBox(

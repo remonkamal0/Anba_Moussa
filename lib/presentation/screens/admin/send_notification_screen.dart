@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/network/supabase_service.dart';
+import '../../providers/playlists_provider.dart';
 
 // ──────────────────────────────────────────
 // Simple data holder for a picked entity
@@ -55,6 +57,7 @@ const _routeOptions = [
   _RouteOption('/album/:id',          'ألبوم صوتي محدد 💿',    entityKind: 'album'),
   _RouteOption('/playlist/:id',       'قائمة تشغيل 🎵',        entityKind: 'playlist'),
   _RouteOption('/player',             'تراك محدد 🎧',           entityKind: 'track'),
+  _RouteOption('/video/:id',          'فيديو محدد 🎬',           entityKind: 'video'),
   _RouteOption('/photo-album/:id',    'ألبوم صور محدد 🖼️',     entityKind: 'photo_album'),
   _RouteOption('/video-album/:id',    'ألبوم فيديو محدد 🎬',   entityKind: 'video_album'),
 ];
@@ -194,6 +197,7 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
       case 'track':       return 'تراك';
       case 'album':       return 'ألبوم صوتي';
       case 'playlist':    return 'قائمة تشغيل';
+      case 'video':       return 'فيديو';
       case 'photo_album': return 'ألبوم صور';
       case 'video_album': return 'ألبوم فيديو';
       default:            return 'عنصر';
@@ -544,7 +548,10 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
               borderRadius: BorderRadius.circular(10.r),
               color: hasPicked ? cs.primary.withOpacity(0.12) : cs.onSurface.withOpacity(0.06),
               image: (hasPicked && _pickedEntity?.imageUrl != null)
-                  ? DecorationImage(image: NetworkImage(_pickedEntity!.imageUrl!), fit: BoxFit.cover)
+                  ? DecorationImage(
+                      image: CachedNetworkImageProvider(_pickedEntity!.imageUrl!), 
+                      fit: BoxFit.cover,
+                    )
                   : null,
             ),
             child: (!hasPicked || _pickedEntity?.imageUrl == null)
@@ -573,17 +580,6 @@ class _SendNotificationScreenState extends State<SendNotificationScreen> {
         ]),
       ),
     );
-  }
-
-  IconData _iconForKind(String kind) {
-    switch (kind) {
-      case 'track':       return Icons.headphones_rounded;
-      case 'album':       return Icons.album_rounded;
-      case 'playlist':    return Icons.queue_music_rounded;
-      case 'photo_album': return Icons.photo_library_rounded;
-      case 'video_album': return Icons.video_library_rounded;
-      default:            return Icons.link_rounded;
-    }
   }
 
   Widget _buildHintText(String text) => Padding(
@@ -654,36 +650,55 @@ class _EntityPickerSheetState extends State<_EntityPickerSheet> {
       if (widget.kind == 'track') {
         final data = await client
             .from('tracks')
-            .select('id, title_ar, title_en, cover_image_url')
+            .select('id, title_ar, title_en, cover_image_url, speaker_ar, speaker_en')
             .eq('is_active', true)
             .order('created_at', ascending: false)
-            .limit(100);
+            .limit(500);
         results = (data as List).map((r) => _PickedEntity(
-          id: r['id'], titleAr: r['title_ar'] ?? '', titleEn: r['title_en'] ?? '',
+          id: r['id'], 
+          titleAr: '${r['title_ar'] ?? ''} - ${r['speaker_ar'] ?? ''}', 
+          titleEn: '${r['title_en'] ?? ''} - ${r['speaker_en'] ?? ''}',
           imageUrl: r['cover_image_url'],
         )).toList();
       } else if (widget.kind == 'album') {
         // Audio albums (categories used as albums)
         final data = await client
             .from('categories')
-            .select('id, title_ar, title_en, image_url')
+            .select('id, title_ar, title_en, image_url, subtitle_ar, subtitle_en')
             .eq('is_active', true)
             .order('sort_order', ascending: true)
-            .limit(100);
+            .limit(500);
         results = (data as List).map((r) => _PickedEntity(
-          id: r['id'], titleAr: r['title_ar'] ?? '', titleEn: r['title_en'] ?? '',
+          id: r['id'], 
+          titleAr: '${r['title_ar'] ?? ''} (${r['subtitle_ar'] ?? ''})', 
+          titleEn: '${r['title_en'] ?? ''} (${r['subtitle_en'] ?? ''})',
           imageUrl: r['image_url'],
         )).toList();
       } else if (widget.kind == 'playlist') {
         final data = await client
             .from('playlists')
-            .select('id, title, image_url')
+            .select('id, title_ar, title_en, image_url')
             .eq('is_public', true)
             .order('created_at', ascending: false)
-            .limit(100);
+            .limit(500);
         results = (data as List).map((r) => _PickedEntity(
-          id: r['id'], titleAr: r['title'] ?? '', titleEn: r['title'] ?? '',
-          imageUrl: r['image_url'],
+          id: r['id'], 
+          titleAr: r['title_ar'] ?? '', 
+          titleEn: r['title_en'] ?? '',
+          imageUrl: r['image_url'], // This is the icon name for playlists
+        )).toList();
+      } else if (widget.kind == 'video') {
+        final data = await client
+            .from('videos')
+            .select('id, title_ar, title_en, thumbnail_url, subtitle_ar, subtitle_en')
+            .eq('is_active', true)
+            .order('sort_order', ascending: true)
+            .limit(500);
+        results = (data as List).map((r) => _PickedEntity(
+          id: r['id'], 
+          titleAr: '${r['title_ar'] ?? ''} (${r['subtitle_ar'] ?? ''})', 
+          titleEn: '${r['title_en'] ?? ''} (${r['subtitle_en'] ?? ''})',
+          imageUrl: r['thumbnail_url'],
         )).toList();
       } else if (widget.kind == 'photo_album') {
         final data = await client
@@ -691,7 +706,7 @@ class _EntityPickerSheetState extends State<_EntityPickerSheet> {
             .select('id, title_ar, title_en, cover_image_url')
             .eq('is_active', true)
             .order('sort_order', ascending: true)
-            .limit(100);
+            .limit(500);
         results = (data as List).map((r) => _PickedEntity(
           id: r['id'], titleAr: r['title_ar'] ?? '', titleEn: r['title_en'] ?? '',
           imageUrl: r['cover_image_url'],
@@ -702,7 +717,7 @@ class _EntityPickerSheetState extends State<_EntityPickerSheet> {
             .select('id, title_ar, title_en, cover_image_url')
             .eq('is_active', true)
             .order('sort_order', ascending: true)
-            .limit(100);
+            .limit(500);
         results = (data as List).map((r) => _PickedEntity(
           id: r['id'], titleAr: r['title_ar'] ?? '', titleEn: r['title_en'] ?? '',
           imageUrl: r['cover_image_url'],
@@ -730,6 +745,7 @@ class _EntityPickerSheetState extends State<_EntityPickerSheet> {
     switch (widget.kind) {
       case 'track':    return 'اختر تراك 🎧';
       case 'album':    return 'اختر ألبوم 💿';
+      case 'video':    return 'اختر فيديو 🎬';
       case 'playlist': return 'اختر قائمة تشغيل 🎵';
       default:         return 'اختر';
     }
@@ -813,12 +829,17 @@ class _EntityPickerSheetState extends State<_EntityPickerSheet> {
                                       borderRadius: BorderRadius.circular(10.r),
                                       color: cs.primary.withOpacity(0.08),
                                       image: entity.imageUrl != null
-                                          ? DecorationImage(image: NetworkImage(entity.imageUrl!), fit: BoxFit.cover)
+                                          ? DecorationImage(
+                                              image: CachedNetworkImageProvider(entity.imageUrl!), 
+                                              fit: BoxFit.cover,
+                                            )
                                           : null,
                                     ),
                                     child: entity.imageUrl == null
-                                        ? Icon(Icons.music_note_rounded, color: cs.primary.withOpacity(0.5), size: 22.w)
-                                        : null,
+                                        ? Icon(_iconForKind(widget.kind), color: cs.primary.withOpacity(0.5), size: 22.w)
+                                        : (widget.kind == 'playlist')
+                                            ? Icon(playlistIcon(entity.imageUrl), color: cs.primary, size: 22.w)
+                                            : null,
                                   ),
                                   title: Text(entity.titleAr,
                                     style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w700, color: cs.onSurface),
@@ -838,5 +859,21 @@ class _EntityPickerSheetState extends State<_EntityPickerSheet> {
         ),
       ),
     );
+  }
+}
+
+// ──────────────────────────────────────────
+// Helpers
+// ──────────────────────────────────────────
+
+IconData _iconForKind(String kind) {
+  switch (kind) {
+    case 'track':       return Icons.headphones_rounded;
+    case 'album':       return Icons.album_rounded;
+    case 'playlist':    return Icons.queue_music_rounded;
+    case 'video':       return Icons.play_circle_fill_rounded;
+    case 'photo_album': return Icons.photo_library_rounded;
+    case 'video_album': return Icons.video_library_rounded;
+    default:            return Icons.link_rounded;
   }
 }

@@ -410,7 +410,7 @@ class _TrackTile extends StatelessWidget {
                           color: cs.surfaceVariant,
                           image: track.imageUrl != null
                               ? DecorationImage(
-                                  image: NetworkImage(track.imageUrl!),
+                                  image: CachedNetworkImageProvider(track.imageUrl!),
                                   fit: BoxFit.cover,
                                 )
                               : null,

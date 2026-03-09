@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:anba_moussa/l10n/app_localizations.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../core/constants/app_constants.dart';
 
@@ -165,7 +166,7 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: NetworkImage(_artist.image),
+                        image: CachedNetworkImageProvider(_artist.image),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -534,7 +535,7 @@ class PopularSongTile extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius.r),
           image: DecorationImage(
-            image: NetworkImage(song.coverImage),
+            image: CachedNetworkImageProvider(song.coverImage),
             fit: BoxFit.cover,
           ),
         ),
@@ -618,7 +619,7 @@ class AlbumCard extends StatelessWidget {
                     top: Radius.circular(AppConstants.mediumBorderRadius.r),
                   ),
                   image: DecorationImage(
-                    image: NetworkImage(album.coverImage),
+                    image: CachedNetworkImageProvider(album.coverImage),
                     fit: BoxFit.cover,
                   ),
                 ),

@@ -29,6 +29,7 @@ import '../screens/gallery/photo_album_details_screen.dart';
 import '../screens/gallery/video_album_details_screen.dart';
 import '../../domain/entities/photo_album.dart';
 import '../../domain/entities/video_album.dart';
+import '../../domain/entities/video.dart';
 import '../widgets/layout/main_layout.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -184,6 +185,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           return _VideoAlbumDeepLinkScreen(albumId: albumId);
         },
       ),
+      GoRoute(
+        path: '/video/:videoId',
+        builder: (context, state) {
+          final videoId = state.pathParameters['videoId']!;
+          return _VideoDeepLinkScreen(videoId: videoId);
+        },
+      ),
     ],
     errorBuilder: (context, state) => Scaffold(
       body: Center(
@@ -324,5 +332,73 @@ class _VideoAlbumDeepLinkScreenState extends State<_VideoAlbumDeepLinkScreen> {
     if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
     if (_error != null || _album == null) return Scaffold(body: Center(child: Text(_error ?? 'Not found')));
     return VideoAlbumDetailsScreen(album: _album);
+  }
+}
+
+class _VideoDeepLinkScreen extends StatefulWidget {
+  final String videoId;
+  const _VideoDeepLinkScreen({required this.videoId});
+
+  @override
+  State<_VideoDeepLinkScreen> createState() => _VideoDeepLinkScreenState();
+}
+
+class _VideoDeepLinkScreenState extends State<_VideoDeepLinkScreen> {
+  bool _isLoading = true;
+  String? _error;
+  dynamic _video;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetch();
+  }
+
+  Future<void> _fetch() async {
+    try {
+      final res = await SupabaseService.instance.client
+          .from('videos')
+          .select()
+          .eq('id', widget.videoId)
+          .maybeSingle();
+      if (res != null) {
+        _video = _parseVideo(res);
+      } else {
+        _error = 'Video not found';
+      }
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  dynamic _parseVideo(Map<String, dynamic> json) {
+    // Basic mapping to domain Video entity
+    return Video(
+      id: json['id'],
+      albumId: json['album_id'],
+      titleAr: json['title_ar'] ?? '',
+      titleEn: json['title_en'] ?? '',
+      subtitleAr: json['subtitle_ar'],
+      subtitleEn: json['subtitle_en'],
+      descriptionAr: json['description_ar'],
+      descriptionEn: json['description_en'],
+      videoUrl: json['video_url'] ?? '',
+      thumbnailUrl: json['thumbnail_url'],
+      durationSeconds: json['duration_seconds'],
+      publishedAt: json['published_at'] != null ? DateTime.parse(json['published_at']) : null,
+      sortOrder: json['sort_order'] ?? 0,
+      isActive: json['is_active'] ?? true,
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['updated_at']),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (_error != null || _video == null) return Scaffold(body: Center(child: Text(_error ?? 'Not found')));
+    return VideoPlaybackMockScreen(video: _video);
   }
 }

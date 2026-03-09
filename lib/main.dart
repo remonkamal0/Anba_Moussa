@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:audio_session/audio_session.dart';
@@ -14,6 +15,7 @@ import 'presentation/routes/app_router.dart';
 import 'presentation/providers/locale_provider.dart';
 import 'presentation/providers/theme_provider.dart';
 import 'core/services/permission_service.dart';
+import 'core/services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +29,9 @@ void main() async {
 
   // Initialize Service Locator
   sl.init();
+
+  // Initialize Notifications
+  await NotificationService.instance.initialize();
 
   // Configure Audio Session
   final session = await AudioSession.instance;
@@ -58,11 +63,46 @@ void main() async {
   );
 }
 
-class MelodixApp extends ConsumerWidget {
+class MelodixApp extends ConsumerStatefulWidget {
   const MelodixApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MelodixApp> createState() => _MelodixAppState();
+}
+
+class _MelodixAppState extends ConsumerState<MelodixApp> {
+  @override
+  void initState() {
+    super.initState();
+    _setupNotificationListener();
+  }
+
+  void _setupNotificationListener() {
+    NotificationService.instance.onTap.listen((data) {
+      final router = ref.read(appRouterProvider);
+      _handleNavigation(router, data);
+    });
+  }
+
+  void _handleNavigation(GoRouter router, Map<String, dynamic> data) {
+    final String? route = data['internal_route'];
+    final String? id = data['internal_id'] ?? data['id'];
+    
+    if (route == null) return;
+
+    if (route.contains('/:')) {
+      // Handle parameterized routes
+      if (id != null) {
+        final target = route.replaceAll(RegExp(r'/:[^/]+'), '/$id');
+        router.push(target);
+      }
+    } else {
+      router.push(route);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final locale = ref.watch(localeProvider);
     final themeMode = ref.watch(themeProvider);
     final accentColor = ref.watch(accentColorProvider);

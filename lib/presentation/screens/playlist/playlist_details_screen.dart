@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../providers/playlists_provider.dart';
 import '../../providers/audio_provider.dart';
@@ -272,7 +273,7 @@ class _PlaylistDetailsScreenState extends ConsumerState<PlaylistDetailsScreen> {
                                         color: cs.surfaceVariant,
                                         image: track.coverImageUrl != null
                                             ? DecorationImage(
-                                                image: NetworkImage(track.coverImageUrl!),
+                                                image: CachedNetworkImageProvider(track.coverImageUrl!),
                                                 fit: BoxFit.cover,
                                               )
                                             : null,

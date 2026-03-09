@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:anba_moussa/l10n/app_localizations.dart'; // Added as per instruction
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -224,7 +226,7 @@ class _TopBar extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
-                    color: cs.onSurface.withValues(alpha: 0.5),
+                    color: cs.onSurface.withOpacity(0.5),
                   ),
                 ),
                 SizedBox(height: 2.h),
@@ -311,7 +313,7 @@ class _SliderSection extends StatelessWidget {
             dotWidth: 6.w,
             expansionFactor: 2,
             spacing: 8.w,
-            dotColor: cs.onSurface.withValues(alpha: 0.1),
+            dotColor: cs.onSurface.withOpacity(0.1),
             activeDotColor: orange,
           ),
         ),
@@ -329,11 +331,21 @@ class _SliderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(26.r),
+      borderRadius: BorderRadius.circular(26.r), // Changed from AppConstants.mediumBorderRadius.r to 26.r to match original
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Image.network(item.imageUrl, fit: BoxFit.cover),
+          CachedNetworkImage( // Replaced Image.network
+            imageUrl: item.imageUrl,
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
+            placeholder: (_, __) => Container(color: Theme.of(context).colorScheme.surfaceVariant),
+            errorWidget: (_, __, ___) => Container(
+              color: Theme.of(context).colorScheme.surfaceVariant,
+              child: Icon(Icons.broken_image, color: Theme.of(context).colorScheme.onSurfaceVariant),
+            ),
+          ),
 
           // orange overlay like screenshot
           Container(
@@ -436,7 +448,7 @@ class _SectionHeader extends StatelessWidget {
         if (trailingIcon != null)
           IconButton(
             onPressed: onTrailing,
-            icon: Icon(trailingIcon, color: cs.onSurface.withValues(alpha: 0.4)),
+            icon: Icon(trailingIcon, color: cs.onSurface.withOpacity(0.4)),
           )
         else if (actionText.isNotEmpty)
           TextButton(
@@ -498,7 +510,15 @@ class _CategoriesRow extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.network(c.imageUrl, fit: BoxFit.cover),
+                    CachedNetworkImage( // Replaced Image.network
+                      imageUrl: c.imageUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (_, __) => Container(color: Theme.of(context).colorScheme.surfaceVariant),
+                      errorWidget: (_, __, ___) => Container(
+                        color: Theme.of(context).colorScheme.surfaceVariant,
+                        child: Icon(Icons.broken_image, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      ),
+                    ),
                     Align(
                       alignment: Alignment.bottomLeft,
                       child: Padding(
@@ -569,7 +589,7 @@ class _TopSongsList extends StatelessWidget {
                 Text(
                   s.rank.toString().padLeft(2, '0'),
                   style: TextStyle(
-                    color: cs.onSurface.withValues(alpha: 0.2),
+                    color: cs.onSurface.withOpacity(0.2),
                     fontSize: 18.sp,
                     fontWeight: FontWeight.w900,
                   ),
@@ -583,7 +603,7 @@ class _TopSongsList extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14.r),
                     color: cs.surfaceVariant,
                     image: DecorationImage(
-                      image: NetworkImage(s.coverUrl),
+                      image: CachedNetworkImageProvider(s.coverUrl), // Replaced NetworkImage
                       fit: BoxFit.cover,
                     ),
                   ),

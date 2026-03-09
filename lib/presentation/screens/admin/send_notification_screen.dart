@@ -678,7 +678,6 @@ class _EntityPickerSheetState extends State<_EntityPickerSheet> {
         final data = await client
             .from('playlists')
             .select('id, title_ar, title_en, image_url')
-            .eq('is_public', true)
             .order('created_at', ascending: false)
             .limit(500);
         results = (data as List).map((r) => _PickedEntity(

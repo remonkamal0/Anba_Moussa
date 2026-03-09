@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:just_audio_background/just_audio_background.dart';
+import 'package:audio_session/audio_session.dart';
+import 'core/di/service_locator.dart';
 import 'l10n/app_localizations.dart';
 
 import 'core/theme/app_theme.dart';
@@ -10,12 +13,11 @@ import 'core/network/supabase_service.dart';
 import 'presentation/routes/app_router.dart';
 import 'presentation/providers/locale_provider.dart';
 import 'presentation/providers/theme_provider.dart';
-import 'core/di/service_locator.dart';
 import 'core/services/permission_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize Hive
   await Hive.initFlutter();
   await Hive.openBox('downloads');
@@ -26,12 +28,32 @@ void main() async {
   // Initialize Service Locator
   sl.init();
 
-  // Request runtime permissions (internet, photos, videos, audio, camera)
+  // Configure Audio Session
+  final session = await AudioSession.instance;
+  await session.configure(const AudioSessionConfiguration.music());
+
+  // Listen to audio session events (e.g., unplugging headphones)
+  session.becomingNoisyEventStream.listen((_) {
+    // This is handled by default in just_audio_background if configured,
+    // but explicit handling can be added here if needed.
+  });
+
+  // Request runtime permissions (internet only needed now)
   await PermissionService.instance.requestAllPermissions();
-  
+
+  // Initialize just_audio_background (Must be before runApp)
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'com.anba_moussa.audio.channel.audio',
+    androidNotificationChannelName: 'Anba Moussa Audio',
+    androidNotificationOngoing: true,
+    androidStopForegroundOnPause: true,
+    androidNotificationIcon: 'mipmap/ic_launcher',
+    notificationColor: const Color(0xFF1E88E5),
+  );
+
   runApp(
     ProviderScope(
-      child: MelodixApp(),
+      child: const MelodixApp(),
     ),
   );
 }

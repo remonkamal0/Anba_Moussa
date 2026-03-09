@@ -27,7 +27,7 @@ class ProfileModel {
   factory ProfileModel.fromJson(Map<String, dynamic> json) =>
       _$ProfileModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ProfileModelToJson(json);
+  Map<String, dynamic> toJson() => _$ProfileModelToJson(this);
 
   String? get formattedBirthDate {
     if (birthDate == null) return null;

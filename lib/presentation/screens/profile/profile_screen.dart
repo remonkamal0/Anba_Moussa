@@ -60,7 +60,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   void _onLogout() async {
-    // TODO: Implement logout
+    final l10n = AppLocalizations.of(context)!;
     final shouldLogout = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(

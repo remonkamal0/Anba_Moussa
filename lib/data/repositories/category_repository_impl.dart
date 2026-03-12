@@ -23,4 +23,19 @@ class CategoryRepositoryImpl implements CategoryRepository {
       return null;
     }
   }
+
+  @override
+  Future<Category> createCategory(Category category) async {
+    return await remoteDataSource.createCategory(category);
+  }
+
+  @override
+  Future<Category> updateCategory(Category category) async {
+    return await remoteDataSource.updateCategory(category);
+  }
+
+  @override
+  Future<void> deleteCategory(String id) async {
+    return await remoteDataSource.deleteCategory(id);
+  }
 }

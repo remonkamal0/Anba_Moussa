@@ -6,7 +6,8 @@ import '../models/track_model.dart';
 
 class TrackRepositoryImpl implements TrackRepository {
   final RemoteDataSource remoteDataSource;
-  final SupabaseService _supabaseService; // Kept for now just for downloads handling if that's not in remote data source
+  final SupabaseService
+  _supabaseService; // Kept for now just for downloads handling if that's not in remote data source
 
   TrackRepositoryImpl(this.remoteDataSource, this._supabaseService);
 
@@ -32,7 +33,10 @@ class TrackRepositoryImpl implements TrackRepository {
 
   @override
   Future<void> removeFromFavorites(String trackId) async {
-    await remoteDataSource.toggleFavorite(trackId: trackId, makeFavorite: false);
+    await remoteDataSource.toggleFavorite(
+      trackId: trackId,
+      makeFavorite: false,
+    );
   }
 
   @override
@@ -51,7 +55,7 @@ class TrackRepositoryImpl implements TrackRepository {
   Future<void> downloadTrack(String trackId) async {
     final userId = _supabaseService.currentUserId;
     if (userId == null) throw Exception('User not authenticated');
-    
+
     // We can add device info/app version here if we add those dependencies later
     // For now we fulfill the core requirement of syncing to the table
     await _supabaseService.client.from('downloads').upsert({
@@ -65,7 +69,7 @@ class TrackRepositoryImpl implements TrackRepository {
   Future<void> removeFromDownloads(String trackId) async {
     final userId = _supabaseService.currentUserId;
     if (userId == null) return;
-    
+
     await _supabaseService.client
         .from('downloads')
         .delete()
@@ -84,7 +88,8 @@ class TrackRepositoryImpl implements TrackRepository {
 
     final data = response as List<dynamic>;
     return data.map((json) {
-      final trackJson = (json as Map<String, dynamic>)['tracks'] as Map<String, dynamic>;
+      final trackJson =
+          (json as Map<String, dynamic>)['tracks'] as Map<String, dynamic>;
       final model = TrackModel.fromJson(trackJson);
       return Track(
         id: model.id,
@@ -130,5 +135,20 @@ class TrackRepositoryImpl implements TrackRepository {
   @override
   Future<void> logPlayEvent(String trackId) async {
     await remoteDataSource.logPlayEvent(trackId);
+  }
+
+  @override
+  Future<Track> createTrack(Track track) async {
+    return await remoteDataSource.createTrack(track);
+  }
+
+  @override
+  Future<Track> updateTrack(Track track) async {
+    return await remoteDataSource.updateTrack(track);
+  }
+
+  @override
+  Future<void> deleteTrack(String id) async {
+    return await remoteDataSource.deleteTrack(id);
   }
 }

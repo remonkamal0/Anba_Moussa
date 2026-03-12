@@ -24,9 +24,7 @@ class Playlist {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Playlist &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
+      other is Playlist && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode => id.hashCode;

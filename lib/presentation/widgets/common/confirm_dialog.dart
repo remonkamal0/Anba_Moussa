@@ -44,7 +44,7 @@ Future<bool?> showConfirmDialog(
               ),
             ),
             SizedBox(height: 12.h),
-            
+
             // Content
             Text(
               content,
@@ -57,7 +57,7 @@ Future<bool?> showConfirmDialog(
               ),
             ),
             SizedBox(height: 24.h),
-            
+
             // Action Buttons
             Row(
               children: [

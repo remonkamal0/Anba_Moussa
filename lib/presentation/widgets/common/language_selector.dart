@@ -16,8 +16,14 @@ class LanguageSelector extends ConsumerWidget {
     final cs = Theme.of(context).colorScheme;
 
     final languages = [
-      {'code': 'en', 'name': currentLocale.languageCode == 'ar' ? 'الإنجليزية' : 'English'},
-      {'code': 'ar', 'name': currentLocale.languageCode == 'ar' ? 'العربية' : 'العربية'},
+      {
+        'code': 'en',
+        'name': currentLocale.languageCode == 'ar' ? 'الإنجليزية' : 'English',
+      },
+      {
+        'code': 'ar',
+        'name': currentLocale.languageCode == 'ar' ? 'العربية' : 'العربية',
+      },
     ];
 
     return Column(
@@ -63,7 +69,7 @@ class LanguageSelector extends ConsumerWidget {
                               color: cs.primary.withOpacity(0.1),
                               blurRadius: 6,
                               spreadRadius: 1,
-                            )
+                            ),
                           ]
                         : null,
                   ),
@@ -81,8 +87,12 @@ class LanguageSelector extends ConsumerWidget {
                       Text(
                         language['name']!,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: isSelected ? cs.primary : cs.onSurface.withOpacity(0.7),
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                          color: isSelected
+                              ? cs.primary
+                              : cs.onSurface.withOpacity(0.7),
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.w500,
                         ),
                       ),
                     ],

@@ -35,24 +35,24 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
   List<PhotoAlbum> _sortAlbums(List<PhotoAlbum> albums) {
     final sortedAlbums = List<PhotoAlbum>.from(albums);
     final locale = Localizations.localeOf(context).languageCode;
-    
+
     sortedAlbums.sort((a, b) {
       final titleA = a.getLocalizedTitle(locale).toLowerCase();
       final titleB = b.getLocalizedTitle(locale).toLowerCase();
-      
+
       if (_sortOrder == 'A-Z') {
         return titleA.compareTo(titleB);
       } else {
         return titleB.compareTo(titleA);
       }
     });
-    
+
     return sortedAlbums;
   }
 
   void _showSortOptions() {
     final locale = Localizations.localeOf(context).languageCode;
-    
+
     showMenu(
       context: context,
       position: RelativeRect.fromLTRB(
@@ -136,9 +136,9 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
           title: Text(
             locale == 'ar' ? 'معرض الصور' : 'Photo Gallery',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  color: cs.onSurface,
-                ),
+              fontWeight: FontWeight.w900,
+              color: cs.onSurface,
+            ),
           ),
           centerTitle: true,
           actions: [],
@@ -165,8 +165,12 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
                       if (albums.isEmpty) {
                         return Center(
                           child: Text(
-                            locale == 'ar' ? 'لا توجد ألبومات حالياً' : 'No albums found',
-                            style: TextStyle(color: cs.onSurface.withOpacity(0.5)),
+                            locale == 'ar'
+                                ? 'لا توجد ألبومات حالياً'
+                                : 'No albums found',
+                            style: TextStyle(
+                              color: cs.onSurface.withOpacity(0.5),
+                            ),
                           ),
                         );
                       }
@@ -177,16 +181,17 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
                           crossAxisCount: 2,
                           crossAxisSpacing: 14.w,
                           mainAxisSpacing: 14.h,
-                          childAspectRatio: 0.72, // Balanced for 1:1 image + text
+                          childAspectRatio:
+                              0.72, // Balanced for 1:1 image + text
                         ),
                         itemCount: sortedAlbums.length,
                         itemBuilder: (context, index) {
                           final album = sortedAlbums[index];
 
                           return PhotoAlbumCard(
-                            album: album,
-                            onTap: () => _onAlbumTapped(album),
-                          )
+                                album: album,
+                                onTap: () => _onAlbumTapped(album),
+                              )
                               .animate()
                               .fadeIn(
                                 duration: const Duration(milliseconds: 240),
@@ -203,11 +208,12 @@ class _PhotoGalleryScreenState extends ConsumerState<PhotoGalleryScreen> {
                         },
                       );
                     },
-                    loading: () => const Center(child: CircularProgressIndicator()),
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
                     error: (error, stack) => ErrorHandleWidget(
-          error: error,
-          onRetry: () => ref.refresh(photoAlbumsProvider),
-        ),
+                      error: error,
+                      onRetry: () => ref.refresh(photoAlbumsProvider),
+                    ),
                   ),
                 ),
               ],
@@ -226,11 +232,7 @@ class PhotoAlbumCard extends StatelessWidget {
   final PhotoAlbum album;
   final VoidCallback onTap;
 
-  const PhotoAlbumCard({
-    super.key,
-    required this.album,
-    required this.onTap,
-  });
+  const PhotoAlbumCard({super.key, required this.album, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -263,15 +265,22 @@ class PhotoAlbumCard extends StatelessWidget {
                     ? CachedNetworkImage(
                         imageUrl: album.coverImageUrl!,
                         fit: BoxFit.cover,
-                        placeholder: (_, __) => Container(color: Colors.grey[100]),
+                        placeholder: (_, __) =>
+                            Container(color: Colors.grey[100]),
                         errorWidget: (_, __, ___) => Container(
                           color: Colors.grey[100],
-                          child: const Icon(Icons.broken_image, color: Colors.grey),
+                          child: const Icon(
+                            Icons.broken_image,
+                            color: Colors.grey,
+                          ),
                         ),
                       )
                     : Container(
                         color: Colors.grey[100],
-                        child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                        child: const Icon(
+                          Icons.image_not_supported,
+                          color: Colors.grey,
+                        ),
                       ),
               ),
             ),

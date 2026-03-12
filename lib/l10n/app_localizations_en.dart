@@ -9,6 +9,10 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get adminErrorCategoryHasTracks =>
+      'Cannot delete category because it has associated tracks. Please delete or move the tracks first.';
+
+  @override
   String get appTitle => 'Anba Moussa';
 
   @override
@@ -333,6 +337,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pickDate => 'Pick Date';
 
   @override
+  String adminSelectToView(Object entity) {
+    return 'Select an album to view $entity';
+  }
+
+  @override
+  String get adminSlug => 'Slug';
+
+  @override
+  String get adminSubtitleAr => 'Subtitle (AR)';
+
+  @override
+  String get adminSubtitleEn => 'Subtitle (EN)';
+
+  @override
+  String get adminDescriptionAr => 'Description (AR)';
+
+  @override
+  String get adminDescriptionEn => 'Description (EN)';
+
+  @override
+  String get adminSpeakerAr => 'Speaker (AR)';
+
+  @override
+  String get adminSpeakerEn => 'Speaker (EN)';
+
+  @override
+  String get adminSortOrder => 'Sort Order';
+
+  @override
+  String get adminIsActive => 'Is Active';
+
+  @override
+  String get adminSelectCategory => 'Select Category';
+
+  @override
   String get select => 'Select';
 
   @override
@@ -638,4 +677,317 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileLogOut => 'Log Out';
+
+  @override
+  String get adminDashboardTitle => 'Admin Dashboard';
+
+  @override
+  String get adminSystemManagement => 'System Management';
+
+  @override
+  String get adminAudioContent => 'Audio Content';
+
+  @override
+  String get adminManageCategories => 'Manage Categories';
+
+  @override
+  String get adminOrganizeAudioAlbums => 'Organize Audio Albums';
+
+  @override
+  String get adminManageTracks => 'Manage Tracks';
+
+  @override
+  String get adminUploadEditTracks => 'Upload & Edit Tracks';
+
+  @override
+  String get adminMediaContent => 'Media Content';
+
+  @override
+  String get adminPhotoAlbums => 'Photo Albums';
+
+  @override
+  String get adminManageGallery => 'Manage Gallery';
+
+  @override
+  String get adminPhotos => 'Photos';
+
+  @override
+  String get adminAddRemovePhotos => 'Add/Remove Photos';
+
+  @override
+  String get adminVideoAlbums => 'Video Albums';
+
+  @override
+  String get adminManageVideoSeries => 'Manage Video Series';
+
+  @override
+  String get adminVideos => 'Videos';
+
+  @override
+  String get adminManageIndividualVideos => 'Manage Videos';
+
+  @override
+  String get adminMetadata => 'Metadata';
+
+  @override
+  String get adminManageTags => 'Manage Tags';
+
+  @override
+  String get adminGlobalTagging => 'Global Tagging System';
+
+  @override
+  String get adminSystem => 'System';
+
+  @override
+  String get adminBroadcastMessages => 'Broadcast Messages';
+
+  @override
+  String adminNew(String entity) {
+    return 'New $entity';
+  }
+
+  @override
+  String adminEdit(String entity) {
+    return 'Edit $entity';
+  }
+
+  @override
+  String adminDeleteConfirm(String entity, String name) {
+    return 'Delete $entity \"$name\"?';
+  }
+
+  @override
+  String adminCreated(String entity) {
+    return '$entity created successfully';
+  }
+
+  @override
+  String adminUpdated(String entity) {
+    return '$entity updated successfully';
+  }
+
+  @override
+  String get adminCategory => 'Category';
+
+  @override
+  String get adminTrack => 'Track';
+
+  @override
+  String get adminTag => 'Tag';
+
+  @override
+  String get adminPhotoAlbum => 'Photo Album';
+
+  @override
+  String get adminVideoAlbum => 'Video Album';
+
+  @override
+  String get adminPhoto => 'Photo';
+
+  @override
+  String get adminVideo => 'Video';
+
+  @override
+  String get adminTitleAr => 'Title (AR)';
+
+  @override
+  String get adminTitleEn => 'Title (EN)';
+
+  @override
+  String get adminImageUrl => 'Image URL';
+
+  @override
+  String get adminVideoUrl => 'Video URL';
+
+  @override
+  String get adminAudioUrl => 'Audio URL';
+
+  @override
+  String get adminCoverImageUrl => 'Cover Image URL';
+
+  @override
+  String get adminThumbnailUrl => 'Thumbnail URL';
+
+  @override
+  String get adminDuration => 'Duration (seconds)';
+
+  @override
+  String get adminConfirmDelete => 'Confirm Delete';
+
+  @override
+  String get adminCreate => 'Create';
+
+  @override
+  String get adminUpdate => 'Update';
+
+  @override
+  String get adminSelectAlbum => 'Select Album';
+
+  @override
+  String get adminSelectVideoAlbum => 'Select Video Album';
+
+  @override
+  String get adminNotificationPanel => 'Notification Panel';
+
+  @override
+  String get adminSendNewNotification => 'Send New Notification';
+
+  @override
+  String get adminNotificationContent => 'Notification Content';
+
+  @override
+  String get adminBodyAr => 'Body (AR)';
+
+  @override
+  String get adminBodyEn => 'Body (EN)';
+
+  @override
+  String get adminBodyHintAr => 'e.g. Tap for details...';
+
+  @override
+  String get adminBodyHintEn => 'e.g. Tap for details...';
+
+  @override
+  String get adminTitleHintAr => 'e.g. New Track 🎵';
+
+  @override
+  String get adminTitleHintEn => 'e.g. New Track 🎵';
+
+  @override
+  String get adminSettings => 'Settings';
+
+  @override
+  String get adminNotificationKind => 'Notification Kind';
+
+  @override
+  String get adminTargetAudience => 'Target Audience';
+
+  @override
+  String get adminUserUuids => 'User UUIDs';
+
+  @override
+  String get adminUserUuidsHint => 'uuid1, uuid2...';
+
+  @override
+  String get adminUserUuidsHelper =>
+      'You can enter multiple UUIDs separated by commas';
+
+  @override
+  String get adminOnTapAction => 'On Tap Action';
+
+  @override
+  String get adminNoAction => 'No Action';
+
+  @override
+  String get adminInternalScreen => 'Internal Screen';
+
+  @override
+  String get adminExternalLink => 'External Link';
+
+  @override
+  String get adminSelectScreen => 'Select Screen';
+
+  @override
+  String get adminSelectScreenWarning => 'Please select an internal screen';
+
+  @override
+  String adminSelectEntityWarning(Object entity) {
+    return 'Please select $entity';
+  }
+
+  @override
+  String get adminExternalUrl => 'External URL';
+
+  @override
+  String get adminExternalUrlHint => 'https://example.com';
+
+  @override
+  String get adminInvalidUrl => 'Invalid URL';
+
+  @override
+  String get adminSendNotificationSuccess => 'Notification sent successfully ✅';
+
+  @override
+  String adminChooseEntity(Object entity) {
+    return 'Choose $entity';
+  }
+
+  @override
+  String get adminSearchByName => 'Search by name...';
+
+  @override
+  String get adminNotificationKindGeneral => 'General';
+
+  @override
+  String get adminNotificationKindNewTrack => 'New Track 🎵';
+
+  @override
+  String get adminNotificationKindNewCategory => 'New Category 📂';
+
+  @override
+  String get adminNotificationKindSystem => 'System ⚙️';
+
+  @override
+  String get adminNotificationKindOffer => 'Offer 🎁';
+
+  @override
+  String get adminAudienceAll => 'Everyone 🌍';
+
+  @override
+  String get adminAudienceSpecific => 'Specific User 👤';
+
+  @override
+  String get adminRouteHome => 'Home 🏠';
+
+  @override
+  String get adminRouteLibrary => 'Library 📚';
+
+  @override
+  String get adminRouteSearch => 'Search 🔍';
+
+  @override
+  String get adminRouteFavorites => 'Favorites ❤️';
+
+  @override
+  String get adminRouteDownloads => 'Downloads ⬇️';
+
+  @override
+  String get adminRoutePhotoGallery => 'Photo Gallery 🖼️';
+
+  @override
+  String get adminRouteVideoGallery => 'Video Gallery 🎬';
+
+  @override
+  String get adminRouteAudioAlbum => 'Specific Audio Album 💿';
+
+  @override
+  String get adminRoutePlaylist => 'Playlist 🎵';
+
+  @override
+  String get adminRouteTrack => 'Specific Track 🎧';
+
+  @override
+  String get adminRouteVideo => 'Specific Video 🎬';
+
+  @override
+  String get adminRoutePhotoAlbum => 'Specific Photo Album 🖼️';
+
+  @override
+  String get adminRouteVideoAlbum => 'Specific Video Album 🎬';
+
+  @override
+  String get adminNotificationBannerTitle => 'Notification Sending Panel';
+
+  @override
+  String get adminNotificationBannerSubtitle =>
+      'Send notifications with direct links to tracks and albums';
+
+  @override
+  String get adminLinkTracks => 'Link Tracks';
+
+  @override
+  String get adminLinkTracksSuccess => 'Tracks linked successfully';
+
+  @override
+  String get adminSearchTracks => 'Search Tracks';
 }

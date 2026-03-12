@@ -39,10 +39,10 @@ class SupabaseService {
   /// Example:
   /// data: { "full_name": "...", "phone": "...", "church": "..." }
   Future<AuthResponse> signUpWithEmail(
-      String email,
-      String password, {
-        Map<String, dynamic>? data,
-      }) async {
+    String email,
+    String password, {
+    Map<String, dynamic>? data,
+  }) async {
     return await client.auth.signUp(
       email: email,
       password: password,
@@ -73,7 +73,9 @@ class SupabaseService {
     } on AuthException catch (e) {
       final msg = e.message.toLowerCase();
       if (e.statusCode == '429' || msg.contains('rate limit')) {
-        throw Exception('Too many requests. Please wait a few minutes and try again.');
+        throw Exception(
+          'Too many requests. Please wait a few minutes and try again.',
+        );
       }
       rethrow;
     }
@@ -82,10 +84,8 @@ class SupabaseService {
   Future<void> updateUserPassword(String newPassword) async {
     final user = client.auth.currentUser;
     if (user == null) throw Exception('Not authenticated');
-    
-    await client.auth.updateUser(
-      UserAttributes(password: newPassword),
-    );
+
+    await client.auth.updateUser(UserAttributes(password: newPassword));
   }
 
   // ----------------------------
@@ -130,9 +130,12 @@ class SupabaseService {
       'updated_at': DateTime.now().toIso8601String(),
     };
 
-    if (phone != null && phone.trim().isNotEmpty) payload['phone'] = phone.trim();
-    if (church != null && church.trim().isNotEmpty) payload['church'] = church.trim();
-    if (gender != null && gender.trim().isNotEmpty) payload['gender'] = gender.trim();
+    if (phone != null && phone.trim().isNotEmpty)
+      payload['phone'] = phone.trim();
+    if (church != null && church.trim().isNotEmpty)
+      payload['church'] = church.trim();
+    if (gender != null && gender.trim().isNotEmpty)
+      payload['gender'] = gender.trim();
     if (birthDate != null) payload['birth_date'] = birthDate.toIso8601String();
 
     await client.from('profiles').insert(payload);
@@ -153,10 +156,14 @@ class SupabaseService {
       'updated_at': DateTime.now().toIso8601String(),
     };
 
-    if (fullName != null && fullName.trim().isNotEmpty) update['full_name'] = fullName.trim();
-    if (phone != null && phone.trim().isNotEmpty) update['phone'] = phone.trim();
-    if (church != null && church.trim().isNotEmpty) update['church'] = church.trim();
-    if (gender != null && gender.trim().isNotEmpty) update['gender'] = gender.trim();
+    if (fullName != null && fullName.trim().isNotEmpty)
+      update['full_name'] = fullName.trim();
+    if (phone != null && phone.trim().isNotEmpty)
+      update['phone'] = phone.trim();
+    if (church != null && church.trim().isNotEmpty)
+      update['church'] = church.trim();
+    if (gender != null && gender.trim().isNotEmpty)
+      update['gender'] = gender.trim();
     if (birthDate != null) update['birth_date'] = birthDate.toIso8601String();
 
     // If nothing besides updated_at, skip
@@ -179,7 +186,8 @@ class SupabaseService {
     final user = client.auth.currentUser!;
     final meta = user.userMetadata ?? {};
 
-    final metaFullName = (meta['full_name'] ?? fallbackFullName ?? '').toString();
+    final metaFullName = (meta['full_name'] ?? fallbackFullName ?? '')
+        .toString();
     final metaPhone = (meta['phone'] ?? fallbackPhone ?? '').toString();
     final metaChurch = (meta['church'] ?? fallbackChurch ?? '').toString();
     final metaGender = (meta['gender'] ?? '').toString();
@@ -275,8 +283,12 @@ class SupabaseService {
 
     // Sort by sent_at or created_at descending
     result.sort((a, b) {
-      final aDate = (a['notifications']['sent_at'] ?? a['notifications']['created_at']) as String?;
-      final bDate = (b['notifications']['sent_at'] ?? b['notifications']['created_at']) as String?;
+      final aDate =
+          (a['notifications']['sent_at'] ?? a['notifications']['created_at'])
+              as String?;
+      final bDate =
+          (b['notifications']['sent_at'] ?? b['notifications']['created_at'])
+              as String?;
       if (aDate == null && bDate == null) return 0;
       if (aDate == null) return 1;
       if (bDate == null) return -1;
@@ -290,14 +302,12 @@ class SupabaseService {
     final userId = currentUserId;
     if (userId == null) return;
 
-    await client
-        .from('notification_recipients')
-        .upsert({
-          'notification_id': notificationId,
-          'user_id': userId,
-          'is_read': true,
-          'read_at': DateTime.now().toIso8601String(),
-        });
+    await client.from('notification_recipients').upsert({
+      'notification_id': notificationId,
+      'user_id': userId,
+      'is_read': true,
+      'read_at': DateTime.now().toIso8601String(),
+    });
   }
 
   /// Inserts a new notification into `notifications`.
@@ -314,6 +324,8 @@ class SupabaseService {
     String? internalId,
     String? externalUrl,
     String? imageUrl,
+    String? entityType,
+    String? entityId,
     List<String> recipientUserIds = const [],
   }) async {
     final now = DateTime.now().toIso8601String();
@@ -330,6 +342,8 @@ class SupabaseService {
           'action_type': actionType,
           if (internalRoute != null) 'internal_route': internalRoute,
           if (internalId != null) 'internal_id': internalId,
+          if (entityType != null) 'entity_type': entityType,
+          if (entityId != null) 'entity_id': entityId,
           if (externalUrl != null) 'external_url': externalUrl,
           if (imageUrl != null) 'image_url': imageUrl,
           'is_active': true,
@@ -342,11 +356,15 @@ class SupabaseService {
 
     // If specific audience, insert recipient rows
     if (audience == 'specific' && recipientUserIds.isNotEmpty) {
-      final rows = recipientUserIds.map((uid) => {
-        'notification_id': notificationId,
-        'user_id': uid,
-        'is_read': false,
-      }).toList();
+      final rows = recipientUserIds
+          .map(
+            (uid) => {
+              'notification_id': notificationId,
+              'user_id': uid,
+              'is_read': false,
+            },
+          )
+          .toList();
       await client.from('notification_recipients').insert(rows);
     }
   }
@@ -551,14 +569,17 @@ class SupabaseService {
 
     // 2. Upsert read status for all unread notifications
     final now = DateTime.now().toIso8601String();
-    final rows = unreadIds.map((id) => {
-      'notification_id': id,
-      'user_id': userId,
-      'is_read': true,
-      'read_at': now,
-    }).toList();
+    final rows = unreadIds
+        .map(
+          (id) => {
+            'notification_id': id,
+            'user_id': userId,
+            'is_read': true,
+            'read_at': now,
+          },
+        )
+        .toList();
 
     await client.from('notification_recipients').upsert(rows);
   }
 }
-

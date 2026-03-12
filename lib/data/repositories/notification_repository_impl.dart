@@ -1,6 +1,7 @@
 import '../../core/network/supabase_service.dart';
 import '../../domain/entities/notification.dart';
 import '../../domain/repositories/notification_repository.dart';
+import '../models/notification_model.dart';
 
 class NotificationRepositoryImpl implements NotificationRepository {
   final SupabaseService _supabaseService;
@@ -10,30 +11,16 @@ class NotificationRepositoryImpl implements NotificationRepository {
   @override
   Future<List<AppNotification>> getNotifications({int limit = 20}) async {
     final raw = await _supabaseService.getNotifications(limit: limit);
-    
+
     return raw.map((map) {
-      final n = map['notifications'] as Map<String, dynamic>;
-      final r = map;
-      
-      return AppNotification(
-        id: n['id'],
-        kind: n['kind'] ?? 'system',
-        audience: n['audience'] ?? 'all',
-        titleAr: n['title_ar'] ?? '',
-        titleEn: n['title_en'] ?? '',
-        bodyAr: n['body_ar'] ?? '',
-        bodyEn: n['body_en'] ?? '',
-        imageUrl: n['image_url'],
-        actionType: n['action_type'],
-        externalUrl: n['external_url'],
-        internalRoute: n['internal_route'],
-        internalId: n['internal_id'],
-        entityType: n['entity_type'],
-        entityId: n['entity_id'],
-        sentAt: DateTime.parse(n['sent_at'] ?? n['created_at']),
-        isRead: r?['is_read'] ?? false,
-        readAt: r?['read_at'] != null ? DateTime.parse(r!['read_at']) : null,
-      );
+      final nJson = map['notifications'] as Map<String, dynamic>;
+      final isRead = map['is_read'] as bool? ?? false;
+      final readAtStr = map['read_at'] as String?;
+      final readAt = readAtStr != null ? DateTime.parse(readAtStr) : null;
+
+      return NotificationModel.fromJson(
+        nJson,
+      ).toEntity(isRead: isRead, readAt: readAt);
     }).toList();
   }
 

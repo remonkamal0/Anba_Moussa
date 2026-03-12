@@ -55,7 +55,10 @@ class _LibraryScreenContentState extends State<_LibraryScreenContent> {
         return Scaffold(
           appBar: AppBar(
             leading: IconButton(
-              icon: Icon(Icons.menu, color: Theme.of(context).colorScheme.onSurface),
+              icon: Icon(
+                Icons.menu,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
               onPressed: () {
                 final drawer = ZoomDrawer.of(context);
                 if (drawer != null) drawer.toggle();
@@ -64,10 +67,10 @@ class _LibraryScreenContentState extends State<_LibraryScreenContent> {
             title: Text(
               AppLocalizations.of(context)!.navigationLibrary.toUpperCase(),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: Theme.of(context).colorScheme.onSurface,
-                    letterSpacing: 1.2,
-                  ),
+                fontWeight: FontWeight.w800,
+                color: Theme.of(context).colorScheme.onSurface,
+                letterSpacing: 1.2,
+              ),
             ),
             centerTitle: true,
           ),
@@ -89,38 +92,44 @@ class _LibraryScreenContentState extends State<_LibraryScreenContent> {
         );
       case LibraryStatus.loaded:
         if (state.categories.isEmpty) {
-          return Center(child: Text(AppLocalizations.of(context)!.noCategoriesFound));
+          return Center(
+            child: Text(AppLocalizations.of(context)!.noCategoriesFound),
+          );
         }
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
-          child: GridView.builder(
-            itemCount: state.categories.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: gap,
-              mainAxisSpacing: gap,
-              childAspectRatio: 0.85, 
+        return RefreshIndicator(
+          onRefresh: () => provider.fetchCategories(),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+            child: GridView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: state.categories.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: gap,
+                mainAxisSpacing: gap,
+                childAspectRatio: 0.85,
+              ),
+              itemBuilder: (context, index) {
+                final category = state.categories[index];
+                return _CategoryCard(
+                      category: category,
+                      onTap: () => _onCategoryTapped(category),
+                    )
+                    .animate()
+                    .fadeIn(
+                      duration: const Duration(milliseconds: 280),
+                      delay: Duration(milliseconds: index * 40),
+                      curve: Curves.easeOut,
+                    )
+                    .slideY(
+                      begin: 0.1,
+                      end: 0,
+                      duration: const Duration(milliseconds: 280),
+                      delay: Duration(milliseconds: index * 40),
+                      curve: Curves.easeOut,
+                    );
+              },
             ),
-            itemBuilder: (context, index) {
-              final category = state.categories[index];
-              return _CategoryCard(
-                category: category,
-                onTap: () => _onCategoryTapped(category),
-              )
-                  .animate()
-                  .fadeIn(
-                    duration: const Duration(milliseconds: 280),
-                    delay: Duration(milliseconds: index * 40),
-                    curve: Curves.easeOut,
-                  )
-                  .slideY(
-                    begin: 0.1,
-                    end: 0,
-                    duration: const Duration(milliseconds: 280),
-                    delay: Duration(milliseconds: index * 40),
-                    curve: Curves.easeOut,
-                  );
-            },
           ),
         );
     }
@@ -131,10 +140,7 @@ class _CategoryCard extends StatelessWidget {
   final Category category;
   final VoidCallback onTap;
 
-  const _CategoryCard({
-    required this.category,
-    required this.onTap,
-  });
+  const _CategoryCard({required this.category, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -162,12 +168,18 @@ class _CategoryCard extends StatelessWidget {
                       ),
                       errorWidget: (_, __, ___) => Container(
                         color: Colors.grey[200],
-                        child: const Icon(Icons.broken_image, color: Colors.grey),
+                        child: const Icon(
+                          Icons.broken_image,
+                          color: Colors.grey,
+                        ),
                       ),
                     )
                   : Container(
                       color: Colors.grey[200],
-                      child: const Icon(Icons.category_outlined, color: Colors.grey),
+                      child: const Icon(
+                        Icons.category_outlined,
+                        color: Colors.grey,
+                      ),
                     ),
             ),
 
@@ -226,7 +238,9 @@ class _CategoryCard extends StatelessWidget {
                               subtitle,
                               style: TextStyle(
                                 fontSize: 10.sp,
-                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withOpacity(0.6),
                                 fontWeight: FontWeight.w600,
                               ),
                               maxLines: 1,

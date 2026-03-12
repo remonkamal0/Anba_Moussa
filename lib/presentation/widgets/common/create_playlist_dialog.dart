@@ -43,7 +43,7 @@ Future<String?> showCreatePlaylistDialog(
                 ),
               ),
               SizedBox(height: 16.h),
-              
+
               // Input Field
               TextField(
                 controller: controller,
@@ -57,7 +57,10 @@ Future<String?> showCreatePlaylistDialog(
                   ),
                   filled: true,
                   fillColor: const Color(0xFFF3F5F7),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 14.h,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16.r),
                     borderSide: BorderSide.none,
@@ -73,9 +76,9 @@ Future<String?> showCreatePlaylistDialog(
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              
+
               SizedBox(height: 24.h),
-              
+
               // Action Buttons
               Row(
                 children: [

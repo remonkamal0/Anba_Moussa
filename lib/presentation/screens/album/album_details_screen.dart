@@ -67,15 +67,24 @@ class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
 
   void _toggleLike(Track track) {
     ref.read(favoritesProvider.notifier).toggleFavorite(track);
-    final isCurrentlyLiked = ref.read(favoritesProvider).tracks.any((t) => t.id == track.id);
-    // Note: Since toggleFavorite is async, the toast might show old state if checked immediately, 
+    final isCurrentlyLiked = ref
+        .read(favoritesProvider)
+        .tracks
+        .any((t) => t.id == track.id);
+    // Note: Since toggleFavorite is async, the toast might show old state if checked immediately,
     // but usually it's fine for simple UI feedback.
-    _toast(isCurrentlyLiked ? 'Removed from favorites ❤️‍🩹' : 'Added to favorites ❤️');
+    _toast(
+      isCurrentlyLiked
+          ? 'Removed from favorites ❤️‍🩹'
+          : 'Added to favorites ❤️',
+    );
   }
 
   void _toggleDownload(Track track) async {
     final downloads = ref.read(downloadsProvider);
-    final isDownloaded = downloads.downloadedTracks.any((t) => t.id == track.id);
+    final isDownloaded = downloads.downloadedTracks.any(
+      (t) => t.id == track.id,
+    );
 
     if (isDownloaded) {
       ref.read(downloadsProvider.notifier).removeDownload(track.id);
@@ -98,135 +107,163 @@ class _AlbumDetailsScreenState extends ConsumerState<AlbumDetailsScreen> {
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: cs.surface,
+      appBar: AppBar(
         backgroundColor: cs.surface,
-        appBar: AppBar(
-          backgroundColor: cs.surface,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.onSurface),
-            onPressed: () => context.pop(),
-          ),
-          title: Text(
-            widget.title,
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w800,
-              color: cs.onSurface,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          centerTitle: true,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.onSurface),
+          onPressed: () => context.pop(),
         ),
-        body: state.isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : state.errorMessage != null
-                ? Center(child: Text(state.errorMessage!))
-                : SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _HeroAlbumHeader(
-                          title: widget.title,
-                          artist: widget.artist,
-                          imageUrl: widget.imageUrl,
-                          tracksCount: state.allTracks.length,
-                          onPlayTap: () {
-                            if (state.allTracks.isNotEmpty) {
-                              final firstTrack = state.allTracks.first;
-                              final audioState = ref.read(audioProvider);
-                              final isCurrentTrack = audioState.currentTrack?.id == firstTrack.id;
+        title: Text(
+          widget.title,
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w800,
+            color: cs.onSurface,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        centerTitle: true,
+      ),
+      body: state.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : state.errorMessage != null
+          ? Center(child: Text(state.errorMessage!))
+          : SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _HeroAlbumHeader(
+                        title: widget.title,
+                        artist: widget.artist,
+                        imageUrl: widget.imageUrl,
+                        tracksCount: state.allTracks.length,
+                        onPlayTap: () {
+                          if (state.allTracks.isNotEmpty) {
+                            final firstTrack = state.allTracks.first;
+                            final audioState = ref.read(audioProvider);
+                            final isCurrentTrack =
+                                audioState.currentTrack?.id == firstTrack.id;
 
-                              if (isCurrentTrack) {
-                                ref.read(audioProvider.notifier).togglePlayPause();
-                              } else {
-                                _onTrackTapped(firstTrack);
-                              }
+                            if (isCurrentTrack) {
+                              ref
+                                  .read(audioProvider.notifier)
+                                  .togglePlayPause();
+                            } else {
+                              _onTrackTapped(firstTrack);
                             }
-                          },
-                        )
-                            .animate()
-                            .fadeIn(duration: const Duration(milliseconds: 260))
-                            .slideY(begin: 0.08, end: 0, duration: const Duration(milliseconds: 260)),
+                          }
+                        },
+                      )
+                      .animate()
+                      .fadeIn(duration: const Duration(milliseconds: 260))
+                      .slideY(
+                        begin: 0.08,
+                        end: 0,
+                        duration: const Duration(milliseconds: 260),
+                      ),
 
-                        SizedBox(height: 26.h),
+                  SizedBox(height: 26.h),
 
-                        // Tags Filter
-                        if (state.tags.isNotEmpty)
-                          _TagsFilterRow(
-                            tags: state.tags,
-                            selectedTagId: state.selectedTagId,
-                            onTagSelected: (tagId) => ref
-                                .read(albumDetailsProvider(widget.albumId).notifier)
-                                .filterByTag(tagId),
-                          ),
-
-                        SizedBox(height: 12.h),
-
-                        // Tracks Section Header
-                        if (state.filteredTracks.isNotEmpty)
-                          Padding(
-                            padding: EdgeInsets.only(left: 4.w, right: 4.w, top: 18.h, bottom: 12.h),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  'Tracks',
-                                  style: AppTextStyles.getTitleLarge(context).copyWith(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 18.sp,
-                                  ),
-                                ),
-                                Text(
-                                  '${state.filteredTracks.length} Songs',
-                                  style: AppTextStyles.getLabelMedium(context).copyWith(
-                                    color: cs.onSurface.withValues(alpha: 0.5),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                        // Tracks List
-                        ListView.builder(
-                          itemCount: state.filteredTracks.length,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            final t = state.filteredTracks[index];
-                            final progress = ref.watch(downloadsProvider).downloadProgress[t.id];
-                            final audioState = ref.watch(audioProvider);
-                            final isCurrentTrack = audioState.currentTrack?.id == t.id;
-                            final isPlaying = audioState.isPlaying && isCurrentTrack;
-                            final isLiked = ref.watch(favoritesProvider).tracks.any((fav) => fav.id == t.id);
-                            final isDownloaded = ref.watch(downloadsProvider).downloadedTracks.any((fav) => fav.id == t.id);
-
-                            return _TrackTile(
-                              track: t,
-                              index: index + 1,
-                              isLiked: isLiked,
-                              isDownloaded: isDownloaded,
-                              progress: progress,
-                              isPlaying: isPlaying,
-                              isCurrent: isCurrentTrack,
-                              onTap: () => _onTrackTapped(t),
-                              onLike: () => _toggleLike(t),
-                              onDownload: () => _toggleDownload(t),
-                            )
-                                .animate()
-                                .fadeIn(duration: 220.ms, delay: (index * 50).ms)
-                                .slideX(begin: -0.05, end: 0, duration: 220.ms, delay: (index * 50).ms);
-                          },
-                        ),
-
-                        SizedBox(height: 100.h),
-                      ],
+                  // Tags Filter
+                  if (state.tags.isNotEmpty)
+                    _TagsFilterRow(
+                      tags: state.tags,
+                      selectedTagId: state.selectedTagId,
+                      onTagSelected: (tagId) => ref
+                          .read(albumDetailsProvider(widget.albumId).notifier)
+                          .filterByTag(tagId),
                     ),
+
+                  SizedBox(height: 12.h),
+
+                  // Tracks Section Header
+                  if (state.filteredTracks.isNotEmpty)
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 4.w,
+                        right: 4.w,
+                        top: 18.h,
+                        bottom: 12.h,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Tracks',
+                            style: AppTextStyles.getTitleLarge(context)
+                                .copyWith(
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 18.sp,
+                                ),
+                          ),
+                          Text(
+                            '${state.filteredTracks.length} Songs',
+                            style: AppTextStyles.getLabelMedium(context)
+                                .copyWith(
+                                  color: cs.onSurface.withValues(alpha: 0.5),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  // Tracks List
+                  ListView.builder(
+                    itemCount: state.filteredTracks.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      final t = state.filteredTracks[index];
+                      final progress = ref
+                          .watch(downloadsProvider)
+                          .downloadProgress[t.id];
+                      final audioState = ref.watch(audioProvider);
+                      final isCurrentTrack =
+                          audioState.currentTrack?.id == t.id;
+                      final isPlaying = audioState.isPlaying && isCurrentTrack;
+                      final isLiked = ref
+                          .watch(favoritesProvider)
+                          .tracks
+                          .any((fav) => fav.id == t.id);
+                      final isDownloaded = ref
+                          .watch(downloadsProvider)
+                          .downloadedTracks
+                          .any((fav) => fav.id == t.id);
+
+                      return _TrackTile(
+                            track: t,
+                            index: index + 1,
+                            isLiked: isLiked,
+                            isDownloaded: isDownloaded,
+                            progress: progress,
+                            isPlaying: isPlaying,
+                            isCurrent: isCurrentTrack,
+                            onTap: () => _onTrackTapped(t),
+                            onLike: () => _toggleLike(t),
+                            onDownload: () => _toggleDownload(t),
+                          )
+                          .animate()
+                          .fadeIn(duration: 220.ms, delay: (index * 50).ms)
+                          .slideX(
+                            begin: -0.05,
+                            end: 0,
+                            duration: 220.ms,
+                            delay: (index * 50).ms,
+                          );
+                    },
                   ),
-      );
+
+                  SizedBox(height: 100.h),
+                ],
+              ),
+            ),
+    );
   }
 }
 
@@ -273,10 +310,15 @@ class _HeroAlbumHeader extends StatelessWidget {
             child: CachedNetworkImage(
               imageUrl: imageUrl,
               fit: BoxFit.cover,
-              placeholder: (_, __) => Container(color: Theme.of(context).colorScheme.surfaceVariant),
+              placeholder: (_, __) => Container(
+                color: Theme.of(context).colorScheme.surfaceVariant,
+              ),
               errorWidget: (_, __, ___) => Container(
                 color: Theme.of(context).colorScheme.surfaceVariant,
-                child: Icon(Icons.broken_image, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                child: Icon(
+                  Icons.broken_image,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
           ),
@@ -331,7 +373,6 @@ class _HeroAlbumHeader extends StatelessWidget {
             ],
           ),
         ),
-
       ],
     );
   }
@@ -375,18 +416,22 @@ class _TrackTile extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 8.h),
       child: Container(
         decoration: BoxDecoration(
-          color: isCurrent ? orange.withValues(alpha: 0.08) : Colors.transparent,
+          color: isCurrent
+              ? orange.withValues(alpha: 0.08)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(24.r),
-          boxShadow: isCurrent ? [
-            BoxShadow(
-              color: orange.withValues(alpha: 0.1),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
-            ),
-          ] : null,
-          border: isCurrent 
-            ? Border.all(color: orange.withValues(alpha: 0.15), width: 1.5)
-            : null,
+          boxShadow: isCurrent
+              ? [
+                  BoxShadow(
+                    color: orange.withValues(alpha: 0.1),
+                    blurRadius: 15,
+                    offset: const Offset(0, 8),
+                  ),
+                ]
+              : null,
+          border: isCurrent
+              ? Border.all(color: orange.withValues(alpha: 0.15), width: 1.5)
+              : null,
         ),
         child: Material(
           color: Colors.transparent,
@@ -410,7 +455,9 @@ class _TrackTile extends StatelessWidget {
                           color: cs.surfaceVariant,
                           image: track.imageUrl != null
                               ? DecorationImage(
-                                  image: CachedNetworkImageProvider(track.imageUrl!),
+                                  image: CachedNetworkImageProvider(
+                                    track.imageUrl!,
+                                  ),
                                   fit: BoxFit.cover,
                                 )
                               : null,
@@ -428,19 +475,34 @@ class _TrackTile extends StatelessWidget {
                             borderRadius: BorderRadius.circular(16.r),
                           ),
                           child: Center(
-                            child: Icon(
-                              Icons.bar_chart_rounded,
-                              color: Colors.white,
-                              size: 28.w,
-                            ).animate(onPlay: (controller) => controller.repeat())
-                              .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.2, 1.2), duration: 600.ms, curve: Curves.easeInOut)
-                              .then()
-                              .scale(begin: const Offset(1.2, 1.2), end: const Offset(0.8, 0.8), duration: 600.ms, curve: Curves.easeInOut),
+                            child:
+                                Icon(
+                                      Icons.bar_chart_rounded,
+                                      color: Colors.white,
+                                      size: 28.w,
+                                    )
+                                    .animate(
+                                      onPlay: (controller) =>
+                                          controller.repeat(),
+                                    )
+                                    .scale(
+                                      begin: const Offset(0.8, 0.8),
+                                      end: const Offset(1.2, 1.2),
+                                      duration: 600.ms,
+                                      curve: Curves.easeInOut,
+                                    )
+                                    .then()
+                                    .scale(
+                                      begin: const Offset(1.2, 1.2),
+                                      end: const Offset(0.8, 0.8),
+                                      duration: 600.ms,
+                                      curve: Curves.easeInOut,
+                                    ),
                           ),
                         ),
                     ],
                   ),
-                  
+
                   SizedBox(width: 14.w),
 
                   // Title & Artist
@@ -459,11 +521,14 @@ class _TrackTile extends StatelessWidget {
                         ),
                         SizedBox(height: 4.h),
                         Text(
-                          track.getLocalizedSpeaker(locale) ?? 'Unknown Speaker',
+                          track.getLocalizedSpeaker(locale) ??
+                              'Unknown Speaker',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: AppTextStyles.getBodyMedium(context).copyWith(
-                            color: isCurrent ? orange.withValues(alpha: 0.7) : cs.onSurface.withValues(alpha: 0.6),
+                            color: isCurrent
+                                ? orange.withValues(alpha: 0.7)
+                                : cs.onSurface.withValues(alpha: 0.6),
                           ),
                         ),
                         if (track.tags.isNotEmpty) ...[
@@ -471,23 +536,34 @@ class _TrackTile extends StatelessWidget {
                           SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Row(
-                              children: track.tags.map((tag) => Container(
-                                margin: EdgeInsets.only(right: 6.w),
-                                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-                                decoration: BoxDecoration(
-                                  color: orange.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(6.r),
-                                  border: Border.all(color: orange.withValues(alpha: 0.1)),
-                                ),
-                                child: Text(
-                                  tag.getLocalizedName(locale),
-                                  style: TextStyle(
-                                    fontSize: 9.sp,
-                                    fontWeight: FontWeight.w700,
-                                    color: orange,
-                                  ),
-                                ),
-                              )).toList(),
+                              children: track.tags
+                                  .map(
+                                    (tag) => Container(
+                                      margin: EdgeInsets.only(right: 6.w),
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 8.w,
+                                        vertical: 2.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: orange.withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(
+                                          6.r,
+                                        ),
+                                        border: Border.all(
+                                          color: orange.withValues(alpha: 0.1),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        tag.getLocalizedName(locale),
+                                        style: TextStyle(
+                                          fontSize: 9.sp,
+                                          fontWeight: FontWeight.w700,
+                                          color: orange,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
                             ),
                           ),
                         ],
@@ -500,8 +576,12 @@ class _TrackTile extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       _IconAction(
-                        icon: isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                        color: isLiked ? orange : cs.onSurface.withValues(alpha: 0.3),
+                        icon: isLiked
+                            ? Icons.favorite_rounded
+                            : Icons.favorite_border_rounded,
+                        color: isLiked
+                            ? orange
+                            : cs.onSurface.withValues(alpha: 0.3),
                         onTap: onLike,
                       ),
                       SizedBox(width: 2.w),
@@ -516,8 +596,12 @@ class _TrackTile extends StatelessWidget {
                               ),
                             )
                           : _IconAction(
-                              icon: isDownloaded ? Icons.download_done_rounded : Icons.file_download_outlined,
-                              color: isDownloaded ? orange : cs.onSurface.withValues(alpha: 0.3),
+                              icon: isDownloaded
+                                  ? Icons.download_done_rounded
+                                  : Icons.file_download_outlined,
+                              color: isDownloaded
+                                  ? orange
+                                  : cs.onSurface.withValues(alpha: 0.3),
                               onTap: onDownload,
                             ),
                       SizedBox(width: 6.w),
@@ -532,13 +616,17 @@ class _TrackTile extends StatelessWidget {
                                     color: orange.withOpacity(0.35),
                                     blurRadius: 10,
                                     offset: const Offset(0, 4),
-                                  )
+                                  ),
                                 ]
                               : null,
                         ),
                         child: Icon(
-                          isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                          color: isCurrent ? Colors.white : cs.onSurface.withValues(alpha: 0.4),
+                          isPlaying
+                              ? Icons.pause_rounded
+                              : Icons.play_arrow_rounded,
+                          color: isCurrent
+                              ? Colors.white
+                              : cs.onSurface.withValues(alpha: 0.4),
                           size: 24.w,
                         ),
                       ),
@@ -618,36 +706,46 @@ class _TagChip extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.only(right: 10.w),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(24.r),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 22.w),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: isSelected ? orange : cs.surface,
-            borderRadius: BorderRadius.circular(24.r),
-            boxShadow: [
-              BoxShadow(
-                color: isSelected 
-                    ? orange.withValues(alpha: 0.3)
-                    : cs.onSurface.withValues(alpha: 0.05),
-                blurRadius: 8,
-                spreadRadius: 0,
-                offset: const Offset(0, 2),
+      child:
+          InkWell(
+                onTap: onTap,
+                borderRadius: BorderRadius.circular(24.r),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 22.w),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: isSelected ? orange : cs.surface,
+                    borderRadius: BorderRadius.circular(24.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: isSelected
+                            ? orange.withValues(alpha: 0.3)
+                            : cs.onSurface.withValues(alpha: 0.05),
+                        blurRadius: 8,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    label,
+                    style: AppTextStyles.getLabelLarge(context).copyWith(
+                      color: isSelected
+                          ? Colors.white
+                          : cs.onSurface.withValues(alpha: 0.9),
+                      fontWeight: isSelected
+                          ? FontWeight.w800
+                          : FontWeight.w700,
+                    ),
+                  ),
+                ),
               )
-            ],
-          ),
-          child: Text(
-            label,
-            style: AppTextStyles.getLabelLarge(context).copyWith(
-              color: isSelected ? Colors.white : cs.onSurface.withValues(alpha: 0.9),
-              fontWeight: isSelected ? FontWeight.w800 : FontWeight.w700,
-            ),
-          ),
-        ),
-      ).animate(target: isSelected ? 1 : 0)
-       .scale(begin: const Offset(1, 1), end: const Offset(1.05, 1.05), duration: 200.ms),
+              .animate(target: isSelected ? 1 : 0)
+              .scale(
+                begin: const Offset(1, 1),
+                end: const Offset(1.05, 1.05),
+                duration: 200.ms,
+              ),
     );
   }
 }

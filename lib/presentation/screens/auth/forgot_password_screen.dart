@@ -53,19 +53,19 @@ class _ForgotPasswordScreenState extends State<_ForgotPasswordScreen> {
       await _supabaseService.resetPassword(_emailController.text.trim());
 
       if (!mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Password reset link sent! Please check your email.'),
           backgroundColor: Colors.green,
         ),
       );
-      
+
       // Navigate back to login
       context.go('/login');
     } catch (e) {
       if (!mounted) return;
-      
+
       String errorMessage = 'Failed to send reset link';
       if (e.toString().contains('User not found')) {
         errorMessage = 'No account found with this email address';
@@ -74,12 +74,9 @@ class _ForgotPasswordScreenState extends State<_ForgotPasswordScreen> {
       } else {
         errorMessage = 'An error occurred: $e';
       }
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorMessage),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -95,7 +92,11 @@ class _ForgotPasswordScreenState extends State<_ForgotPasswordScreen> {
         fontSize: 16.sp,
         fontWeight: FontWeight.w500,
       ),
-      prefixIcon: Icon(Icons.email_outlined, color: const Color(0xFFA7B0C0), size: 22.sp),
+      prefixIcon: Icon(
+        Icons.email_outlined,
+        color: const Color(0xFFA7B0C0),
+        size: 22.sp,
+      ),
       filled: true,
       fillColor: _fieldFill,
       contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
@@ -136,7 +137,7 @@ class _ForgotPasswordScreenState extends State<_ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Scaffold(
       backgroundColor: _bg,
       body: SafeArea(
@@ -164,21 +165,28 @@ class _ForgotPasswordScreenState extends State<_ForgotPasswordScreen> {
 
                 // Logo square (orange + shadow)
                 Container(
-                  width: 72.w,
-                  height: 72.w,
-                  decoration: BoxDecoration(
-                    color: _orange,
-                    borderRadius: BorderRadius.circular(18.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.10),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
+                      width: 72.w,
+                      height: 72.w,
+                      decoration: BoxDecoration(
+                        color: _orange,
+                        borderRadius: BorderRadius.circular(18.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.10),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Icon(Icons.headphones, color: Colors.white, size: 34.sp),
-                ).animate().fadeIn(duration: 350.ms).scale(begin: const Offset(0.95, 0.95)),
+                      child: Icon(
+                        Icons.headphones,
+                        color: Colors.white,
+                        size: 34.sp,
+                      ),
+                    )
+                    .animate()
+                    .fadeIn(duration: 350.ms)
+                    .scale(begin: const Offset(0.95, 0.95)),
 
                 SizedBox(height: 28.h),
 
@@ -221,8 +229,11 @@ class _ForgotPasswordScreenState extends State<_ForgotPasswordScreen> {
                         keyboardType: TextInputType.emailAddress,
                         decoration: _inputDecoration(context),
                         validator: (value) {
-                          if (value == null || value.isEmpty) return 'Please enter your email address';
-                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                          if (value == null || value.isEmpty)
+                            return 'Please enter your email address';
+                          if (!RegExp(
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          ).hasMatch(value)) {
                             return 'Please enter a valid email address';
                           }
                           return null;
@@ -240,33 +251,38 @@ class _ForgotPasswordScreenState extends State<_ForgotPasswordScreen> {
                   height: 58.h,
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _sendResetLink,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _orange,
-                      disabledBackgroundColor: _orange.withOpacity(0.7),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.r),
-                      ),
-                    ).copyWith(
-                      shadowColor: WidgetStatePropertyAll(Colors.black.withOpacity(0.12)),
-                    ),
+                    style:
+                        ElevatedButton.styleFrom(
+                          backgroundColor: _orange,
+                          disabledBackgroundColor: _orange.withOpacity(0.7),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.r),
+                          ),
+                        ).copyWith(
+                          shadowColor: WidgetStatePropertyAll(
+                            Colors.black.withOpacity(0.12),
+                          ),
+                        ),
                     child: _isLoading
                         ? SizedBox(
-                      width: 22.w,
-                      height: 22.w,
-                      child: const CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
+                            width: 22.w,
+                            height: 22.w,
+                            child: const CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
                         : Text(
-                      l10n.sendLink,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
+                            l10n.sendLink,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
                   ),
                 ).animate().fadeIn(delay: 420.ms, duration: 350.ms),
 

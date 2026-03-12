@@ -93,7 +93,7 @@ class AudioNotifier extends StateNotifier<AudioState> {
       if (index != null) {
         MiniPlayerTrack? currentTrack;
         final source = player.audioSource;
-        
+
         if (source is ConcatenatingAudioSource) {
           if (index >= 0 && index < source.children.length) {
             final dynamic tag = (source.children[index] as dynamic).tag;
@@ -120,23 +120,29 @@ class AudioNotifier extends StateNotifier<AudioState> {
 
   Future<void> loadPlaylist(List<dynamic> tracks, int initialIndex) async {
     try {
-      final miniTracks = tracks.map((t) => MiniPlayerTrack(
-        id: t.id,
-        titleAr: t.titleAr,
-        titleEn: t.titleEn,
-        speakerAr: t.speakerAr ?? '',
-        speakerEn: t.speakerEn ?? '',
-        coverImageUrl: t.imageUrl ?? '',
-        audioUrl: t.audioUrl,
-      )).toList();
+      final miniTracks = tracks
+          .map(
+            (t) => MiniPlayerTrack(
+              id: t.id,
+              titleAr: t.titleAr,
+              titleEn: t.titleEn,
+              speakerAr: t.speakerAr ?? '',
+              speakerEn: t.speakerEn ?? '',
+              coverImageUrl: t.imageUrl ?? '',
+              audioUrl: t.audioUrl,
+            ),
+          )
+          .toList();
 
       final audioSource = ConcatenatingAudioSource(
         children: tracks.asMap().entries.map((entry) {
           final idx = entry.key;
           final t = entry.value;
           final localPath = DownloadService.instance.getLocalPath(t.id);
-          final mediaItem = _toMediaItem(miniTracks[idx]); // Duration might be null initially
-          
+          final mediaItem = _toMediaItem(
+            miniTracks[idx],
+          ); // Duration might be null initially
+
           if (localPath != null) {
             return AudioSource.file(localPath, tag: mediaItem);
           }
@@ -145,7 +151,7 @@ class AudioNotifier extends StateNotifier<AudioState> {
       );
 
       await player.setAudioSource(audioSource, initialIndex: initialIndex);
-      
+
       final currentMiniTrack = miniTracks[initialIndex];
       state = state.copyWith(
         currentTrack: currentMiniTrack,
@@ -161,16 +167,20 @@ class AudioNotifier extends StateNotifier<AudioState> {
   Future<void> loadAndPlay(String url, MiniPlayerTrack track) async {
     try {
       state = state.copyWith(currentUrl: url, currentTrack: track);
-      
+
       final localPath = DownloadService.instance.getLocalPath(track.id);
       final mediaItem = _toMediaItem(track);
 
       if (localPath != null) {
-        await player.setAudioSource(AudioSource.file(localPath, tag: mediaItem));
+        await player.setAudioSource(
+          AudioSource.file(localPath, tag: mediaItem),
+        );
       } else {
-        await player.setAudioSource(AudioSource.uri(Uri.parse(url), tag: mediaItem));
+        await player.setAudioSource(
+          AudioSource.uri(Uri.parse(url), tag: mediaItem),
+        );
       }
-      
+
       _ref.read(miniPlayerProvider.notifier).play(track);
       await player.play();
     } catch (e) {
@@ -256,15 +266,19 @@ class AudioNotifier extends StateNotifier<AudioState> {
 
   MediaItem _toMediaItem(MiniPlayerTrack track, {Duration? duration}) {
     final title = track.titleAr.isNotEmpty ? track.titleAr : track.titleEn;
-    final speaker = track.speakerAr.isNotEmpty ? track.speakerAr : track.speakerEn;
-    
+    final speaker = track.speakerAr.isNotEmpty
+        ? track.speakerAr
+        : track.speakerEn;
+
     return MediaItem(
       id: track.id,
       title: title,
       album: speaker, // Showing speaker name as album in notification/system UI
       artist: speaker,
       duration: duration,
-      artUri: track.coverImageUrl.isNotEmpty ? Uri.parse(track.coverImageUrl) : null,
+      artUri: track.coverImageUrl.isNotEmpty
+          ? Uri.parse(track.coverImageUrl)
+          : null,
       extras: {
         'audioUrl': track.audioUrl,
         'titleAr': track.titleAr,

@@ -11,11 +11,14 @@ class DownloadService {
   final Dio _dio = Dio();
   final Box _box = Hive.box('downloads');
 
-  Future<void> downloadTrack(Track track, Function(double progress) onProgress) async {
+  Future<void> downloadTrack(
+    Track track,
+    Function(double progress) onProgress,
+  ) async {
     try {
       final appDocDir = await getApplicationDocumentsDirectory();
       final savePath = '${appDocDir.path}/downloads/${track.id}.mp3';
-      
+
       // Ensure directory exists
       final dir = Directory('${appDocDir.path}/downloads');
       if (!await dir.exists()) {
@@ -70,7 +73,7 @@ class DownloadService {
         categoryId: '',
         titleAr: data['titleAr'] ?? '',
         titleEn: data['titleEn'] ?? '',
-        audioUrl: '', 
+        audioUrl: '',
         imageUrl: data['imageUrl'],
         isActive: true,
         createdAt: DateTime.now(),

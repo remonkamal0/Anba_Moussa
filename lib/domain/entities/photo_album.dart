@@ -30,15 +30,15 @@ class PhotoAlbum {
   });
 
   String getLocalizedTitle(String locale) => locale == 'ar' ? titleAr : titleEn;
-  String? getLocalizedSubtitle(String locale) => locale == 'ar' ? subtitleAr : subtitleEn;
-  String? getLocalizedDescription(String locale) => locale == 'ar' ? descriptionAr : descriptionEn;
+  String? getLocalizedSubtitle(String locale) =>
+      locale == 'ar' ? subtitleAr : subtitleEn;
+  String? getLocalizedDescription(String locale) =>
+      locale == 'ar' ? descriptionAr : descriptionEn;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PhotoAlbum &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
+      other is PhotoAlbum && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode => id.hashCode;

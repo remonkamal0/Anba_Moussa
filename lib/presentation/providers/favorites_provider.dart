@@ -7,11 +7,7 @@ class FavoritesState {
   final bool isLoading;
   final String? error;
 
-  FavoritesState({
-    this.tracks = const [],
-    this.isLoading = false,
-    this.error,
-  });
+  FavoritesState({this.tracks = const [], this.isLoading = false, this.error});
 
   FavoritesState copyWith({
     List<Track>? tracks,
@@ -50,9 +46,7 @@ class FavoritesNotifier extends StateNotifier<FavoritesState> {
           tracks: state.tracks.where((t) => t.id != track.id).toList(),
         );
       } else {
-        state = state.copyWith(
-          tracks: [...state.tracks, track],
-        );
+        state = state.copyWith(tracks: [...state.tracks, track]);
       }
     } catch (e) {
       // Handle error (maybe revert state or show toast)
@@ -64,6 +58,7 @@ class FavoritesNotifier extends StateNotifier<FavoritesState> {
   }
 }
 
-final favoritesProvider = StateNotifierProvider<FavoritesNotifier, FavoritesState>((ref) {
-  return FavoritesNotifier();
-});
+final favoritesProvider =
+    StateNotifierProvider<FavoritesNotifier, FavoritesState>((ref) {
+      return FavoritesNotifier();
+    });

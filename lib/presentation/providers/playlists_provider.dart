@@ -59,18 +59,18 @@ class PlaylistModel {
       langCode == 'ar' ? titleAr : titleEn;
 
   factory PlaylistModel.fromJson(Map<String, dynamic> json) => PlaylistModel(
-        id: json['id'] as String,
-        titleAr: json['title_ar'] as String? ?? '',
-        titleEn: json['title_en'] as String? ?? '',
-        descriptionAr: json['description_ar'] as String?,
-        descriptionEn: json['description_en'] as String?,
-        iconName: json['image_url'] as String?,
-        isPublic: json['is_public'] as bool? ?? false,
-        userId: json['user_id'] as String?,
-        ownerType: json['owner_type'] as String? ?? 'user',
-        createdAt: DateTime.parse(json['created_at'] as String),
-        trackCount: (json['track_count'] as int?) ?? 0,
-      );
+    id: json['id'] as String,
+    titleAr: json['title_ar'] as String? ?? '',
+    titleEn: json['title_en'] as String? ?? '',
+    descriptionAr: json['description_ar'] as String?,
+    descriptionEn: json['description_en'] as String?,
+    iconName: json['image_url'] as String?,
+    isPublic: json['is_public'] as bool? ?? false,
+    userId: json['user_id'] as String?,
+    ownerType: json['owner_type'] as String? ?? 'user',
+    createdAt: DateTime.parse(json['created_at'] as String),
+    trackCount: (json['track_count'] as int?) ?? 0,
+  );
 }
 
 // ─── State ─────────────────────────────────────────────────────────────────────
@@ -89,12 +89,11 @@ class PlaylistsState {
     bool? isLoading,
     List<PlaylistModel>? playlists,
     String? error,
-  }) =>
-      PlaylistsState(
-        isLoading: isLoading ?? this.isLoading,
-        playlists: playlists ?? this.playlists,
-        error: error,
-      );
+  }) => PlaylistsState(
+    isLoading: isLoading ?? this.isLoading,
+    playlists: playlists ?? this.playlists,
+    error: error,
+  );
 }
 
 // ─── Notifier ──────────────────────────────────────────────────────────────────
@@ -175,12 +174,15 @@ class PlaylistsNotifier extends StateNotifier<PlaylistsState> {
     bool? isPublic,
   }) async {
     try {
-      await _client.from('playlists').update({
-        'title_ar': titleAr,
-        'title_en': titleEn,
-        'image_url': iconName,
-        if (isPublic != null) 'is_public': isPublic,
-      }).eq('id', id);
+      await _client
+          .from('playlists')
+          .update({
+            'title_ar': titleAr,
+            'title_en': titleEn,
+            'image_url': iconName,
+            if (isPublic != null) 'is_public': isPublic,
+          })
+          .eq('id', id);
 
       final updated = state.playlists.map((p) {
         if (p.id != id) return p;
@@ -272,12 +274,14 @@ class PlaylistsNotifier extends StateNotifier<PlaylistsState> {
 // ─── Providers ─────────────────────────────────────────────────────────────────
 final playlistsProvider =
     StateNotifierProvider<PlaylistsNotifier, PlaylistsState>(
-  (ref) => PlaylistsNotifier(),
-);
+      (ref) => PlaylistsNotifier(),
+    );
 
 /// Fetches all tracks associated with a specific playlist.
-final playlistTracksProvider =
-    FutureProvider.family<List<TrackModel>, String>((ref, playlistId) async {
+final playlistTracksProvider = FutureProvider.family<List<TrackModel>, String>((
+  ref,
+  playlistId,
+) async {
   final client = SupabaseService.instance.client;
   final rows = await client
       .from('playlist_tracks')

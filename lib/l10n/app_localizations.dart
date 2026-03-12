@@ -98,6 +98,12 @@ abstract class AppLocalizations {
     Locale('en'),
   ];
 
+  /// No description provided for @adminErrorCategoryHasTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot delete category because it has associated tracks. Please delete or move the tracks first.'**
+  String get adminErrorCategoryHasTracks;
+
   /// The title of the application
   ///
   /// In en, this message translates to:
@@ -728,6 +734,72 @@ abstract class AppLocalizations {
   /// **'Pick Date'**
   String get pickDate;
 
+  /// No description provided for @adminSelectToView.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an album to view {entity}'**
+  String adminSelectToView(Object entity);
+
+  /// No description provided for @adminSlug.
+  ///
+  /// In en, this message translates to:
+  /// **'Slug'**
+  String get adminSlug;
+
+  /// No description provided for @adminSubtitleAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtitle (AR)'**
+  String get adminSubtitleAr;
+
+  /// No description provided for @adminSubtitleEn.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtitle (EN)'**
+  String get adminSubtitleEn;
+
+  /// No description provided for @adminDescriptionAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (AR)'**
+  String get adminDescriptionAr;
+
+  /// No description provided for @adminDescriptionEn.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (EN)'**
+  String get adminDescriptionEn;
+
+  /// No description provided for @adminSpeakerAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaker (AR)'**
+  String get adminSpeakerAr;
+
+  /// No description provided for @adminSpeakerEn.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaker (EN)'**
+  String get adminSpeakerEn;
+
+  /// No description provided for @adminSortOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort Order'**
+  String get adminSortOrder;
+
+  /// No description provided for @adminIsActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Is Active'**
+  String get adminIsActive;
+
+  /// No description provided for @adminSelectCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Category'**
+  String get adminSelectCategory;
+
   /// No description provided for @select.
   ///
   /// In en, this message translates to:
@@ -1303,6 +1375,600 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Log Out'**
   String get profileLogOut;
+
+  /// No description provided for @adminDashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Dashboard'**
+  String get adminDashboardTitle;
+
+  /// No description provided for @adminSystemManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'System Management'**
+  String get adminSystemManagement;
+
+  /// No description provided for @adminAudioContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio Content'**
+  String get adminAudioContent;
+
+  /// No description provided for @adminManageCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Categories'**
+  String get adminManageCategories;
+
+  /// No description provided for @adminOrganizeAudioAlbums.
+  ///
+  /// In en, this message translates to:
+  /// **'Organize Audio Albums'**
+  String get adminOrganizeAudioAlbums;
+
+  /// No description provided for @adminManageTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Tracks'**
+  String get adminManageTracks;
+
+  /// No description provided for @adminUploadEditTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload & Edit Tracks'**
+  String get adminUploadEditTracks;
+
+  /// No description provided for @adminMediaContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Media Content'**
+  String get adminMediaContent;
+
+  /// No description provided for @adminPhotoAlbums.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo Albums'**
+  String get adminPhotoAlbums;
+
+  /// No description provided for @adminManageGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Gallery'**
+  String get adminManageGallery;
+
+  /// No description provided for @adminPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get adminPhotos;
+
+  /// No description provided for @adminAddRemovePhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Add/Remove Photos'**
+  String get adminAddRemovePhotos;
+
+  /// No description provided for @adminVideoAlbums.
+  ///
+  /// In en, this message translates to:
+  /// **'Video Albums'**
+  String get adminVideoAlbums;
+
+  /// No description provided for @adminManageVideoSeries.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Video Series'**
+  String get adminManageVideoSeries;
+
+  /// No description provided for @adminVideos.
+  ///
+  /// In en, this message translates to:
+  /// **'Videos'**
+  String get adminVideos;
+
+  /// No description provided for @adminManageIndividualVideos.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Videos'**
+  String get adminManageIndividualVideos;
+
+  /// No description provided for @adminMetadata.
+  ///
+  /// In en, this message translates to:
+  /// **'Metadata'**
+  String get adminMetadata;
+
+  /// No description provided for @adminManageTags.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Tags'**
+  String get adminManageTags;
+
+  /// No description provided for @adminGlobalTagging.
+  ///
+  /// In en, this message translates to:
+  /// **'Global Tagging System'**
+  String get adminGlobalTagging;
+
+  /// No description provided for @adminSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get adminSystem;
+
+  /// No description provided for @adminBroadcastMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'Broadcast Messages'**
+  String get adminBroadcastMessages;
+
+  /// No description provided for @adminNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New {entity}'**
+  String adminNew(String entity);
+
+  /// No description provided for @adminEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit {entity}'**
+  String adminEdit(String entity);
+
+  /// No description provided for @adminDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {entity} \"{name}\"?'**
+  String adminDeleteConfirm(String entity, String name);
+
+  /// No description provided for @adminCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'{entity} created successfully'**
+  String adminCreated(String entity);
+
+  /// No description provided for @adminUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'{entity} updated successfully'**
+  String adminUpdated(String entity);
+
+  /// No description provided for @adminCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get adminCategory;
+
+  /// No description provided for @adminTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'Track'**
+  String get adminTrack;
+
+  /// No description provided for @adminTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag'**
+  String get adminTag;
+
+  /// No description provided for @adminPhotoAlbum.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo Album'**
+  String get adminPhotoAlbum;
+
+  /// No description provided for @adminVideoAlbum.
+  ///
+  /// In en, this message translates to:
+  /// **'Video Album'**
+  String get adminVideoAlbum;
+
+  /// No description provided for @adminPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get adminPhoto;
+
+  /// No description provided for @adminVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get adminVideo;
+
+  /// No description provided for @adminTitleAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Title (AR)'**
+  String get adminTitleAr;
+
+  /// No description provided for @adminTitleEn.
+  ///
+  /// In en, this message translates to:
+  /// **'Title (EN)'**
+  String get adminTitleEn;
+
+  /// No description provided for @adminImageUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Image URL'**
+  String get adminImageUrl;
+
+  /// No description provided for @adminVideoUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Video URL'**
+  String get adminVideoUrl;
+
+  /// No description provided for @adminAudioUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio URL'**
+  String get adminAudioUrl;
+
+  /// No description provided for @adminCoverImageUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Cover Image URL'**
+  String get adminCoverImageUrl;
+
+  /// No description provided for @adminThumbnailUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Thumbnail URL'**
+  String get adminThumbnailUrl;
+
+  /// No description provided for @adminDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration (seconds)'**
+  String get adminDuration;
+
+  /// No description provided for @adminConfirmDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Delete'**
+  String get adminConfirmDelete;
+
+  /// No description provided for @adminCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get adminCreate;
+
+  /// No description provided for @adminUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get adminUpdate;
+
+  /// No description provided for @adminSelectAlbum.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Album'**
+  String get adminSelectAlbum;
+
+  /// No description provided for @adminSelectVideoAlbum.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Video Album'**
+  String get adminSelectVideoAlbum;
+
+  /// No description provided for @adminNotificationPanel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Panel'**
+  String get adminNotificationPanel;
+
+  /// No description provided for @adminSendNewNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Send New Notification'**
+  String get adminSendNewNotification;
+
+  /// No description provided for @adminNotificationContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Content'**
+  String get adminNotificationContent;
+
+  /// No description provided for @adminBodyAr.
+  ///
+  /// In en, this message translates to:
+  /// **'Body (AR)'**
+  String get adminBodyAr;
+
+  /// No description provided for @adminBodyEn.
+  ///
+  /// In en, this message translates to:
+  /// **'Body (EN)'**
+  String get adminBodyEn;
+
+  /// No description provided for @adminBodyHintAr.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Tap for details...'**
+  String get adminBodyHintAr;
+
+  /// No description provided for @adminBodyHintEn.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Tap for details...'**
+  String get adminBodyHintEn;
+
+  /// No description provided for @adminTitleHintAr.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. New Track 🎵'**
+  String get adminTitleHintAr;
+
+  /// No description provided for @adminTitleHintEn.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. New Track 🎵'**
+  String get adminTitleHintEn;
+
+  /// No description provided for @adminSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get adminSettings;
+
+  /// No description provided for @adminNotificationKind.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Kind'**
+  String get adminNotificationKind;
+
+  /// No description provided for @adminTargetAudience.
+  ///
+  /// In en, this message translates to:
+  /// **'Target Audience'**
+  String get adminTargetAudience;
+
+  /// No description provided for @adminUserUuids.
+  ///
+  /// In en, this message translates to:
+  /// **'User UUIDs'**
+  String get adminUserUuids;
+
+  /// No description provided for @adminUserUuidsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'uuid1, uuid2...'**
+  String get adminUserUuidsHint;
+
+  /// No description provided for @adminUserUuidsHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'You can enter multiple UUIDs separated by commas'**
+  String get adminUserUuidsHelper;
+
+  /// No description provided for @adminOnTapAction.
+  ///
+  /// In en, this message translates to:
+  /// **'On Tap Action'**
+  String get adminOnTapAction;
+
+  /// No description provided for @adminNoAction.
+  ///
+  /// In en, this message translates to:
+  /// **'No Action'**
+  String get adminNoAction;
+
+  /// No description provided for @adminInternalScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal Screen'**
+  String get adminInternalScreen;
+
+  /// No description provided for @adminExternalLink.
+  ///
+  /// In en, this message translates to:
+  /// **'External Link'**
+  String get adminExternalLink;
+
+  /// No description provided for @adminSelectScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Screen'**
+  String get adminSelectScreen;
+
+  /// No description provided for @adminSelectScreenWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select an internal screen'**
+  String get adminSelectScreenWarning;
+
+  /// No description provided for @adminSelectEntityWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select {entity}'**
+  String adminSelectEntityWarning(Object entity);
+
+  /// No description provided for @adminExternalUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'External URL'**
+  String get adminExternalUrl;
+
+  /// No description provided for @adminExternalUrlHint.
+  ///
+  /// In en, this message translates to:
+  /// **'https://example.com'**
+  String get adminExternalUrlHint;
+
+  /// No description provided for @adminInvalidUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid URL'**
+  String get adminInvalidUrl;
+
+  /// No description provided for @adminSendNotificationSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification sent successfully ✅'**
+  String get adminSendNotificationSuccess;
+
+  /// No description provided for @adminChooseEntity.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose {entity}'**
+  String adminChooseEntity(Object entity);
+
+  /// No description provided for @adminSearchByName.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name...'**
+  String get adminSearchByName;
+
+  /// No description provided for @adminNotificationKindGeneral.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get adminNotificationKindGeneral;
+
+  /// No description provided for @adminNotificationKindNewTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'New Track 🎵'**
+  String get adminNotificationKindNewTrack;
+
+  /// No description provided for @adminNotificationKindNewCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'New Category 📂'**
+  String get adminNotificationKindNewCategory;
+
+  /// No description provided for @adminNotificationKindSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System ⚙️'**
+  String get adminNotificationKindSystem;
+
+  /// No description provided for @adminNotificationKindOffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer 🎁'**
+  String get adminNotificationKindOffer;
+
+  /// No description provided for @adminAudienceAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone 🌍'**
+  String get adminAudienceAll;
+
+  /// No description provided for @adminAudienceSpecific.
+  ///
+  /// In en, this message translates to:
+  /// **'Specific User 👤'**
+  String get adminAudienceSpecific;
+
+  /// No description provided for @adminRouteHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home 🏠'**
+  String get adminRouteHome;
+
+  /// No description provided for @adminRouteLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Library 📚'**
+  String get adminRouteLibrary;
+
+  /// No description provided for @adminRouteSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search 🔍'**
+  String get adminRouteSearch;
+
+  /// No description provided for @adminRouteFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites ❤️'**
+  String get adminRouteFavorites;
+
+  /// No description provided for @adminRouteDownloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads ⬇️'**
+  String get adminRouteDownloads;
+
+  /// No description provided for @adminRoutePhotoGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo Gallery 🖼️'**
+  String get adminRoutePhotoGallery;
+
+  /// No description provided for @adminRouteVideoGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Video Gallery 🎬'**
+  String get adminRouteVideoGallery;
+
+  /// No description provided for @adminRouteAudioAlbum.
+  ///
+  /// In en, this message translates to:
+  /// **'Specific Audio Album 💿'**
+  String get adminRouteAudioAlbum;
+
+  /// No description provided for @adminRoutePlaylist.
+  ///
+  /// In en, this message translates to:
+  /// **'Playlist 🎵'**
+  String get adminRoutePlaylist;
+
+  /// No description provided for @adminRouteTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'Specific Track 🎧'**
+  String get adminRouteTrack;
+
+  /// No description provided for @adminRouteVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Specific Video 🎬'**
+  String get adminRouteVideo;
+
+  /// No description provided for @adminRoutePhotoAlbum.
+  ///
+  /// In en, this message translates to:
+  /// **'Specific Photo Album 🖼️'**
+  String get adminRoutePhotoAlbum;
+
+  /// No description provided for @adminRouteVideoAlbum.
+  ///
+  /// In en, this message translates to:
+  /// **'Specific Video Album 🎬'**
+  String get adminRouteVideoAlbum;
+
+  /// No description provided for @adminNotificationBannerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Sending Panel'**
+  String get adminNotificationBannerTitle;
+
+  /// No description provided for @adminNotificationBannerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Send notifications with direct links to tracks and albums'**
+  String get adminNotificationBannerSubtitle;
+
+  /// No description provided for @adminLinkTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'Link Tracks'**
+  String get adminLinkTracks;
+
+  /// No description provided for @adminLinkTracksSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracks linked successfully'**
+  String get adminLinkTracksSuccess;
+
+  /// No description provided for @adminSearchTracks.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Tracks'**
+  String get adminSearchTracks;
 }
 
 class _AppLocalizationsDelegate

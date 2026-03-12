@@ -52,18 +52,18 @@ class PhotoAlbumModel {
   Map<String, dynamic> toJson() => _$PhotoAlbumModelToJson(this);
 
   PhotoAlbum toEntity() => PhotoAlbum(
-        id: id,
-        slug: slug,
-        titleAr: titleAr,
-        titleEn: titleEn,
-        subtitleAr: subtitleAr,
-        subtitleEn: subtitleEn,
-        coverImageUrl: coverImageUrl,
-        descriptionAr: descriptionAr,
-        descriptionEn: descriptionEn,
-        sortOrder: sortOrder,
-        isActive: isActive,
-        createdAt: createdAt,
-        updatedAt: updatedAt,
-      );
+    id: id,
+    slug: slug,
+    titleAr: titleAr,
+    titleEn: titleEn,
+    subtitleAr: subtitleAr,
+    subtitleEn: subtitleEn,
+    coverImageUrl: coverImageUrl,
+    descriptionAr: descriptionAr,
+    descriptionEn: descriptionEn,
+    sortOrder: sortOrder,
+    isActive: isActive,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+  );
 }

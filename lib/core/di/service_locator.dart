@@ -9,9 +9,11 @@ import '../../data/repositories/slider_repository_impl.dart';
 import '../../data/repositories/playlist_repository_impl.dart';
 import '../../data/repositories/gallery_repository_impl.dart';
 import '../../data/repositories/video_repository_impl.dart';
+import '../../data/repositories/tag_repository_impl.dart';
 import '../../domain/repositories/category_repository.dart';
 import '../../domain/repositories/gallery_repository.dart';
 import '../../domain/repositories/video_repository.dart';
+import '../../domain/repositories/tag_repository.dart';
 import '../../domain/repositories/notification_repository.dart';
 import '../../domain/repositories/playlist_repository.dart';
 import '../../domain/repositories/slider_repository.dart';
@@ -27,6 +29,13 @@ import '../../domain/usecases/toggle_favorite_track_usecase.dart';
 import '../../domain/usecases/get_tracks_by_category_usecase.dart';
 import '../../presentation/providers/home_provider.dart';
 import '../../presentation/providers/library_provider.dart';
+import '../../presentation/providers/admin/admin_category_provider.dart';
+import '../../presentation/providers/admin/admin_track_provider.dart';
+import '../../presentation/providers/admin/admin_tag_provider.dart';
+import '../../presentation/providers/admin/admin_photo_album_provider.dart';
+import '../../presentation/providers/admin/admin_photo_provider.dart';
+import '../../presentation/providers/admin/admin_video_album_provider.dart';
+import '../../presentation/providers/admin/admin_video_provider.dart';
 
 class ServiceLocator {
   static final ServiceLocator _instance = ServiceLocator._internal();
@@ -49,6 +58,7 @@ class ServiceLocator {
   late final NotificationRepository notificationRepository;
   late final GalleryRepository galleryRepository;
   late final VideoRepository videoRepository;
+  late final TagRepository tagRepository;
 
   // Use Cases
   late final GetTopTracksUseCase getTopTracksUseCase;
@@ -75,12 +85,19 @@ class ServiceLocator {
 
     // Repositories
     trackRepository = TrackRepositoryImpl(remoteDataSource, supabaseService);
-    categoryRepository = CategoryRepositoryImpl(remoteDataSource: remoteDataSource);
+    categoryRepository = CategoryRepositoryImpl(
+      remoteDataSource: remoteDataSource,
+    );
     sliderRepository = SliderRepositoryImpl(remoteDataSource: remoteDataSource);
-    playlistRepository = PlaylistRepositoryImpl(remoteDataSource: remoteDataSource);
+    playlistRepository = PlaylistRepositoryImpl(
+      remoteDataSource: remoteDataSource,
+    );
     notificationRepository = NotificationRepositoryImpl(supabaseService);
-    galleryRepository = GalleryRepositoryImpl(remoteDataSource: remoteDataSource);
+    galleryRepository = GalleryRepositoryImpl(
+      remoteDataSource: remoteDataSource,
+    );
     videoRepository = VideoRepositoryImpl(remoteDataSource: remoteDataSource);
+    tagRepository = TagRepositoryImpl(remoteDataSource: remoteDataSource);
 
     // Use Cases
     getTopTracksUseCase = GetTopTracksUseCase(trackRepository);
@@ -108,6 +125,28 @@ class ServiceLocator {
     getCategoriesUseCase: getCategoriesUseCase,
     logger: logger,
   );
+
+  // Admin Providers
+  AdminCategoryProvider get adminCategoryProvider =>
+      AdminCategoryProvider(repository: categoryRepository, logger: logger);
+
+  AdminTrackProvider get adminTrackProvider =>
+      AdminTrackProvider(repository: trackRepository, logger: logger);
+
+  AdminTagProvider get adminTagProvider =>
+      AdminTagProvider(repository: tagRepository, logger: logger);
+
+  AdminPhotoAlbumProvider get adminPhotoAlbumProvider =>
+      AdminPhotoAlbumProvider(repository: galleryRepository, logger: logger);
+
+  AdminPhotoProvider get adminPhotoProvider =>
+      AdminPhotoProvider(repository: galleryRepository, logger: logger);
+
+  AdminVideoAlbumProvider get adminVideoAlbumProvider =>
+      AdminVideoAlbumProvider(repository: videoRepository, logger: logger);
+
+  AdminVideoProvider get adminVideoProvider =>
+      AdminVideoProvider(repository: videoRepository, logger: logger);
 }
 
 final sl = ServiceLocator();

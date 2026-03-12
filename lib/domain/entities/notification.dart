@@ -40,10 +40,7 @@ class AppNotification {
   String getLocalizedTitle(String locale) => locale == 'ar' ? titleAr : titleEn;
   String getLocalizedBody(String locale) => locale == 'ar' ? bodyAr : bodyEn;
 
-  AppNotification copyWith({
-    bool? isRead,
-    DateTime? readAt,
-  }) {
+  AppNotification copyWith({bool? isRead, DateTime? readAt}) {
     return AppNotification(
       id: id,
       kind: kind,

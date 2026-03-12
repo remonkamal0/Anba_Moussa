@@ -11,20 +11,29 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
 
   Future<void> _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    final themeString = prefs.getString(AppConstants.selectedThemeKey) ?? 'light';
+    final themeString =
+        prefs.getString(AppConstants.selectedThemeKey) ?? 'light';
     state = themeString == 'dark' ? ThemeMode.dark : ThemeMode.light;
   }
 
   Future<void> toggleTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    final newTheme = state == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
-    await prefs.setString(AppConstants.selectedThemeKey, newTheme == ThemeMode.dark ? 'dark' : 'light');
+    final newTheme = state == ThemeMode.light
+        ? ThemeMode.dark
+        : ThemeMode.light;
+    await prefs.setString(
+      AppConstants.selectedThemeKey,
+      newTheme == ThemeMode.dark ? 'dark' : 'light',
+    );
     state = newTheme;
   }
 
   Future<void> setTheme(ThemeMode themeMode) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(AppConstants.selectedThemeKey, themeMode == ThemeMode.dark ? 'dark' : 'light');
+    await prefs.setString(
+      AppConstants.selectedThemeKey,
+      themeMode == ThemeMode.dark ? 'dark' : 'light',
+    );
     state = themeMode;
   }
 }
@@ -36,7 +45,8 @@ class AccentColorNotifier extends StateNotifier<Color> {
 
   Future<void> _loadAccentColor() async {
     final prefs = await SharedPreferences.getInstance();
-    final colorName = prefs.getString(AppConstants.selectedAccentColorKey) ?? 'orange';
+    final colorName =
+        prefs.getString(AppConstants.selectedAccentColorKey) ?? 'orange';
     state = AppTheme.getAccentColor(colorName);
   }
 
@@ -51,6 +61,8 @@ final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
   return ThemeNotifier();
 });
 
-final accentColorProvider = StateNotifierProvider<AccentColorNotifier, Color>((ref) {
+final accentColorProvider = StateNotifierProvider<AccentColorNotifier, Color>((
+  ref,
+) {
   return AccentColorNotifier();
 });

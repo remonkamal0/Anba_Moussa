@@ -7,18 +7,18 @@ part of 'photo_model.dart';
 // **************************************************************************
 
 PhotoModel _$PhotoModelFromJson(Map<String, dynamic> json) => PhotoModel(
-      id: json['id'] as String,
-      albumId: json['album_id'] as String,
-      imageUrl: json['image_url'] as String,
-      titleAr: json['title_ar'] as String?,
-      titleEn: json['title_en'] as String?,
-      captionAr: json['caption_ar'] as String?,
-      captionEn: json['caption_en'] as String?,
-      sortOrder: (json['sort_order'] as num).toInt(),
-      isActive: json['is_active'] as bool,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-    );
+  id: json['id'] as String,
+  albumId: json['album_id'] as String,
+  imageUrl: json['image_url'] as String,
+  titleAr: json['title_ar'] as String?,
+  titleEn: json['title_en'] as String?,
+  captionAr: json['caption_ar'] as String?,
+  captionEn: json['caption_en'] as String?,
+  sortOrder: (json['sort_order'] as num).toInt(),
+  isActive: json['is_active'] as bool,
+  createdAt: DateTime.parse(json['created_at'] as String),
+  updatedAt: DateTime.parse(json['updated_at'] as String),
+);
 
 Map<String, dynamic> _$PhotoModelToJson(PhotoModel instance) =>
     <String, dynamic>{

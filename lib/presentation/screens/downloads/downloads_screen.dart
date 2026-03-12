@@ -23,7 +23,11 @@ class DownloadsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.onSurface, size: 20),
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: cs.onSurface,
+            size: 20,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
@@ -41,7 +45,9 @@ class DownloadsScreen extends ConsumerWidget {
                 final confirm = await showConfirmDialog(
                   context,
                   title: AppLocalizations.of(context)!.deleteAllDownloadsTitle,
-                  content: AppLocalizations.of(context)!.deleteAllDownloadsContent,
+                  content: AppLocalizations.of(
+                    context,
+                  )!.deleteAllDownloadsContent,
                   cancelText: AppLocalizations.of(context)!.dialogCancel,
                   confirmText: AppLocalizations.of(context)!.deleteAll,
                 );
@@ -72,11 +78,18 @@ class DownloadsScreen extends ConsumerWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.download_for_offline_outlined, size: 64.sp, color: cs.onSurface.withValues(alpha: 0.2)),
+                        Icon(
+                          Icons.download_for_offline_outlined,
+                          size: 64.sp,
+                          color: cs.onSurface.withValues(alpha: 0.2),
+                        ),
                         SizedBox(height: 16.h),
                         Text(
                           AppLocalizations.of(context)!.noDownloadsYet,
-                          style: TextStyle(fontSize: 16.sp, color: cs.onSurface.withValues(alpha: 0.5)),
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            color: cs.onSurface.withValues(alpha: 0.5),
+                          ),
                         ),
                       ],
                     ),
@@ -85,9 +98,15 @@ class DownloadsScreen extends ConsumerWidget {
                     children: [
                       // Storage Info Container
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 24.w,
+                          vertical: 16.h,
+                        ),
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 24.w,
+                            vertical: 20.h,
+                          ),
                           decoration: BoxDecoration(
                             color: cs.surface,
                             borderRadius: BorderRadius.circular(24.r),
@@ -111,12 +130,15 @@ class DownloadsScreen extends ConsumerWidget {
                                       fontSize: 10.sp,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 1.5,
-                                      color: cs.onSurface.withValues(alpha: 0.4),
+                                      color: cs.onSurface.withValues(
+                                        alpha: 0.4,
+                                      ),
                                     ),
                                   ),
                                   SizedBox(height: 4.h),
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.baseline,
                                     textBaseline: TextBaseline.alphabetic,
                                     children: [
                                       Text(
@@ -129,33 +151,42 @@ class DownloadsScreen extends ConsumerWidget {
                                       ),
                                       SizedBox(width: 4.w),
                                       Text(
-                                        AppLocalizations.of(context)!.tracksCount,
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.tracksCount,
                                         style: TextStyle(
                                           fontSize: 14.sp,
                                           fontWeight: FontWeight.normal,
-                                          color: cs.onSurface.withValues(alpha: 0.5),
+                                          color: cs.onSurface.withValues(
+                                            alpha: 0.5,
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
                                 ],
                               ),
-                              
+
                               // Download Icon
-                              Icon(Icons.download_done_rounded, color: cs.primary, size: 32.sp),
+                              Icon(
+                                Icons.download_done_rounded,
+                                color: cs.primary,
+                                size: 32.sp,
+                              ),
                             ],
                           ),
                         ),
                       ),
-                      
+
                       SizedBox(height: 8.h),
-                      
+
                       // List of downloaded songs
                       Expanded(
                         child: ListView.separated(
                           padding: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 100.h),
                           itemCount: downloads.downloadedTracks.length,
-                          separatorBuilder: (context, index) => SizedBox(height: 24.h),
+                          separatorBuilder: (context, index) =>
+                              SizedBox(height: 24.h),
                           itemBuilder: (context, index) {
                             final track = downloads.downloadedTracks[index];
                             return Row(
@@ -168,7 +199,9 @@ class DownloadsScreen extends ConsumerWidget {
                                     borderRadius: BorderRadius.circular(14.r),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: cs.primary.withValues(alpha: 0.2),
+                                        color: cs.primary.withValues(
+                                          alpha: 0.2,
+                                        ),
                                         blurRadius: 15,
                                         offset: const Offset(0, 8),
                                       ),
@@ -179,18 +212,23 @@ class DownloadsScreen extends ConsumerWidget {
                                     child: CachedNetworkImage(
                                       imageUrl: track.imageUrl ?? '',
                                       fit: BoxFit.cover,
-                                      placeholder: (_, __) => Container(color: cs.surfaceVariant),
-                                      errorWidget: (_, __, ___) => Container(color: cs.surfaceVariant, child: const Icon(Icons.music_note)),
+                                      placeholder: (_, __) =>
+                                          Container(color: cs.surfaceVariant),
+                                      errorWidget: (_, __, ___) => Container(
+                                        color: cs.surfaceVariant,
+                                        child: const Icon(Icons.music_note),
+                                      ),
                                     ),
                                   ),
                                 ),
-                                
+
                                 SizedBox(width: 16.w),
-                                
+
                                 // Title, Artist, Size
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         track.getLocalizedTitle(locale),
@@ -204,10 +242,15 @@ class DownloadsScreen extends ConsumerWidget {
                                       ),
                                       SizedBox(height: 4.h),
                                       Text(
-                                        track.getLocalizedSpeaker(locale) ?? AppLocalizations.of(context)!.unknownSpeaker,
+                                        track.getLocalizedSpeaker(locale) ??
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.unknownSpeaker,
                                         style: TextStyle(
                                           fontSize: 13.sp,
-                                          color: cs.onSurface.withValues(alpha: 0.5),
+                                          color: cs.onSurface.withValues(
+                                            alpha: 0.5,
+                                          ),
                                         ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
@@ -215,35 +258,50 @@ class DownloadsScreen extends ConsumerWidget {
                                       SizedBox(height: 4.h),
                                       Row(
                                         children: [
-                                          Icon(Icons.check_circle_rounded, color: cs.primary, size: 14.w),
+                                          Icon(
+                                            Icons.check_circle_rounded,
+                                            color: cs.primary,
+                                            size: 14.w,
+                                          ),
                                           SizedBox(width: 4.w),
-                                            Text(
-                                              AppLocalizations.of(context)!.offline,
-                                              style: TextStyle(
-                                                fontSize: 12.sp,
-                                                fontWeight: FontWeight.w600,
-                                                color: cs.primary,
-                                              ),
+                                          Text(
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.offline,
+                                            style: TextStyle(
+                                              fontSize: 12.sp,
+                                              fontWeight: FontWeight.w600,
+                                              color: cs.primary,
                                             ),
+                                          ),
                                         ],
                                       ),
                                     ],
                                   ),
                                 ),
-                                
+
                                 // Play Button
                                 Consumer(
                                   builder: (context, ref, _) {
                                     final audioState = ref.watch(audioProvider);
-                                    final isCurrentTrack = audioState.currentTrack?.id == track.id;
-                                    final isPlaying = audioState.isPlaying && isCurrentTrack;
+                                    final isCurrentTrack =
+                                        audioState.currentTrack?.id == track.id;
+                                    final isPlaying =
+                                        audioState.isPlaying && isCurrentTrack;
 
                                     return InkWell(
                                       onTap: () {
                                         if (isCurrentTrack) {
-                                          ref.read(audioProvider.notifier).togglePlayPause();
+                                          ref
+                                              .read(audioProvider.notifier)
+                                              .togglePlayPause();
                                         } else {
-                                          ref.read(audioProvider.notifier).loadPlaylist(downloads.downloadedTracks, index);
+                                          ref
+                                              .read(audioProvider.notifier)
+                                              .loadPlaylist(
+                                                downloads.downloadedTracks,
+                                                index,
+                                              );
                                         }
                                       },
                                       child: Container(
@@ -254,14 +312,18 @@ class DownloadsScreen extends ConsumerWidget {
                                           shape: BoxShape.circle,
                                           boxShadow: [
                                             BoxShadow(
-                                              color: cs.primary.withValues(alpha: 0.3),
+                                              color: cs.primary.withValues(
+                                                alpha: 0.3,
+                                              ),
                                               blurRadius: 10,
                                               offset: const Offset(0, 4),
                                             ),
                                           ],
                                         ),
                                         child: Icon(
-                                          isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                                          isPlaying
+                                              ? Icons.pause_rounded
+                                              : Icons.play_arrow_rounded,
                                           color: Colors.white,
                                           size: 28.w,
                                         ),
@@ -269,25 +331,39 @@ class DownloadsScreen extends ConsumerWidget {
                                     );
                                   },
                                 ),
-                                
+
                                 SizedBox(width: 16.w),
-                                
+
                                 // Delete Icon
                                 InkWell(
                                   onTap: () async {
                                     final confirm = await showConfirmDialog(
                                       context,
-                                      title: AppLocalizations.of(context)!.deleteDownloadTitle,
-                                      content: AppLocalizations.of(context)!.deleteDownloadContent,
-                                      cancelText: AppLocalizations.of(context)!.dialogCancel,
-                                      confirmText: AppLocalizations.of(context)!.delete,
+                                      title: AppLocalizations.of(
+                                        context,
+                                      )!.deleteDownloadTitle,
+                                      content: AppLocalizations.of(
+                                        context,
+                                      )!.deleteDownloadContent,
+                                      cancelText: AppLocalizations.of(
+                                        context,
+                                      )!.dialogCancel,
+                                      confirmText: AppLocalizations.of(
+                                        context,
+                                      )!.delete,
                                     );
 
                                     if (confirm == true) {
-                                      ref.read(downloadsProvider.notifier).removeDownload(track.id);
+                                      ref
+                                          .read(downloadsProvider.notifier)
+                                          .removeDownload(track.id);
                                     }
                                   },
-                                  child: Icon(Icons.delete_outline_rounded, color: cs.onSurface.withValues(alpha: 0.3), size: 28.w),
+                                  child: Icon(
+                                    Icons.delete_outline_rounded,
+                                    color: cs.onSurface.withValues(alpha: 0.3),
+                                    size: 28.w,
+                                  ),
                                 ),
                               ],
                             );

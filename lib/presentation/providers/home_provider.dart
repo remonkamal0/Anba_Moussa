@@ -26,12 +26,12 @@ class HomeProvider extends ChangeNotifier {
     required GetFavoriteTrackIdsUseCase getFavoriteTrackIdsUseCase,
     required ToggleFavoriteTrackUseCase toggleFavoriteTrackUseCase,
     required Logger logger,
-  })  : _getTopTracksUseCase = getTopTracksUseCase,
-        _getCategoriesUseCase = getCategoriesUseCase,
-        _getSlidersUseCase = getSlidersUseCase,
-        _getFavoriteTrackIdsUseCase = getFavoriteTrackIdsUseCase,
-        _toggleFavoriteTrackUseCase = toggleFavoriteTrackUseCase,
-        _logger = logger;
+  }) : _getTopTracksUseCase = getTopTracksUseCase,
+       _getCategoriesUseCase = getCategoriesUseCase,
+       _getSlidersUseCase = getSlidersUseCase,
+       _getFavoriteTrackIdsUseCase = getFavoriteTrackIdsUseCase,
+       _toggleFavoriteTrackUseCase = toggleFavoriteTrackUseCase,
+       _logger = logger;
 
   HomeState get state => _state;
 
@@ -44,12 +44,14 @@ class HomeProvider extends ChangeNotifier {
       final sliders = await _getSlidersUseCase.execute();
       final favoriteIds = await _getFavoriteTrackIdsUseCase.execute();
 
-      _setState(HomeState.loaded(
-        tracks: tracks,
-        categories: categories,
-        sliders: sliders,
-        favoriteTrackIds: Set<String>.from(favoriteIds),
-      ));
+      _setState(
+        HomeState.loaded(
+          tracks: tracks,
+          categories: categories,
+          sliders: sliders,
+          favoriteTrackIds: Set<String>.from(favoriteIds),
+        ),
+      );
     } catch (e, st) {
       _logger.error('Failed to load home data', e, st);
       _setState(HomeState.error(e));
@@ -63,9 +65,11 @@ class HomeProvider extends ChangeNotifier {
       await _toggleFavoriteTrackUseCase.execute(trackId, !isFavorite);
 
       final newFavoriteIds = await _getFavoriteTrackIdsUseCase.execute();
-      _setState(currentState.copyWith(
-        favoriteTrackIds: Set<String>.from(newFavoriteIds),
-      ));
+      _setState(
+        currentState.copyWith(
+          favoriteTrackIds: Set<String>.from(newFavoriteIds),
+        ),
+      );
     } catch (e) {
       _logger.error('Failed to toggle favorite: $e');
     }
@@ -121,13 +125,13 @@ class HomeState {
   });
 
   const HomeState.loading()
-      : status = HomeStatus.loading,
-        tracks = const [],
-        categories = const [],
-        sliders = const [],
-        favoriteTrackIds = const {},
-        currentIndex = 0,
-        error = null;
+    : status = HomeStatus.loading,
+      tracks = const [],
+      categories = const [],
+      sliders = const [],
+      favoriteTrackIds = const {},
+      currentIndex = 0,
+      error = null;
 
   const HomeState.loaded({
     required this.tracks,
@@ -135,16 +139,16 @@ class HomeState {
     required this.sliders,
     required this.favoriteTrackIds,
     this.currentIndex = 0,
-  })  : status = HomeStatus.loaded,
-        error = null;
+  }) : status = HomeStatus.loaded,
+       error = null;
 
   const HomeState.error(this.error)
-      : status = HomeStatus.error,
-        tracks = const [],
-        categories = const [],
-        sliders = const [],
-        favoriteTrackIds = const {},
-        currentIndex = 0;
+    : status = HomeStatus.error,
+      tracks = const [],
+      categories = const [],
+      sliders = const [],
+      favoriteTrackIds = const {},
+      currentIndex = 0;
 
   HomeState copyWith({
     HomeStatus? status,
@@ -168,16 +172,27 @@ class HomeState {
 
   T when<T>({
     required T Function() loading,
-    required T Function(List<Track>, List<Category>, List<entity.Slider>,
-            Set<String>, int)
-        loaded,
+    required T Function(
+      List<Track>,
+      List<Category>,
+      List<entity.Slider>,
+      Set<String>,
+      int,
+    )
+    loaded,
     required T Function(Object) error,
   }) {
     switch (status) {
       case HomeStatus.loading:
         return loading();
       case HomeStatus.loaded:
-        return loaded(tracks, categories, sliders, favoriteTrackIds, currentIndex);
+        return loaded(
+          tracks,
+          categories,
+          sliders,
+          favoriteTrackIds,
+          currentIndex,
+        );
       case HomeStatus.error:
         return error(this.error ?? 'Unknown error');
     }

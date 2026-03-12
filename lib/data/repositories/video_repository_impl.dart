@@ -17,4 +17,34 @@ class VideoRepositoryImpl implements VideoRepository {
   Future<List<Video>> getVideosByAlbumId(String albumId) async {
     return await remoteDataSource.getVideosByAlbumId(albumId);
   }
+
+  @override
+  Future<VideoAlbum> createVideoAlbum(VideoAlbum album) async {
+    return await remoteDataSource.createVideoAlbum(album);
+  }
+
+  @override
+  Future<VideoAlbum> updateVideoAlbum(VideoAlbum album) async {
+    return await remoteDataSource.updateVideoAlbum(album);
+  }
+
+  @override
+  Future<void> deleteVideoAlbum(String id) async {
+    return await remoteDataSource.deleteVideoAlbum(id);
+  }
+
+  @override
+  Future<Video> createVideo(Video video) async {
+    return await remoteDataSource.createVideo(video);
+  }
+
+  @override
+  Future<Video> updateVideo(Video video) async {
+    return await remoteDataSource.updateVideo(video);
+  }
+
+  @override
+  Future<void> deleteVideo(String id) async {
+    return await remoteDataSource.deleteVideo(id);
+  }
 }

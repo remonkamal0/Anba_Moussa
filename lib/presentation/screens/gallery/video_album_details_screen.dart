@@ -17,32 +17,34 @@ class VideoAlbumDetailsScreen extends ConsumerStatefulWidget {
   const VideoAlbumDetailsScreen({super.key, required this.album});
 
   @override
-  ConsumerState<VideoAlbumDetailsScreen> createState() => _VideoAlbumDetailsScreenState();
+  ConsumerState<VideoAlbumDetailsScreen> createState() =>
+      _VideoAlbumDetailsScreenState();
 }
 
-class _VideoAlbumDetailsScreenState extends ConsumerState<VideoAlbumDetailsScreen> {
+class _VideoAlbumDetailsScreenState
+    extends ConsumerState<VideoAlbumDetailsScreen> {
   String _sortOrder = 'A-Z';
 
   List<Video> _sortVideos(List<Video> videos, String sortOrder, String locale) {
     final sortedVideos = List<Video>.from(videos);
-    
+
     sortedVideos.sort((a, b) {
       final titleA = a.getLocalizedTitle(locale).toLowerCase();
       final titleB = b.getLocalizedTitle(locale).toLowerCase();
-      
+
       if (sortOrder == 'A-Z') {
         return titleA.compareTo(titleB);
       } else {
         return titleB.compareTo(titleA);
       }
     });
-    
+
     return sortedVideos;
   }
 
   void _showSortOptions() {
     final locale = Localizations.localeOf(context).languageCode;
-    
+
     showMenu(
       context: context,
       position: RelativeRect.fromLTRB(
@@ -107,15 +109,19 @@ class _VideoAlbumDetailsScreenState extends ConsumerState<VideoAlbumDetailsScree
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.primary, size: 20.w),
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: cs.primary,
+            size: 20.w,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           widget.album.getLocalizedTitle(locale),
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w900,
-                color: cs.onSurface,
-              ),
+            fontWeight: FontWeight.w900,
+            color: cs.onSurface,
+          ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -143,126 +149,164 @@ class _VideoAlbumDetailsScreenState extends ConsumerState<VideoAlbumDetailsScree
                   if (videos.isEmpty) {
                     return Center(
                       child: Text(
-                        locale == 'ar' ? 'لا توجد فيديوهات في هذا الألبوم' : 'No videos in this album',
+                        locale == 'ar'
+                            ? 'لا توجد فيديوهات في هذا الألبوم'
+                            : 'No videos in this album',
                         style: TextStyle(color: cs.onSurface.withOpacity(0.5)),
                       ),
                     );
                   }
                   final sortedVideos = _sortVideos(videos, _sortOrder, locale);
                   return ListView.separated(
-                    padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 80.h),
+                    padding: EdgeInsets.only(
+                      left: 16.w,
+                      right: 16.w,
+                      bottom: 80.h,
+                    ),
                     itemCount: sortedVideos.length,
-                    separatorBuilder: (context, index) => SizedBox(height: 24.h),
+                    separatorBuilder: (context, index) =>
+                        SizedBox(height: 24.h),
                     itemBuilder: (context, index) {
                       final video = sortedVideos[index];
 
                       return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => VideoPlaybackMockScreen(video: video),
-                            ),
-                          );
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 190.h,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16.r),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    blurRadius: 12,
-                                    offset: const Offset(0, 6),
-                                  ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16.r),
-                                child: Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    if (video.thumbnailUrl != null)
-                                      CachedNetworkImage(
-                                        imageUrl: video.thumbnailUrl!,
-                                        fit: BoxFit.cover,
-                                        placeholder: (_, __) => Container(color: Colors.grey[200]),
-                                        errorWidget: (_, __, ___) => Container(
-                                          color: Colors.grey[200],
-                                          child: const Icon(Icons.broken_image, color: Colors.grey),
-                                        ),
-                                      )
-                                    else
-                                      Container(color: Colors.grey[200], child: Icon(Icons.video_library_rounded, color: cs.primary.withOpacity(0.2), size: 50.w)),
-                                    Container(color: Colors.black.withOpacity(0.2)),
-                                    Center(
-                                      child: Container(
-                                        width: 52.w,
-                                        height: 52.w,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.9),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Icon(
-                                          Icons.play_arrow_rounded,
-                                          color: cs.primary,
-                                          size: 32.w,
-                                        ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      VideoPlaybackMockScreen(video: video),
+                                ),
+                              );
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  height: 190.h,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 12,
+                                        offset: const Offset(0, 6),
                                       ),
-                                    ),
-                                    if (video.durationSeconds != null)
-                                      Positioned(
-                                        bottom: 12.h,
-                                        right: 12.w,
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                                          decoration: BoxDecoration(
-                                            color: Colors.black.withOpacity(0.75),
-                                            borderRadius: BorderRadius.circular(6.r),
+                                    ],
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    child: Stack(
+                                      fit: StackFit.expand,
+                                      children: [
+                                        if (video.thumbnailUrl != null)
+                                          CachedNetworkImage(
+                                            imageUrl: video.thumbnailUrl!,
+                                            fit: BoxFit.cover,
+                                            placeholder: (_, __) => Container(
+                                              color: Colors.grey[200],
+                                            ),
+                                            errorWidget: (_, __, ___) =>
+                                                Container(
+                                                  color: Colors.grey[200],
+                                                  child: const Icon(
+                                                    Icons.broken_image,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                          )
+                                        else
+                                          Container(
+                                            color: Colors.grey[200],
+                                            child: Icon(
+                                              Icons.video_library_rounded,
+                                              color: cs.primary.withOpacity(
+                                                0.2,
+                                              ),
+                                              size: 50.w,
+                                            ),
                                           ),
-                                          child: Text(
-                                            '${(video.durationSeconds! ~/ 60)}:${(video.durationSeconds! % 60).toString().padLeft(2, '0')}',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 11.sp,
-                                              fontWeight: FontWeight.w800,
+                                        Container(
+                                          color: Colors.black.withOpacity(0.2),
+                                        ),
+                                        Center(
+                                          child: Container(
+                                            width: 52.w,
+                                            height: 52.w,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white.withOpacity(
+                                                0.9,
+                                              ),
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Icon(
+                                              Icons.play_arrow_rounded,
+                                              color: cs.primary,
+                                              size: 32.w,
                                             ),
                                           ),
                                         ),
+                                        if (video.durationSeconds != null)
+                                          Positioned(
+                                            bottom: 12.h,
+                                            right: 12.w,
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 8.w,
+                                                vertical: 4.h,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.black.withOpacity(
+                                                  0.75,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(6.r),
+                                              ),
+                                              child: Text(
+                                                '${(video.durationSeconds! ~/ 60)}:${(video.durationSeconds! % 60).toString().padLeft(2, '0')}',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 11.sp,
+                                                  fontWeight: FontWeight.w800,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 12.h),
+                                Text(
+                                  video.getLocalizedTitle(locale),
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w900,
+                                    color: cs.onSurface,
+                                  ),
+                                ),
+                                SizedBox(height: 4.h),
+                                if (video.getLocalizedSubtitle(locale) != null)
+                                  Text(
+                                    video.getLocalizedSubtitle(locale)!,
+                                    style: TextStyle(
+                                      fontSize: 13.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: cs.onSurface.withValues(
+                                        alpha: 0.6,
                                       ),
-                                  ],
-                                ),
-                              ),
+                                    ),
+                                  ),
+                              ],
                             ),
-                            SizedBox(height: 12.h),
-                            Text(
-                              video.getLocalizedTitle(locale),
-                              style: TextStyle(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w900,
-                                color: cs.onSurface,
-                              ),
-                            ),
-                            SizedBox(height: 4.h),
-                            if (video.getLocalizedSubtitle(locale) != null)
-                              Text(
-                                video.getLocalizedSubtitle(locale)!,
-                                style: TextStyle(
-                                  fontSize: 13.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: cs.onSurface.withValues(alpha: 0.6),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ).animate().fadeIn(
+                          )
+                          .animate()
+                          .fadeIn(
                             duration: const Duration(milliseconds: 300),
                             delay: Duration(milliseconds: (index % 5) * 80),
-                          ).slideY(
+                          )
+                          .slideY(
                             begin: 0.1,
                             end: 0,
                             duration: const Duration(milliseconds: 300),
@@ -274,9 +318,11 @@ class _VideoAlbumDetailsScreenState extends ConsumerState<VideoAlbumDetailsScree
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stack) => ErrorHandleWidget(
-          error: error,
-          onRetry: () => ref.refresh(albumVideosProvider(widget.album.id)),
-        ),      ),
+                  error: error,
+                  onRetry: () =>
+                      ref.refresh(albumVideosProvider(widget.album.id)),
+                ),
+              ),
             ),
           ],
         ),
@@ -291,17 +337,18 @@ class VideoPlaybackMockScreen extends StatefulWidget {
   const VideoPlaybackMockScreen({super.key, required this.video});
 
   @override
-  State<VideoPlaybackMockScreen> createState() => _VideoPlaybackMockScreenState();
+  State<VideoPlaybackMockScreen> createState() =>
+      _VideoPlaybackMockScreenState();
 }
 
 class _VideoPlaybackMockScreenState extends State<VideoPlaybackMockScreen> {
   // Video Player (Normal)
   VideoPlayerController? _videoPlayerController;
   ChewieController? _chewieController;
-  
+
   // YouTube Player
   YoutubePlayerController? _youtubeController;
-  
+
   bool _isInit = false;
   bool _isYoutube = false;
 
@@ -327,10 +374,7 @@ class _VideoPlaybackMockScreenState extends State<VideoPlaybackMockScreen> {
     if (videoId != null) {
       _youtubeController = YoutubePlayerController(
         initialVideoId: videoId,
-        flags: const YoutubePlayerFlags(
-          autoPlay: true,
-          mute: false,
-        ),
+        flags: const YoutubePlayerFlags(autoPlay: true, mute: false),
       );
       setState(() {
         _isInit = true;
@@ -341,9 +385,7 @@ class _VideoPlaybackMockScreenState extends State<VideoPlaybackMockScreen> {
   Future<void> _initNormalPlayer(String url) async {
     final cs = Theme.of(context).colorScheme;
     try {
-      _videoPlayerController = VideoPlayerController.networkUrl(
-        Uri.parse(url),
-      );
+      _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url));
 
       await _videoPlayerController!.initialize();
 
@@ -354,9 +396,7 @@ class _VideoPlaybackMockScreenState extends State<VideoPlaybackMockScreen> {
         aspectRatio: _videoPlayerController!.value.aspectRatio,
         placeholder: Container(
           color: Colors.black,
-          child: Center(
-            child: CircularProgressIndicator(color: cs.primary),
-          ),
+          child: Center(child: CircularProgressIndicator(color: cs.primary)),
         ),
         materialProgressColors: ChewieProgressColors(
           playedColor: cs.primary,
@@ -406,16 +446,16 @@ class _VideoPlaybackMockScreenState extends State<VideoPlaybackMockScreen> {
             child: !_isInit
                 ? Center(child: CircularProgressIndicator(color: cs.primary))
                 : _isYoutube
-                    ? YoutubePlayer(
-                        controller: _youtubeController!,
-                        showVideoProgressIndicator: true,
-                        progressIndicatorColor: cs.primary,
-                      )
-                    : _chewieController != null
-                        ? Chewie(controller: _chewieController!)
-                        : const Center(child: Icon(Icons.error, color: Colors.white)),
+                ? YoutubePlayer(
+                    controller: _youtubeController!,
+                    showVideoProgressIndicator: true,
+                    progressIndicatorColor: cs.primary,
+                  )
+                : _chewieController != null
+                ? Chewie(controller: _chewieController!)
+                : const Center(child: Icon(Icons.error, color: Colors.white)),
           ),
-          
+
           Padding(
             padding: EdgeInsets.all(16.w),
             child: Column(
@@ -452,7 +492,9 @@ class _VideoPlaybackMockScreenState extends State<VideoPlaybackMockScreen> {
                 SizedBox(height: 8.h),
                 Text(
                   widget.video.getLocalizedDescription(locale) ??
-                      (locale == 'ar' ? 'لا يوجد وصف متاح' : 'No description available'),
+                      (locale == 'ar'
+                          ? 'لا يوجد وصف متاح'
+                          : 'No description available'),
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: cs.onSurface.withValues(alpha: 0.8),
@@ -467,5 +509,3 @@ class _VideoPlaybackMockScreenState extends State<VideoPlaybackMockScreen> {
     );
   }
 }
-
-

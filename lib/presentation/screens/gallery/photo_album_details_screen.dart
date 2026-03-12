@@ -27,15 +27,19 @@ class PhotoAlbumDetailsScreen extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.primary, size: 20.w),
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: cs.primary,
+            size: 20.w,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           album.getLocalizedTitle(locale),
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w900,
-                color: cs.onSurface,
-              ),
+            fontWeight: FontWeight.w900,
+            color: cs.onSurface,
+          ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -53,7 +57,9 @@ class PhotoAlbumDetailsScreen extends ConsumerWidget {
                   SizedBox(height: 12.h),
                   photosAsync.when(
                     data: (photos) => Text(
-                      locale == 'ar' ? '${photos.length} صور' : '${photos.length} PHOTOS',
+                      locale == 'ar'
+                          ? '${photos.length} صور'
+                          : '${photos.length} PHOTOS',
                       style: TextStyle(
                         fontSize: 11.sp,
                         fontWeight: FontWeight.w900,
@@ -83,14 +89,19 @@ class PhotoAlbumDetailsScreen extends ConsumerWidget {
                   if (photos.isEmpty) {
                     return Center(
                       child: Text(
-                        locale == 'ar' ? 'لا توجد صور في هذا الألبوم' : 'No photos in this album',
+                        locale == 'ar'
+                            ? 'لا توجد صور في هذا الألبوم'
+                            : 'No photos in this album',
                         style: TextStyle(color: cs.onSurface.withOpacity(0.5)),
                       ),
                     );
                   }
                   final imageUrls = photos.map((p) => p.imageUrl).toList();
                   return GridView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 8.h,
+                    ),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       crossAxisSpacing: 8.w,
@@ -100,36 +111,43 @@ class PhotoAlbumDetailsScreen extends ConsumerWidget {
                     itemCount: photos.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FullScreenImageViewer(
-                                imageUrls: imageUrls,
-                                initialIndex: index,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FullScreenImageViewer(
+                                    imageUrls: imageUrls,
+                                    initialIndex: index,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Hero(
+                              tag: photos[index].imageUrl,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12.r),
+                                child: CachedNetworkImage(
+                                  imageUrl: photos[index].imageUrl,
+                                  fit: BoxFit.cover,
+                                  placeholder: (_, __) =>
+                                      Container(color: Colors.grey[100]),
+                                  errorWidget: (_, __, ___) => Container(
+                                    color: Colors.grey[100],
+                                    child: const Icon(
+                                      Icons.broken_image,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          );
-                        },
-                        child: Hero(
-                          tag: photos[index].imageUrl,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12.r),
-                            child: CachedNetworkImage(
-                              imageUrl: photos[index].imageUrl,
-                              fit: BoxFit.cover,
-                              placeholder: (_, __) => Container(color: Colors.grey[100]),
-                              errorWidget: (_, __, ___) => Container(
-                                color: Colors.grey[100],
-                                child: const Icon(Icons.broken_image, color: Colors.grey),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ).animate().fadeIn(
+                          )
+                          .animate()
+                          .fadeIn(
                             duration: const Duration(milliseconds: 300),
                             delay: Duration(milliseconds: (index % 9) * 50),
-                          ).scale(
+                          )
+                          .scale(
                             begin: const Offset(0.9, 0.9),
                             end: const Offset(1.0, 1.0),
                             duration: const Duration(milliseconds: 300),
@@ -189,4 +207,3 @@ class FullScreenImageViewer extends StatelessWidget {
     );
   }
 }
-

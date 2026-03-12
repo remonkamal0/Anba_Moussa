@@ -1,16 +1,15 @@
 class Tag {
   final String id;
+  final String? slug;
   final String titleAr;
   final String titleEn;
 
-  Tag({
-    required this.id,
-    String? titleAr,
-    String? titleEn,
-  })  : titleAr = titleAr ?? '',
-        titleEn = titleEn ?? '';
+  Tag({required this.id, this.slug, String? titleAr, String? titleEn})
+    : titleAr = titleAr ?? '',
+      titleEn = titleEn ?? '';
 
-  String getLocalizedName(String locale) => locale == 'ar' ? (titleAr) : (titleEn);
+  String getLocalizedName(String locale) =>
+      locale == 'ar' ? (titleAr) : (titleEn);
 
   @override
   bool operator ==(Object other) =>

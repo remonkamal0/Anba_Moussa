@@ -32,8 +32,6 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
   late final List<AnimationController> _eqCtrls;
   late final List<Animation<double>> _eqAnims;
 
-
-
   bool _isShuffled = false;
   bool _isRepeating = false;
   double _volume = 0.7;
@@ -66,8 +64,12 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
       );
     });
     _eqAnims = _eqCtrls
-        .map((c) => Tween<double>(begin: 0.15, end: 1.0)
-            .animate(CurvedAnimation(parent: c, curve: Curves.easeInOut)))
+        .map(
+          (c) => Tween<double>(
+            begin: 0.15,
+            end: 1.0,
+          ).animate(CurvedAnimation(parent: c, curve: Curves.easeInOut)),
+        )
         .toList();
 
     // Cache notifiers while ref is valid (cannot use ref in dispose)
@@ -77,19 +79,18 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
     _initVolume();
 
     // Listen to playback state to start/stop animations
-    ref.listenManual(
-      audioProvider.select((s) => s.isPlaying),
-      (prev, isPlaying) {
-        if (isPlaying) {
-          _vinylCtrl.repeat();
-          for (final c in _eqCtrls) c.repeat(reverse: true);
-        } else {
-          _vinylCtrl.stop();
-          for (final c in _eqCtrls) c.stop();
-        }
-      },
-      fireImmediately: true,
-    );
+    ref.listenManual(audioProvider.select((s) => s.isPlaying), (
+      prev,
+      isPlaying,
+    ) {
+      if (isPlaying) {
+        _vinylCtrl.repeat();
+        for (final c in _eqCtrls) c.repeat(reverse: true);
+      } else {
+        _vinylCtrl.stop();
+        for (final c in _eqCtrls) c.stop();
+      }
+    }, fireImmediately: true);
 
     // The track is already loaded by the screen that navigated here (e.g. AlbumDetails)
     // We just ensure the mini player is visible.
@@ -156,7 +157,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
 
     final left = (iconOffset.dx + (iconSize.width / 2) - (popupWidth / 2))
         .clamp(12.0, screen.width - popupWidth - 12.0);
-    final top = (iconOffset.dy - popupHeight - verticalGap).clamp(12.0, screen.height - popupHeight - 12.0);
+    final top = (iconOffset.dy - popupHeight - verticalGap).clamp(
+      12.0,
+      screen.height - popupHeight - 12.0,
+    );
 
     _volumeOverlay = OverlayEntry(
       builder: (ctx) {
@@ -327,7 +331,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                           borderRadius: BorderRadius.circular(26.r),
                           child: audioState.currentTrack?.coverImageUrl != null
                               ? CachedNetworkImage(
-                                  imageUrl: audioState.currentTrack!.coverImageUrl,
+                                  imageUrl:
+                                      audioState.currentTrack!.coverImageUrl,
                                   fit: BoxFit.cover,
                                   placeholder: (_, __) => Container(
                                     color: cs.surfaceVariant,
@@ -372,7 +377,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                         child: Column(
                           children: [
                             Text(
-                              audioState.currentTrack?.getLocalizedTitle(locale) ?? '...',
+                              audioState.currentTrack?.getLocalizedTitle(
+                                    locale,
+                                  ) ??
+                                  '...',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 24.sp,
@@ -382,7 +390,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                             ),
                             SizedBox(height: 6.h),
                             Text(
-                              audioState.currentTrack?.getLocalizedSpeaker(locale) ?? '...',
+                              audioState.currentTrack?.getLocalizedSpeaker(
+                                    locale,
+                                  ) ??
+                                  '...',
                               style: TextStyle(
                                 fontSize: 13.sp,
                                 fontWeight: FontWeight.w600,
@@ -395,7 +406,6 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
 
                       SizedBox(height: 5.h),
 
-
                       // ── Download + Favourite ─────────────────────
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -404,9 +414,16 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                             Consumer(
                               builder: (context, ref, child) {
                                 final downloads = ref.watch(downloadsProvider);
-                                final isDownloaded = downloads.downloadedTracks.any((t) => t.id == audioState.currentTrack!.id);
-                                final progress = downloads.downloadProgress[audioState.currentTrack!.id];
-                                
+                                final isDownloaded = downloads.downloadedTracks
+                                    .any(
+                                      (t) =>
+                                          t.id == audioState.currentTrack!.id,
+                                    );
+                                final progress =
+                                    downloads.downloadProgress[audioState
+                                        .currentTrack!
+                                        .id];
+
                                 if (progress != null) {
                                   return Stack(
                                     alignment: Alignment.center,
@@ -422,17 +439,22 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                       ),
                                       Text(
                                         '${(progress * 100).toInt()}%',
-                                        style: TextStyle(fontSize: 8.sp, fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                          fontSize: 8.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ],
                                   );
                                 }
-                                
+
                                 return _IBtn(
                                   icon: isDownloaded
                                       ? Icons.download_done_rounded
                                       : Icons.download_rounded,
-                                  color: isDownloaded ? cs.primary : Colors.grey[400],
+                                  color: isDownloaded
+                                      ? cs.primary
+                                      : Colors.grey[400],
                                   onTap: () {
                                     if (!isDownloaded) {
                                       final mini = audioState.currentTrack!;
@@ -450,9 +472,15 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                         isActive: true,
                                         categoryId: '',
                                       );
-                                      ref.read(downloadsProvider.notifier).downloadTrack(t);
+                                      ref
+                                          .read(downloadsProvider.notifier)
+                                          .downloadTrack(t);
                                     } else {
-                                      ref.read(downloadsProvider.notifier).removeDownload(audioState.currentTrack!.id);
+                                      ref
+                                          .read(downloadsProvider.notifier)
+                                          .removeDownload(
+                                            audioState.currentTrack!.id,
+                                          );
                                     }
                                   },
                                 );
@@ -461,7 +489,14 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                           SizedBox(width: 20.w),
                           if (audioState.currentTrack != null)
                             _IBtn(
-                              icon: ref.watch(favoritesProvider).tracks.any((t) => t.id == audioState.currentTrack!.id)
+                              icon:
+                                  ref
+                                      .watch(favoritesProvider)
+                                      .tracks
+                                      .any(
+                                        (t) =>
+                                            t.id == audioState.currentTrack!.id,
+                                      )
                                   ? Icons.favorite_rounded
                                   : Icons.favorite_border_rounded,
                               onTap: () {
@@ -479,7 +514,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                   isActive: true,
                                   categoryId: '',
                                 );
-                                ref.read(favoritesProvider.notifier).toggleFavorite(t);
+                                ref
+                                    .read(favoritesProvider.notifier)
+                                    .toggleFavorite(t);
                               },
                             ),
                         ],
@@ -501,18 +538,21 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                                       activeTrackColor: cs.primary,
                                       inactiveTrackColor: cs.outlineVariant,
                                       thumbColor: cs.primary,
-                                      overlayColor:
-                                          cs.primary.withOpacity(0.15),
+                                      overlayColor: cs.primary.withOpacity(
+                                        0.15,
+                                      ),
                                       thumbShape: RoundSliderThumbShape(
-                                          enabledThumbRadius: 7.r),
+                                        enabledThumbRadius: 7.r,
+                                      ),
                                     ),
                                     child: Slider(
                                       value: _position.inSeconds
                                           .clamp(0, _duration.inSeconds)
                                           .toDouble(),
-                                      max: _duration.inSeconds
-                                          .toDouble()
-                                          .clamp(1, double.infinity),
+                                      max: _duration.inSeconds.toDouble().clamp(
+                                        1,
+                                        double.infinity,
+                                      ),
                                       onChanged: _onSeek,
                                     ),
                                   ),
@@ -520,22 +560,31 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                               ],
                             ),
                             Padding(
-                              padding:
-                                  EdgeInsets.symmetric(horizontal: 6.w),
+                              padding: EdgeInsets.symmetric(horizontal: 6.w),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(_fmt(_position),
-                                      style: TextStyle(
-                                          fontSize: 13.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: cs.onSurface.withValues(alpha: 0.6))),
-                                  Text(_fmt(_duration),
-                                      style: TextStyle(
-                                          fontSize: 13.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: cs.onSurface.withValues(alpha: 0.6))),
+                                  Text(
+                                    _fmt(_position),
+                                    style: TextStyle(
+                                      fontSize: 13.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: cs.onSurface.withValues(
+                                        alpha: 0.6,
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    _fmt(_duration),
+                                    style: TextStyle(
+                                      fontSize: 13.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: cs.onSurface.withValues(
+                                        alpha: 0.6,
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -555,7 +604,13 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                             borderRadius: BorderRadius.circular(28.r),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.07),
+                                color: Colors.black.withValues(
+                                  alpha:
+                                      Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? 0.3
+                                      : 0.07,
+                                ),
                                 blurRadius: 30,
                                 offset: const Offset(0, 16),
                               ),
@@ -564,8 +619,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen>
                           child: Directionality(
                             textDirection: TextDirection.ltr,
                             child: Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceEvenly,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 _IBtn(
                                   icon: Icons.shuffle_rounded,
@@ -718,8 +772,7 @@ class _EqualizerBars extends StatelessWidget {
                   width: 5,
                   height: h,
                   decoration: BoxDecoration(
-                    color: cs.primary
-                        .withOpacity(0.6 + 0.4 * eqAnims[i].value),
+                    color: cs.primary.withOpacity(0.6 + 0.4 * eqAnims[i].value),
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
@@ -752,12 +805,7 @@ class _IBtn extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     return IconButton(
       onPressed: onTap,
-      icon: Icon(
-        icon,
-        color: color ?? cs.primary,
-        size: size,
-      ),
+      icon: Icon(icon, color: color ?? cs.primary, size: size),
     );
   }
 }
-

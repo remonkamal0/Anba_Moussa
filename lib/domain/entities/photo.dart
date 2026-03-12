@@ -25,15 +25,15 @@ class Photo {
     required this.updatedAt,
   });
 
-  String? getLocalizedTitle(String locale) => locale == 'ar' ? titleAr : titleEn;
-  String? getLocalizedCaption(String locale) => locale == 'ar' ? captionAr : captionEn;
+  String? getLocalizedTitle(String locale) =>
+      locale == 'ar' ? titleAr : titleEn;
+  String? getLocalizedCaption(String locale) =>
+      locale == 'ar' ? captionAr : captionEn;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Photo &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
+      other is Photo && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode => id.hashCode;

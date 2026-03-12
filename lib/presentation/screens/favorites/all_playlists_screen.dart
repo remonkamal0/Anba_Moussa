@@ -26,9 +26,10 @@ class _AllPlaylistsScreenState extends ConsumerState<AllPlaylistsScreen> {
   }
 
   void _openCreate() async {
-    await Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute(builder: (_) => const CreatePlaylistScreen()),
-    );
+    await Navigator.of(
+      context,
+      rootNavigator: true,
+    ).push(MaterialPageRoute(builder: (_) => const CreatePlaylistScreen()));
     // Provider already updated by CreatePlaylistScreen
   }
 
@@ -51,7 +52,7 @@ class _AllPlaylistsScreenState extends ConsumerState<AllPlaylistsScreen> {
   void _deletePlaylist(PlaylistModel playlist) async {
     final cs = Theme.of(context).colorScheme;
     final locale = Localizations.localeOf(context).languageCode;
-    
+
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => Dialog(
@@ -76,7 +77,9 @@ class _AllPlaylistsScreenState extends ConsumerState<AllPlaylistsScreen> {
               ),
               SizedBox(height: 12.h),
               Text(
-                  AppLocalizations.of(context)!.playlistDeleteConfirm(locale == 'ar' ? playlist.titleAr : playlist.titleEn),
+                AppLocalizations.of(context)!.playlistDeleteConfirm(
+                  locale == 'ar' ? playlist.titleAr : playlist.titleEn,
+                ),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14.sp,
@@ -95,9 +98,14 @@ class _AllPlaylistsScreenState extends ConsumerState<AllPlaylistsScreen> {
                         foregroundColor: cs.onSurface,
                         elevation: 0,
                         padding: EdgeInsets.symmetric(vertical: 14.h),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
                       ),
-                      child: Text(AppLocalizations.of(context)!.dialogCancel, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      child: Text(
+                        AppLocalizations.of(context)!.dialogCancel,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                   SizedBox(width: 16.w),
@@ -109,9 +117,14 @@ class _AllPlaylistsScreenState extends ConsumerState<AllPlaylistsScreen> {
                         foregroundColor: Colors.white,
                         elevation: 0,
                         padding: EdgeInsets.symmetric(vertical: 14.h),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
                       ),
-                      child: Text(AppLocalizations.of(context)!.dialogConfirm, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      child: Text(
+                        AppLocalizations.of(context)!.dialogConfirm,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                 ],
@@ -134,10 +147,12 @@ class _AllPlaylistsScreenState extends ConsumerState<AllPlaylistsScreen> {
     final filtered = _query.isEmpty
         ? playlistState.playlists
         : playlistState.playlists
-            .where((p) =>
-                p.titleAr.toLowerCase().contains(_query.toLowerCase()) ||
-                p.titleEn.toLowerCase().contains(_query.toLowerCase()))
-            .toList();
+              .where(
+                (p) =>
+                    p.titleAr.toLowerCase().contains(_query.toLowerCase()) ||
+                    p.titleEn.toLowerCase().contains(_query.toLowerCase()),
+              )
+              .toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -147,7 +162,9 @@ class _AllPlaylistsScreenState extends ConsumerState<AllPlaylistsScreen> {
         ),
         title: Text(
           AppLocalizations.of(context)!.profileMyPlaylists,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -169,8 +186,15 @@ class _AllPlaylistsScreenState extends ConsumerState<AllPlaylistsScreen> {
                   onChanged: (v) => setState(() => _query = v),
                   decoration: InputDecoration(
                     hintText: AppLocalizations.of(context)!.playlistSearchHint,
-                    hintStyle: TextStyle(color: cs.onSurface.withValues(alpha: 0.4), fontSize: 14.sp),
-                    prefixIcon: Icon(Icons.search, color: cs.onSurface.withValues(alpha: 0.4), size: 20.sp),
+                    hintStyle: TextStyle(
+                      color: cs.onSurface.withValues(alpha: 0.4),
+                      fontSize: 14.sp,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: cs.onSurface.withValues(alpha: 0.4),
+                      size: 20.sp,
+                    ),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(vertical: 14.h),
                   ),
@@ -183,26 +207,33 @@ class _AllPlaylistsScreenState extends ConsumerState<AllPlaylistsScreen> {
               child: playlistState.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : playlistState.error != null
-                      ? _ErrorView(error: playlistState.error!, onRetry: () => ref.read(playlistsProvider.notifier).fetch())
-                      : filtered.isEmpty
-                          ? _EmptyView(onAdd: _openCreate)
-                          : ListView.separated(
-                              padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 100.h),
-                              itemCount: filtered.length,
-                              separatorBuilder: (_, __) => SizedBox(height: 16.h),
-                              itemBuilder: (context, index) {
-                                final playlist = filtered[index];
-                                return PlaylistCard(
-                                  playlist: playlist,
-                                  onTap: () => _openDetails(playlist),
-                                  onEdit: () => _openEdit(playlist),
-                                  onDelete: () => _deletePlaylist(playlist),
-                                ).animate().fadeIn(
-                                      duration: 400.ms,
-                                      delay: Duration(milliseconds: index * 50),
-                                    ).slideY(begin: 0.1, end: 0);
-                              },
-                            ),
+                  ? _ErrorView(
+                      error: playlistState.error!,
+                      onRetry: () =>
+                          ref.read(playlistsProvider.notifier).fetch(),
+                    )
+                  : filtered.isEmpty
+                  ? _EmptyView(onAdd: _openCreate)
+                  : ListView.separated(
+                      padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 100.h),
+                      itemCount: filtered.length,
+                      separatorBuilder: (_, __) => SizedBox(height: 16.h),
+                      itemBuilder: (context, index) {
+                        final playlist = filtered[index];
+                        return PlaylistCard(
+                              playlist: playlist,
+                              onTap: () => _openDetails(playlist),
+                              onEdit: () => _openEdit(playlist),
+                              onDelete: () => _deletePlaylist(playlist),
+                            )
+                            .animate()
+                            .fadeIn(
+                              duration: 400.ms,
+                              delay: Duration(milliseconds: index * 50),
+                            )
+                            .slideY(begin: 0.1, end: 0);
+                      },
+                    ),
             ),
           ],
         ),
@@ -230,13 +261,26 @@ class _EmptyView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.queue_music_rounded, size: 72.sp, color: cs.onSurface.withValues(alpha: 0.2)),
+          Icon(
+            Icons.queue_music_rounded,
+            size: 72.sp,
+            color: cs.onSurface.withValues(alpha: 0.2),
+          ),
           SizedBox(height: 16.h),
-          Text(AppLocalizations.of(context)!.playlistNoPlaylists, style: TextStyle(fontSize: 16.sp, color: cs.onSurface.withValues(alpha: 0.5))),
+          Text(
+            AppLocalizations.of(context)!.playlistNoPlaylists,
+            style: TextStyle(
+              fontSize: 16.sp,
+              color: cs.onSurface.withValues(alpha: 0.5),
+            ),
+          ),
           SizedBox(height: 8.h),
           TextButton(
             onPressed: onAdd,
-            child: Text(AppLocalizations.of(context)!.playlistCreateFirst, style: TextStyle(color: cs.primary, fontWeight: FontWeight.w700)),
+            child: Text(
+              AppLocalizations.of(context)!.playlistCreateFirst,
+              style: TextStyle(color: cs.primary, fontWeight: FontWeight.w700),
+            ),
           ),
         ],
       ),
@@ -257,11 +301,21 @@ class _ErrorView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.wifi_off_rounded, size: 56.sp, color: cs.onSurface.withValues(alpha: 0.3)),
+          Icon(
+            Icons.wifi_off_rounded,
+            size: 56.sp,
+            color: cs.onSurface.withValues(alpha: 0.3),
+          ),
           SizedBox(height: 12.h),
-          Text(AppLocalizations.of(context)!.playlistFailedToLoad, style: TextStyle(color: cs.onSurface.withValues(alpha: 0.6))),
+          Text(
+            AppLocalizations.of(context)!.playlistFailedToLoad,
+            style: TextStyle(color: cs.onSurface.withValues(alpha: 0.6)),
+          ),
           SizedBox(height: 8.h),
-          ElevatedButton(onPressed: onRetry, child: Text(AppLocalizations.of(context)!.retry)),
+          ElevatedButton(
+            onPressed: onRetry,
+            child: Text(AppLocalizations.of(context)!.retry),
+          ),
         ],
       ),
     );
@@ -326,9 +380,9 @@ class PlaylistCard extends StatelessWidget {
               ),
               child: Icon(icon, color: Colors.white, size: 24.sp),
             ),
-            
+
             SizedBox(width: 16.w),
-            
+
             // Text portion
             Expanded(
               child: Column(
@@ -350,20 +404,29 @@ class PlaylistCard extends StatelessWidget {
                     children: [
                       if (playlist.isPublic) ...[
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 2.h,
+                          ),
                           decoration: BoxDecoration(
                             color: cs.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(20.r),
                           ),
                           child: Text(
                             AppLocalizations.of(context)!.playlistPublic,
-                            style: TextStyle(color: cs.primary, fontSize: 9.sp, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              color: cs.primary,
+                              fontSize: 9.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         SizedBox(width: 8.w),
                       ],
                       Text(
-                        AppLocalizations.of(context)!.playlistTracksCount(playlist.trackCount),
+                        AppLocalizations.of(
+                          context,
+                        )!.playlistTracksCount(playlist.trackCount),
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: cs.onSurface.withValues(alpha: 0.5),
@@ -375,19 +438,27 @@ class PlaylistCard extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Trailing Actions
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (onEdit != null)
                   IconButton(
-                    icon: Icon(Icons.edit_outlined, color: cs.primary.withValues(alpha: 0.7), size: 20.sp),
+                    icon: Icon(
+                      Icons.edit_outlined,
+                      color: cs.primary.withValues(alpha: 0.7),
+                      size: 20.sp,
+                    ),
                     onPressed: onEdit,
                   ),
                 if (onDelete != null)
                   IconButton(
-                    icon: Icon(Icons.delete_outline_rounded, color: Colors.red.withValues(alpha: 0.6), size: 20.sp),
+                    icon: Icon(
+                      Icons.delete_outline_rounded,
+                      color: Colors.red.withValues(alpha: 0.6),
+                      size: 20.sp,
+                    ),
                     onPressed: onDelete,
                   ),
               ],
@@ -404,25 +475,46 @@ class PlaylistCard extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       backgroundColor: cs.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24.r))),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
       builder: (ctx) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: 8.h),
-            Container(width: 40.w, height: 4.h, decoration: BoxDecoration(color: cs.onSurface.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(4.r))),
+            Container(
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: cs.onSurface.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(4.r),
+              ),
+            ),
             SizedBox(height: 12.h),
             if (onEdit != null)
               ListTile(
                 leading: Icon(Icons.edit_rounded, color: cs.primary),
                 title: Text(AppLocalizations.of(context)!.playlistEdit),
-                onTap: () { Navigator.pop(ctx); onEdit!(); },
+                onTap: () {
+                  Navigator.pop(ctx);
+                  onEdit!();
+                },
               ),
             if (onDelete != null)
               ListTile(
-                leading: Icon(Icons.delete_outline_rounded, color: Colors.red.shade400),
-                title: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: Colors.red.shade400)),
-                onTap: () { Navigator.pop(ctx); onDelete!(); },
+                leading: Icon(
+                  Icons.delete_outline_rounded,
+                  color: Colors.red.shade400,
+                ),
+                title: Text(
+                  AppLocalizations.of(context)!.delete,
+                  style: TextStyle(color: Colors.red.shade400),
+                ),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  onDelete!();
+                },
               ),
             SizedBox(height: 24.h),
           ],

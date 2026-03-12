@@ -17,7 +17,8 @@ class NotificationsScreen extends ConsumerStatefulWidget {
   const NotificationsScreen({super.key});
 
   @override
-  ConsumerState<NotificationsScreen> createState() => _NotificationsScreenState();
+  ConsumerState<NotificationsScreen> createState() =>
+      _NotificationsScreenState();
 }
 
 class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
@@ -62,7 +63,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     if (!n.isRead) {
       // Optimistic update
       setState(() {
-        final index = _notifications.indexWhere((element) => element.id == n.id);
+        final index = _notifications.indexWhere(
+          (element) => element.id == n.id,
+        );
         if (index != -1) {
           _notifications[index] = _notifications[index].copyWith(isRead: true);
         }
@@ -137,11 +140,12 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     }
   }
 
-
   Future<void> _markAllAsRead() async {
     // Optimistic update
     setState(() {
-      _notifications = _notifications.map((n) => n.copyWith(isRead: true)).toList();
+      _notifications = _notifications
+          .map((n) => n.copyWith(isRead: true))
+          .toList();
     });
 
     try {
@@ -189,46 +193,57 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : _errorMessage != null
-                ? Center(child: Text(_errorMessage!))
-                : _notifications.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(24.w),
-                              decoration: BoxDecoration(
-                                color: cs.primary.withValues(alpha: 0.08),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(Icons.notifications_none_rounded, size: 64.w, color: cs.primary.withValues(alpha: 0.4)),
-                            ),
-                            SizedBox(height: 16.h),
-                            Text(
-                              AppLocalizations.of(context)!.noNotificationsFound, 
-                              style: AppTextStyles.getTitleMedium(context).copyWith(
-                                color: cs.onSurface.withValues(alpha: 0.5),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: _fetchNotifications,
-                        child: ListView.separated(
-                          padding: EdgeInsets.all(16.w),
-                          itemCount: _notifications.length,
-                          separatorBuilder: (_, __) => Divider(height: 24.h, thickness: 0.5, color: cs.outlineVariant),
-                          itemBuilder: (context, index) {
-                            final n = _notifications[index];
-                            return NotificationTile(
-                              notification: n,
-                              onTap: () => _handleNotificationTap(n),
-                            ).animate().fadeIn(delay: Duration(milliseconds: index * 50)).slideX(begin: -0.05);
-                          },
-                        ),
+            ? Center(child: Text(_errorMessage!))
+            : _notifications.isEmpty
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(24.w),
+                      decoration: BoxDecoration(
+                        color: cs.primary.withValues(alpha: 0.08),
+                        shape: BoxShape.circle,
                       ),
+                      child: Icon(
+                        Icons.notifications_none_rounded,
+                        size: 64.w,
+                        color: cs.primary.withValues(alpha: 0.4),
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+                    Text(
+                      AppLocalizations.of(context)!.noNotificationsFound,
+                      style: AppTextStyles.getTitleMedium(context).copyWith(
+                        color: cs.onSurface.withValues(alpha: 0.5),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : RefreshIndicator(
+                onRefresh: _fetchNotifications,
+                child: ListView.separated(
+                  padding: EdgeInsets.all(16.w),
+                  itemCount: _notifications.length,
+                  separatorBuilder: (_, __) => Divider(
+                    height: 24.h,
+                    thickness: 0.5,
+                    color: cs.outlineVariant,
+                  ),
+                  itemBuilder: (context, index) {
+                    final n = _notifications[index];
+                    return NotificationTile(
+                          notification: n,
+                          onTap: () => _handleNotificationTap(n),
+                        )
+                        .animate()
+                        .fadeIn(delay: Duration(milliseconds: index * 50))
+                        .slideX(begin: -0.05);
+                  },
+                ),
+              ),
       ),
     );
   }
@@ -255,9 +270,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
             ),
             Text(
               AppLocalizations.of(context)!.viewAll,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: cs.primary,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: cs.primary),
             ),
           ],
         ),
@@ -316,7 +331,9 @@ class NotificationTile extends StatelessWidget {
               height: 52.w,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12.r),
-                color: notification.isRead ? cs.onSurface.withValues(alpha: 0.05) : cs.primary.withValues(alpha: 0.1),
+                color: notification.isRead
+                    ? cs.onSurface.withValues(alpha: 0.05)
+                    : cs.primary.withValues(alpha: 0.1),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.r),
@@ -324,12 +341,18 @@ class NotificationTile extends StatelessWidget {
                     ? CachedNetworkImage(
                         imageUrl: notification.imageUrl!,
                         fit: BoxFit.cover,
-                        placeholder: (_, __) => Icon(Icons.notifications, color: cs.primary.withValues(alpha: 0.5)),
-                        errorWidget: (_, __, ___) => Icon(Icons.notifications, color: cs.primary),
+                        placeholder: (_, __) => Icon(
+                          Icons.notifications,
+                          color: cs.primary.withValues(alpha: 0.5),
+                        ),
+                        errorWidget: (_, __, ___) =>
+                            Icon(Icons.notifications, color: cs.primary),
                       )
                     : Icon(
                         _getIconForKind(notification.kind),
-                        color: notification.isRead ? cs.onSurface.withValues(alpha: 0.4) : cs.primary,
+                        color: notification.isRead
+                            ? cs.onSurface.withValues(alpha: 0.4)
+                            : cs.primary,
                         size: 24.w,
                       ),
               ),
@@ -348,8 +371,12 @@ class NotificationTile extends StatelessWidget {
                         child: Text(
                           notification.getLocalizedTitle(locale),
                           style: AppTextStyles.getBodyLarge(context).copyWith(
-                            fontWeight: notification.isRead ? FontWeight.w600 : FontWeight.w800,
-                            color: notification.isRead ? cs.onSurface.withValues(alpha: 0.7) : cs.onSurface,
+                            fontWeight: notification.isRead
+                                ? FontWeight.w600
+                                : FontWeight.w800,
+                            color: notification.isRead
+                                ? cs.onSurface.withValues(alpha: 0.7)
+                                : cs.onSurface,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -359,7 +386,10 @@ class NotificationTile extends StatelessWidget {
                         Container(
                           width: 8.w,
                           height: 8.w,
-                          decoration: BoxDecoration(color: cs.primary, shape: BoxShape.circle),
+                          decoration: BoxDecoration(
+                            color: cs.primary,
+                            shape: BoxShape.circle,
+                          ),
                         ),
                     ],
                   ),
@@ -392,10 +422,14 @@ class NotificationTile extends StatelessWidget {
 
   IconData _getIconForKind(String kind) {
     switch (kind) {
-      case 'new_track': return Icons.music_note_rounded;
-      case 'new_category': return Icons.category_rounded;
-      case 'system': return Icons.settings_suggest_rounded;
-      default: return Icons.notifications_rounded;
+      case 'new_track':
+        return Icons.music_note_rounded;
+      case 'new_category':
+        return Icons.category_rounded;
+      case 'system':
+        return Icons.settings_suggest_rounded;
+      default:
+        return Icons.notifications_rounded;
     }
   }
 
@@ -407,7 +441,7 @@ class NotificationTile extends StatelessWidget {
     if (diff.inMinutes < 60) return l10n.timeMinutesAgo(diff.inMinutes);
     if (diff.inHours < 24) return l10n.timeHoursAgo(diff.inHours);
     if (diff.inDays < 7) return l10n.timeDaysAgo(diff.inDays);
-    
+
     return '${dt.day}/${dt.month}/${dt.year}';
   }
 }
@@ -415,4 +449,3 @@ class NotificationTile extends StatelessWidget {
 // These are no longer needed
 // class NotificationItem ...
 // enum NotificationType ...
-

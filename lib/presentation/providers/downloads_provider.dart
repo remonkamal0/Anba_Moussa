@@ -34,7 +34,10 @@ class DownloadsNotifier extends StateNotifier<DownloadsState> {
 
   void _init() {
     final ids = DownloadService.instance.getAllDownloadedIds();
-    final tracks = ids.map((id) => DownloadService.instance.getTrack(id)).whereType<Track>().toList();
+    final tracks = ids
+        .map((id) => DownloadService.instance.getTrack(id))
+        .whereType<Track>()
+        .toList();
     state = state.copyWith(downloadedTracks: tracks);
   }
 
@@ -75,7 +78,7 @@ class DownloadsNotifier extends StateNotifier<DownloadsState> {
 
   Future<void> removeDownload(String trackId) async {
     await DownloadService.instance.deleteDownload(trackId);
-    
+
     // Sync with Supabase (delete record)
     try {
       await sl.trackRepository.removeFromDownloads(trackId);
@@ -84,14 +87,18 @@ class DownloadsNotifier extends StateNotifier<DownloadsState> {
     }
 
     state = state.copyWith(
-      downloadedTracks: state.downloadedTracks.where((t) => t.id != trackId).toList(),
+      downloadedTracks: state.downloadedTracks
+          .where((t) => t.id != trackId)
+          .toList(),
     );
   }
 
-  bool isDownloaded(String trackId) => state.downloadedTracks.any((t) => t.id == trackId);
+  bool isDownloaded(String trackId) =>
+      state.downloadedTracks.any((t) => t.id == trackId);
   double? getProgress(String trackId) => state.downloadProgress[trackId];
 }
 
-final downloadsProvider = StateNotifierProvider<DownloadsNotifier, DownloadsState>((ref) {
-  return DownloadsNotifier();
-});
+final downloadsProvider =
+    StateNotifierProvider<DownloadsNotifier, DownloadsState>((ref) {
+      return DownloadsNotifier();
+    });

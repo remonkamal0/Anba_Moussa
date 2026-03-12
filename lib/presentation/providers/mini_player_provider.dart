@@ -22,7 +22,8 @@ class MiniPlayerTrack {
   });
 
   String getLocalizedTitle(String locale) => locale == 'ar' ? titleAr : titleEn;
-  String getLocalizedSpeaker(String locale) => locale == 'ar' ? speakerAr : speakerEn;
+  String getLocalizedSpeaker(String locale) =>
+      locale == 'ar' ? speakerAr : speakerEn;
 }
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -58,11 +59,7 @@ class MiniPlayerNotifier extends StateNotifier<MiniPlayerState> {
 
   /// Call when a track starts playing
   void play(MiniPlayerTrack track) {
-    state = state.copyWith(
-      track: track,
-      isVisible: true,
-      isPlaying: true,
-    );
+    state = state.copyWith(track: track, isVisible: true, isPlaying: true);
   }
 
   void setPlaying(bool playing) {
@@ -90,5 +87,5 @@ class MiniPlayerNotifier extends StateNotifier<MiniPlayerState> {
 
 final miniPlayerProvider =
     StateNotifierProvider<MiniPlayerNotifier, MiniPlayerState>(
-  (ref) => MiniPlayerNotifier(),
-);
+      (ref) => MiniPlayerNotifier(),
+    );

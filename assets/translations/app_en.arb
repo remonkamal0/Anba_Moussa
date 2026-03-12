@@ -1,5 +1,6 @@
 {
   "@@locale": "en",
+  "adminErrorCategoryHasTracks": "Cannot delete category because it has associated tracks. Please delete or move the tracks first.",
   "appTitle": "Anba Moussa",
   "@appTitle": {
     "description": "The title of the application"
@@ -114,6 +115,17 @@
   "genderFemale": "Female",
   "birthDate": "BIRTH DATE",
   "pickDate": "Pick Date",
+  "adminSelectToView": "Select an album to view {entity}",
+  "adminSlug": "Slug",
+  "adminSubtitleAr": "Subtitle (AR)",
+  "adminSubtitleEn": "Subtitle (EN)",
+  "adminDescriptionAr": "Description (AR)",
+  "adminDescriptionEn": "Description (EN)",
+  "adminSpeakerAr": "Speaker (AR)",
+  "adminSpeakerEn": "Speaker (EN)",
+  "adminSortOrder": "Sort Order",
+  "adminIsActive": "Is Active",
+  "adminSelectCategory": "Select Category",
   "select": "Select",
   "required": "Required",
   "editProfile": "Edit Profile",
@@ -259,5 +271,142 @@
   "profileFavorites": "Favorites",
   "profileDownloads": "Downloads",
   "profileNotifications": "Notifications",
-  "profileLogOut": "Log Out"
+  "profileLogOut": "Log Out",
+  "adminDashboardTitle": "Admin Dashboard",
+  "adminSystemManagement": "System Management",
+  "adminAudioContent": "Audio Content",
+  "adminManageCategories": "Manage Categories",
+  "adminOrganizeAudioAlbums": "Organize Audio Albums",
+  "adminManageTracks": "Manage Tracks",
+  "adminUploadEditTracks": "Upload & Edit Tracks",
+  "adminMediaContent": "Media Content",
+  "adminPhotoAlbums": "Photo Albums",
+  "adminManageGallery": "Manage Gallery",
+  "adminPhotos": "Photos",
+  "adminAddRemovePhotos": "Add/Remove Photos",
+  "adminVideoAlbums": "Video Albums",
+  "adminManageVideoSeries": "Manage Video Series",
+  "adminVideos": "Videos",
+  "adminManageIndividualVideos": "Manage Videos",
+  "adminMetadata": "Metadata",
+  "adminManageTags": "Manage Tags",
+  "adminGlobalTagging": "Global Tagging System",
+  "adminSystem": "System",
+  "adminBroadcastMessages": "Broadcast Messages",
+  "adminNew": "New {entity}",
+  "@adminNew": {
+    "placeholders": {
+      "entity": {
+        "type": "String"
+      }
+    }
+  },
+  "adminEdit": "Edit {entity}",
+  "@adminEdit": {
+    "placeholders": {
+      "entity": {
+        "type": "String"
+      }
+    }
+  },
+  "adminDeleteConfirm": "Delete {entity} \"{name}\"?",
+  "@adminDeleteConfirm": {
+    "placeholders": {
+      "entity": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminCreated": "{entity} created successfully",
+  "@adminCreated": {
+    "placeholders": {
+      "entity": {
+        "type": "String"
+      }
+    }
+  },
+  "adminUpdated": "{entity} updated successfully",
+  "@adminUpdated": {
+    "placeholders": {
+      "entity": {
+        "type": "String"
+      }
+    }
+  },
+  "adminCategory": "Category",
+  "adminTrack": "Track",
+  "adminTag": "Tag",
+  "adminPhotoAlbum": "Photo Album",
+  "adminVideoAlbum": "Video Album",
+  "adminPhoto": "Photo",
+  "adminVideo": "Video",
+  "adminTitleAr": "Title (AR)",
+  "adminTitleEn": "Title (EN)",
+  "adminImageUrl": "Image URL",
+  "adminVideoUrl": "Video URL",
+  "adminAudioUrl": "Audio URL",
+  "adminCoverImageUrl": "Cover Image URL",
+  "adminThumbnailUrl": "Thumbnail URL",
+  "adminDuration": "Duration (seconds)",
+  "adminConfirmDelete": "Confirm Delete",
+  "adminCreate": "Create",
+  "adminUpdate": "Update",
+  "adminSelectAlbum": "Select Album",
+  "adminSelectVideoAlbum": "Select Video Album",
+  "adminNotificationPanel": "Notification Panel",
+  "adminSendNewNotification": "Send New Notification",
+  "adminNotificationContent": "Notification Content",
+  "adminBodyAr": "Body (AR)",
+  "adminBodyEn": "Body (EN)",
+  "adminBodyHintAr": "e.g. Tap for details...",
+  "adminBodyHintEn": "e.g. Tap for details...",
+  "adminTitleHintAr": "e.g. New Track 🎵",
+  "adminTitleHintEn": "e.g. New Track 🎵",
+  "adminSettings": "Settings",
+  "adminNotificationKind": "Notification Kind",
+  "adminTargetAudience": "Target Audience",
+  "adminUserUuids": "User UUIDs",
+  "adminUserUuidsHint": "uuid1, uuid2...",
+  "adminUserUuidsHelper": "You can enter multiple UUIDs separated by commas",
+  "adminOnTapAction": "On Tap Action",
+  "adminNoAction": "No Action",
+  "adminInternalScreen": "Internal Screen",
+  "adminExternalLink": "External Link",
+  "adminSelectScreen": "Select Screen",
+  "adminSelectScreenWarning": "Please select an internal screen",
+  "adminSelectEntityWarning": "Please select {entity}",
+  "adminExternalUrl": "External URL",
+  "adminExternalUrlHint": "https://example.com",
+  "adminInvalidUrl": "Invalid URL",
+  "adminSendNotificationSuccess": "Notification sent successfully ✅",
+  "adminChooseEntity": "Choose {entity}",
+  "adminSearchByName": "Search by name...",
+  "adminNotificationKindGeneral": "General",
+  "adminNotificationKindNewTrack": "New Track 🎵",
+  "adminNotificationKindNewCategory": "New Category 📂",
+  "adminNotificationKindSystem": "System ⚙️",
+  "adminNotificationKindOffer": "Offer 🎁",
+  "adminAudienceAll": "Everyone 🌍",
+  "adminAudienceSpecific": "Specific User 👤",
+  "adminRouteHome": "Home 🏠",
+  "adminRouteLibrary": "Library 📚",
+  "adminRouteSearch": "Search 🔍",
+  "adminRouteFavorites": "Favorites ❤️",
+  "adminRouteDownloads": "Downloads ⬇️",
+  "adminRoutePhotoGallery": "Photo Gallery 🖼️",
+  "adminRouteVideoGallery": "Video Gallery 🎬",
+  "adminRouteAudioAlbum": "Specific Audio Album 💿",
+  "adminRoutePlaylist": "Playlist 🎵",
+  "adminRouteTrack": "Specific Track 🎧",
+  "adminRouteVideo": "Specific Video 🎬",
+  "adminRoutePhotoAlbum": "Specific Photo Album 🖼️",
+  "adminRouteVideoAlbum": "Specific Video Album 🎬",
+  "adminNotificationBannerTitle": "Notification Sending Panel",
+  "adminNotificationBannerSubtitle": "Send notifications with direct links to tracks and albums",
+  "adminLinkTracks": "Link Tracks",
+  "adminLinkTracksSuccess": "Tracks linked successfully",
+  "adminSearchTracks": "Search Tracks"
 }

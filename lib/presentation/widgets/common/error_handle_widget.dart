@@ -20,7 +20,9 @@ class ErrorHandleWidget extends StatelessWidget {
     }
 
     final errorStr = error.toString().toLowerCase();
-    if (errorStr.contains('socketexception') || errorStr.contains('failed host lookup') || errorStr.contains('network_error')) {
+    if (errorStr.contains('socketexception') ||
+        errorStr.contains('failed host lookup') ||
+        errorStr.contains('network_error')) {
       return NoInternetWidget(onRetry: onRetry);
     }
 

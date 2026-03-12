@@ -29,32 +29,79 @@ class _HomeScreenState extends State<HomeScreen> {
     _SliderItem(
       title: "New Album:\nR&B Soul Hits",
       subtitle: "Listen to the latest tracks from top artists",
-      imageUrl: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=1200&q=80",
+      imageUrl:
+          "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=1200&q=80",
     ),
     _SliderItem(
       title: "Top Praise:\nKoinonia",
       subtitle: "Fellowship tracks for your day",
-      imageUrl: "https://images.unsplash.com/photo-1522780209446-3f30c0a4c69d?w=1200&q=80",
+      imageUrl:
+          "https://images.unsplash.com/photo-1522780209446-3f30c0a4c69d?w=1200&q=80",
     ),
     _SliderItem(
       title: "New Release:\nSpiritual Vibes",
       subtitle: "Fresh tracks every week",
-      imageUrl: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1200&q=80",
+      imageUrl:
+          "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1200&q=80",
     ),
   ];
 
   final List<_CategoryItem> categories = const [
-    _CategoryItem(title: "Jazz", imageUrl: "https://picsum.photos/seed/jazz/300/400"),
-    _CategoryItem(title: "Rock", imageUrl: "https://picsum.photos/seed/rock/300/400"),
-    _CategoryItem(title: "Pop", imageUrl: "https://picsum.photos/seed/pop/300/400"),
-    _CategoryItem(title: "Classic", imageUrl: "https://picsum.photos/seed/classic/300/400"),
+    _CategoryItem(
+      title: "Jazz",
+      imageUrl: "https://picsum.photos/seed/jazz/300/400",
+    ),
+    _CategoryItem(
+      title: "Rock",
+      imageUrl: "https://picsum.photos/seed/rock/300/400",
+    ),
+    _CategoryItem(
+      title: "Pop",
+      imageUrl: "https://picsum.photos/seed/pop/300/400",
+    ),
+    _CategoryItem(
+      title: "Classic",
+      imageUrl: "https://picsum.photos/seed/classic/300/400",
+    ),
   ];
 
   final List<_SongItem> topSongs = const [
-    _SongItem(rank: 1, title: "Amelia ...", artist: "Starry Skies", duration: "3:45", coverUrl: "https://picsum.photos/seed/a1/200/200", liked: true, downloaded: true),
-    _SongItem(rank: 2, title: "Olivia Lyric", artist: "Sunset Serenity", duration: "4:02", coverUrl: "https://picsum.photos/seed/a2/200/200", liked: false, downloaded: false),
-    _SongItem(rank: 3, title: "Mason Chorus", artist: "Eternal Sunset", duration: "3:28", coverUrl: "https://picsum.photos/seed/a3/200/200", liked: false, downloaded: true),
-    _SongItem(rank: 4, title: "Midnight Dreams", artist: "Luna Rose", duration: "3:11", coverUrl: "https://picsum.photos/seed/a4/200/200", liked: true, downloaded: false),
+    _SongItem(
+      rank: 1,
+      title: "Amelia ...",
+      artist: "Starry Skies",
+      duration: "3:45",
+      coverUrl: "https://picsum.photos/seed/a1/200/200",
+      liked: true,
+      downloaded: true,
+    ),
+    _SongItem(
+      rank: 2,
+      title: "Olivia Lyric",
+      artist: "Sunset Serenity",
+      duration: "4:02",
+      coverUrl: "https://picsum.photos/seed/a2/200/200",
+      liked: false,
+      downloaded: false,
+    ),
+    _SongItem(
+      rank: 3,
+      title: "Mason Chorus",
+      artist: "Eternal Sunset",
+      duration: "3:28",
+      coverUrl: "https://picsum.photos/seed/a3/200/200",
+      liked: false,
+      downloaded: true,
+    ),
+    _SongItem(
+      rank: 4,
+      title: "Midnight Dreams",
+      artist: "Luna Rose",
+      duration: "3:11",
+      coverUrl: "https://picsum.photos/seed/a4/200/200",
+      liked: true,
+      downloaded: false,
+    ),
   ];
 
   @override
@@ -107,7 +154,10 @@ class _HomeScreenState extends State<HomeScreen> {
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -150,10 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       SizedBox(height: 8.h),
 
-                      _TopSongsList(
-                        songs: topSongs,
-                        orange: _orange,
-                      ),
+                      _TopSongsList(songs: topSongs, orange: _orange),
 
                       SizedBox(height: 18.h),
                     ],
@@ -266,7 +313,7 @@ class _TopBar extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ],
@@ -301,7 +348,8 @@ class _SliderSection extends StatelessWidget {
             controller: pageController,
             itemCount: sliders.length,
             onPageChanged: (index) => onChanged(index),
-            itemBuilder: (_, i) => _SliderCard(item: sliders[i], orange: orange),
+            itemBuilder: (_, i) =>
+                _SliderCard(item: sliders[i], orange: orange),
           ),
         ),
         SizedBox(height: 10.h),
@@ -331,19 +379,26 @@ class _SliderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(26.r), // Changed from AppConstants.mediumBorderRadius.r to 26.r to match original
+      borderRadius: BorderRadius.circular(
+        26.r,
+      ), // Changed from AppConstants.mediumBorderRadius.r to 26.r to match original
       child: Stack(
         fit: StackFit.expand,
         children: [
-          CachedNetworkImage( // Replaced Image.network
+          CachedNetworkImage(
+            // Replaced Image.network
             imageUrl: item.imageUrl,
             width: double.infinity,
             height: double.infinity,
             fit: BoxFit.cover,
-            placeholder: (_, __) => Container(color: Theme.of(context).colorScheme.surfaceVariant),
+            placeholder: (_, __) =>
+                Container(color: Theme.of(context).colorScheme.surfaceVariant),
             errorWidget: (_, __, ___) => Container(
               color: Theme.of(context).colorScheme.surfaceVariant,
-              child: Icon(Icons.broken_image, color: Theme.of(context).colorScheme.onSurfaceVariant),
+              child: Icon(
+                Icons.broken_image,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
 
@@ -353,10 +408,7 @@ class _SliderCard extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  orange.withOpacity(0.70),
-                  orange.withOpacity(0.88),
-                ],
+                colors: [orange.withOpacity(0.70), orange.withOpacity(0.88)],
               ),
             ),
           ),
@@ -455,10 +507,7 @@ class _SectionHeader extends StatelessWidget {
             onPressed: onAction,
             child: Text(
               actionText,
-              style: TextStyle(
-                color: orange,
-                fontWeight: FontWeight.w900,
-              ),
+              style: TextStyle(color: orange, fontWeight: FontWeight.w900),
             ),
           ),
       ],
@@ -470,10 +519,7 @@ class _CategoriesRow extends StatelessWidget {
   final List<_CategoryItem> categories;
   final Color orange;
 
-  const _CategoriesRow({
-    required this.categories,
-    required this.orange,
-  });
+  const _CategoriesRow({required this.categories, required this.orange});
 
   @override
   Widget build(BuildContext context) {
@@ -510,13 +556,19 @@ class _CategoriesRow extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    CachedNetworkImage( // Replaced Image.network
+                    CachedNetworkImage(
+                      // Replaced Image.network
                       imageUrl: c.imageUrl,
                       fit: BoxFit.cover,
-                      placeholder: (_, __) => Container(color: Theme.of(context).colorScheme.surfaceVariant),
+                      placeholder: (_, __) => Container(
+                        color: Theme.of(context).colorScheme.surfaceVariant,
+                      ),
                       errorWidget: (_, __, ___) => Container(
                         color: Theme.of(context).colorScheme.surfaceVariant,
-                        child: Icon(Icons.broken_image, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        child: Icon(
+                          Icons.broken_image,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ),
                     Align(
@@ -535,7 +587,7 @@ class _CategoriesRow extends StatelessWidget {
                               Shadow(
                                 color: Colors.black.withOpacity(0.45),
                                 blurRadius: 10,
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -556,10 +608,7 @@ class _TopSongsList extends StatelessWidget {
   final List<_SongItem> songs;
   final Color orange;
 
-  const _TopSongsList({
-    required this.songs,
-    required this.orange,
-  });
+  const _TopSongsList({required this.songs, required this.orange});
 
   @override
   Widget build(BuildContext context) {
@@ -581,7 +630,7 @@ class _TopSongsList extends StatelessWidget {
                   color: Colors.black.withOpacity(0.06),
                   blurRadius: 18,
                   offset: const Offset(0, 10),
-                )
+                ),
               ],
             ),
             child: Row(
@@ -603,7 +652,9 @@ class _TopSongsList extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14.r),
                     color: cs.surfaceVariant,
                     image: DecorationImage(
-                      image: CachedNetworkImageProvider(s.coverUrl), // Replaced NetworkImage
+                      image: CachedNetworkImageProvider(
+                        s.coverUrl,
+                      ), // Replaced NetworkImage
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -675,12 +726,14 @@ class _TopSongsList extends StatelessWidget {
                           color: orange.withOpacity(0.35),
                           blurRadius: 18,
                           offset: const Offset(0, 10),
-                        )
+                        ),
                     ],
                   ),
                   child: Icon(
                     Icons.play_arrow_rounded,
-                    color: first ? Colors.white : cs.onSurface.withValues(alpha: 0.4),
+                    color: first
+                        ? Colors.white
+                        : cs.onSurface.withValues(alpha: 0.4),
                     size: 30.sp,
                   ),
                 ),
@@ -716,7 +769,7 @@ class _BottomNav extends StatelessWidget {
             color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 18,
             offset: const Offset(0, -8),
-          )
+          ),
         ],
       ),
       child: BottomNavigationBar(
@@ -729,11 +782,31 @@ class _BottomNav extends StatelessWidget {
         showUnselectedLabels: true,
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w800),
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), activeIcon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.library_music_outlined), activeIcon: Icon(Icons.library_music), label: 'Library'),
-          BottomNavigationBarItem(icon: Icon(Icons.photo_library_outlined), activeIcon: Icon(Icons.photo_library), label: 'Gallery'),
-          BottomNavigationBarItem(icon: Icon(Icons.video_library_outlined), activeIcon: Icon(Icons.video_library), label: 'Videos'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), activeIcon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.library_music_outlined),
+            activeIcon: Icon(Icons.library_music),
+            label: 'Library',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.photo_library_outlined),
+            activeIcon: Icon(Icons.photo_library),
+            label: 'Gallery',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.video_library_outlined),
+            activeIcon: Icon(Icons.video_library),
+            label: 'Videos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
+            label: 'Profile',
+          ),
         ],
       ),
     );
@@ -746,7 +819,11 @@ class _SliderItem {
   final String title;
   final String subtitle;
   final String imageUrl;
-  const _SliderItem({required this.title, required this.subtitle, required this.imageUrl});
+  const _SliderItem({
+    required this.title,
+    required this.subtitle,
+    required this.imageUrl,
+  });
 }
 
 class _CategoryItem {

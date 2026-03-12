@@ -39,7 +39,8 @@ class _HomeViewContent extends riverpod.ConsumerStatefulWidget {
   const _HomeViewContent();
 
   @override
-  riverpod.ConsumerState<_HomeViewContent> createState() => _HomeViewContentState();
+  riverpod.ConsumerState<_HomeViewContent> createState() =>
+      _HomeViewContentState();
 }
 
 class _HomeViewContentState extends riverpod.ConsumerState<_HomeViewContent> {
@@ -65,32 +66,35 @@ class _HomeViewContentState extends riverpod.ConsumerState<_HomeViewContent> {
 
   Widget build(BuildContext context) {
     final userProfile = ref.watch(userProfileProvider);
-    
+
     return Consumer<HomeProvider>(
       builder: (context, provider, child) {
-          return provider.state.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (err) => ErrorHandleWidget(
-              error: err,
-              onRetry: () => provider.refresh(),
-            ),
-            loaded: (tracks, categories, sliders, favoriteIds, currentIndex) {
-              return Scaffold(
-                backgroundColor: Theme.of(context).colorScheme.surface,
-                drawer: AppDrawer(),
-                body: SafeArea(
-                  child: Column(
-                    children: [
-                      _TopBar(
-                        userName: userProfile.fullName,
-                        onSearch: () => context.push('/search'),
-                        onNotifications: () => context.push('/notifications'),
-                      ),
-                      Expanded(
+        return provider.state.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (err) =>
+              ErrorHandleWidget(error: err, onRetry: () => provider.refresh()),
+          loaded: (tracks, categories, sliders, favoriteIds, currentIndex) {
+            return Scaffold(
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              drawer: AppDrawer(),
+              body: SafeArea(
+                child: Column(
+                  children: [
+                    _TopBar(
+                      userName: userProfile.fullName,
+                      onSearch: () => context.push('/search'),
+                      onNotifications: () => context.push('/notifications'),
+                    ),
+                    Expanded(
+                      child: RefreshIndicator(
+                        onRefresh: () => provider.refresh(),
                         child: SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
+                          physics: const AlwaysScrollableScrollPhysics(),
                           child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 8.h,
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -105,28 +109,42 @@ class _HomeViewContentState extends riverpod.ConsumerState<_HomeViewContent> {
                                 ).animate().slideY(begin: 0.05, duration: 300.ms),
                                 SizedBox(height: 16.h),
                                 _SectionHeader(
-                                  title: AppLocalizations.of(context)!.homeCategories,
-                                  actionText: AppLocalizations.of(context)!.homeViewAll,
+                                  title: AppLocalizations.of(
+                                    context,
+                                  )!.homeCategories,
+                                  actionText: AppLocalizations.of(
+                                    context,
+                                  )!.homeViewAll,
                                   onAction: () => context.push('/library'),
-                                ).animate().fadeIn(delay: 120.ms, duration: 250.ms),
+                                ).animate().fadeIn(
+                                  delay: 120.ms,
+                                  duration: 250.ms,
+                                ),
                                 SizedBox(height: 8.h),
-                                _CategoriesRow(
-                                  categories: categories,
-                                ).animate().slideX(begin: -0.04, duration: 300.ms),
+                                _CategoriesRow(categories: categories)
+                                    .animate()
+                                    .slideX(begin: -0.04, duration: 300.ms),
                                 SizedBox(height: 16.h),
                                 _SectionHeader(
-                                  title: AppLocalizations.of(context)!.homeTopTracks,
+                                  title: AppLocalizations.of(
+                                    context,
+                                  )!.homeTopTracks,
                                   actionText: "",
                                   trailingIcon: Icons.tune,
                                   onTrailing: () {},
-                                ).animate().fadeIn(delay: 180.ms, duration: 250.ms),
+                                ).animate().fadeIn(
+                                  delay: 180.ms,
+                                  duration: 250.ms,
+                                ),
                                 SizedBox(height: 8.h),
                                 _TopTracksList(
                                   tracks: tracks,
                                   onPlay: (t) {
                                     final index = tracks.indexOf(t);
                                     if (index != -1) {
-                                      ref.read(audioProvider.notifier).loadPlaylist(tracks, index);
+                                      ref
+                                          .read(audioProvider.notifier)
+                                          .loadPlaylist(tracks, index);
                                     }
                                   },
                                 ),
@@ -136,14 +154,15 @@ class _HomeViewContentState extends riverpod.ConsumerState<_HomeViewContent> {
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              );
-            },
-          );
-        },
-      );
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 }
 
@@ -182,18 +201,18 @@ class _TopBar extends StatelessWidget {
               children: [
                 Text(
                   AppLocalizations.of(context)!.homeWelcomeBack,
-                  style: AppTextStyles.getBodySmall(context).copyWith(
-                    color: cs.onSurface.withValues(alpha: 0.5),
-                  ),
+                  style: AppTextStyles.getBodySmall(
+                    context,
+                  ).copyWith(color: cs.onSurface.withValues(alpha: 0.5)),
                 ),
                 SizedBox(height: 2.h),
                 Text(
                   userName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.getDisplayMedium(context).copyWith(
-                    color: cs.onSurface,
-                  ),
+                  style: AppTextStyles.getDisplayMedium(
+                    context,
+                  ).copyWith(color: cs.onSurface),
                 ),
               ],
             ),
@@ -210,7 +229,9 @@ class _TopBar extends StatelessWidget {
               ),
               riverpod.Consumer(
                 builder: (context, ref, child) {
-                  final unreadCount = ref.watch(unreadNotificationsCountProvider);
+                  final unreadCount = ref.watch(
+                    unreadNotificationsCountProvider,
+                  );
                   return unreadCount.when(
                     data: (count) {
                       if (count > 0) {
@@ -294,15 +315,20 @@ class _SliderSection extends StatelessWidget {
             SizedBox(height: 10.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(sliders.length, (i) => Container(
-                width: i == currentIndex ? 16.w : 6.w,
-                height: 6.w,
-                margin: EdgeInsets.symmetric(horizontal: 4.w),
-                decoration: BoxDecoration(
-                  color: i == currentIndex ? orange : cs.onSurface.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10.r),
+              children: List.generate(
+                sliders.length,
+                (i) => Container(
+                  width: i == currentIndex ? 16.w : 6.w,
+                  height: 6.w,
+                  margin: EdgeInsets.symmetric(horizontal: 4.w),
+                  decoration: BoxDecoration(
+                    color: i == currentIndex
+                        ? orange
+                        : cs.onSurface.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
                 ),
-              )),
+              ),
             ),
           ],
         );
@@ -315,10 +341,7 @@ class _SliderCard extends StatelessWidget {
   final entity_slider.Slider slider;
   final Color orange;
 
-  const _SliderCard({
-    required this.slider,
-    required this.orange,
-  });
+  const _SliderCard({required this.slider, required this.orange});
 
   @override
   Widget build(BuildContext context) {
@@ -399,7 +422,9 @@ class _SliderCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        slider.getLocalizedTitle(Localizations.localeOf(context).languageCode),
+                        slider.getLocalizedTitle(
+                          Localizations.localeOf(context).languageCode,
+                        ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.getDisplayMedium(context).copyWith(
@@ -408,10 +433,15 @@ class _SliderCard extends StatelessWidget {
                           height: 1.1,
                         ),
                       ),
-                      if (slider.getLocalizedSubtitle(Localizations.localeOf(context).languageCode) != null) ...[
+                      if (slider.getLocalizedSubtitle(
+                            Localizations.localeOf(context).languageCode,
+                          ) !=
+                          null) ...[
                         SizedBox(height: 6.h),
                         Text(
-                          slider.getLocalizedSubtitle(Localizations.localeOf(context).languageCode)!,
+                          slider.getLocalizedSubtitle(
+                            Localizations.localeOf(context).languageCode,
+                          )!,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: AppTextStyles.getBodySmall(context).copyWith(
@@ -456,24 +486,27 @@ class _SectionHeader extends StatelessWidget {
       children: [
         Text(
           title,
-          style: AppTextStyles.getHeadlineLarge(context).copyWith(
-            color: cs.onSurface,
-          ),
+          style: AppTextStyles.getHeadlineLarge(
+            context,
+          ).copyWith(color: cs.onSurface),
         ),
         const Spacer(),
         if (trailingIcon != null)
           IconButton(
             onPressed: onTrailing,
-            icon: Icon(trailingIcon, color: cs.onSurface.withValues(alpha: 0.4)),
+            icon: Icon(
+              trailingIcon,
+              color: cs.onSurface.withValues(alpha: 0.4),
+            ),
           )
         else if (actionText.isNotEmpty)
           TextButton(
             onPressed: onAction,
             child: Text(
               actionText,
-              style: AppTextStyles.getLabelLarge(context).copyWith(
-                color: orange,
-              ),
+              style: AppTextStyles.getLabelLarge(
+                context,
+              ).copyWith(color: orange),
             ),
           ),
       ],
@@ -507,7 +540,9 @@ class _CategoriesRow extends StatelessWidget {
                   Uri(
                     path: '/album/${category.id}',
                     queryParameters: {
-                      'title': category.getLocalizedTitle(Localizations.localeOf(context).languageCode),
+                      'title': category.getLocalizedTitle(
+                        Localizations.localeOf(context).languageCode,
+                      ),
                       'imageUrl': category.imageUrl ?? '',
                     },
                   ).toString(),
@@ -523,10 +558,7 @@ class _CategoriesRow extends StatelessWidget {
                         offset: const Offset(0, 4),
                       ),
                     ],
-                    border: Border.all(
-                      color: cs.outlineVariant,
-                      width: 2,
-                    ),
+                    border: Border.all(color: cs.outlineVariant, width: 2),
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(22.r),
@@ -539,7 +571,10 @@ class _CategoriesRow extends StatelessWidget {
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) => Container(
                               color: cs.surfaceVariant,
-                              child: Icon(Icons.category, color: cs.onSurface.withValues(alpha: 0.3)),
+                              child: Icon(
+                                Icons.category,
+                                color: cs.onSurface.withValues(alpha: 0.3),
+                              ),
                             ),
                           )
                         else
@@ -562,13 +597,16 @@ class _CategoriesRow extends StatelessWidget {
                           child: Padding(
                             padding: EdgeInsets.all(12.w),
                             child: Text(
-                              category.getLocalizedTitle(Localizations.localeOf(context).languageCode),
+                              category.getLocalizedTitle(
+                                Localizations.localeOf(context).languageCode,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.getLabelLarge(context).copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: AppTextStyles.getLabelLarge(context)
+                                  .copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                             ),
                           ),
                         ),
@@ -589,10 +627,7 @@ class _TopTracksList extends riverpod.ConsumerWidget {
   final List<Track> tracks;
   final Function(Track) onPlay;
 
-  const _TopTracksList({
-    required this.tracks,
-    required this.onPlay,
-  });
+  const _TopTracksList({required this.tracks, required this.onPlay});
 
   @override
   Widget build(BuildContext context, riverpod.WidgetRef ref) {
@@ -610,18 +645,25 @@ class _TopTracksList extends riverpod.ConsumerWidget {
           padding: EdgeInsets.only(bottom: 12.h),
           child: Container(
             decoration: BoxDecoration(
-              color: isCurrentTrack ? orange.withValues(alpha: 0.08) : cs.surface,
+              color: isCurrentTrack
+                  ? orange.withValues(alpha: 0.08)
+                  : cs.surface,
               borderRadius: BorderRadius.circular(24.r),
-              boxShadow: isCurrentTrack ? [
-                BoxShadow(
-                  color: orange.withValues(alpha: 0.1),
-                  blurRadius: 15,
-                  offset: const Offset(0, 8),
-                ),
-              ] : null,
-              border: isCurrentTrack 
-                ? Border.all(color: orange.withValues(alpha: 0.15), width: 1.5)
-                : null,
+              boxShadow: isCurrentTrack
+                  ? [
+                      BoxShadow(
+                        color: orange.withValues(alpha: 0.1),
+                        blurRadius: 15,
+                        offset: const Offset(0, 8),
+                      ),
+                    ]
+                  : null,
+              border: isCurrentTrack
+                  ? Border.all(
+                      color: orange.withValues(alpha: 0.15),
+                      width: 1.5,
+                    )
+                  : null,
             ),
             child: Material(
               color: Colors.transparent,
@@ -636,7 +678,10 @@ class _TopTracksList extends riverpod.ConsumerWidget {
                   }
                 },
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 12.h,
+                  ),
                   child: Row(
                     children: [
                       // Thumbnail with Visualizer
@@ -657,7 +702,11 @@ class _TopTracksList extends riverpod.ConsumerWidget {
                                   : null,
                             ),
                             child: track.imageUrl == null
-                                ? Icon(Icons.music_note, color: orange, size: 22.w)
+                                ? Icon(
+                                    Icons.music_note,
+                                    color: orange,
+                                    size: 22.w,
+                                  )
                                 : null,
                           ),
                           if (isPlaying)
@@ -669,19 +718,34 @@ class _TopTracksList extends riverpod.ConsumerWidget {
                                 borderRadius: BorderRadius.circular(16.r),
                               ),
                               child: Center(
-                                child: Icon(
-                                  Icons.bar_chart_rounded,
-                                  color: Colors.white,
-                                  size: 26.w,
-                                ).animate(onPlay: (controller) => controller.repeat())
-                                  .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.2, 1.2), duration: 600.ms, curve: Curves.easeInOut)
-                                  .then()
-                                  .scale(begin: const Offset(1.2, 1.2), end: const Offset(0.8, 0.8), duration: 600.ms, curve: Curves.easeInOut),
+                                child:
+                                    Icon(
+                                          Icons.bar_chart_rounded,
+                                          color: Colors.white,
+                                          size: 26.w,
+                                        )
+                                        .animate(
+                                          onPlay: (controller) =>
+                                              controller.repeat(),
+                                        )
+                                        .scale(
+                                          begin: const Offset(0.8, 0.8),
+                                          end: const Offset(1.2, 1.2),
+                                          duration: 600.ms,
+                                          curve: Curves.easeInOut,
+                                        )
+                                        .then()
+                                        .scale(
+                                          begin: const Offset(1.2, 1.2),
+                                          end: const Offset(0.8, 0.8),
+                                          duration: 600.ms,
+                                          curve: Curves.easeInOut,
+                                        ),
                               ),
                             ),
                         ],
                       ),
-                      
+
                       SizedBox(width: 14.w),
 
                       // Title & Artist
@@ -690,22 +754,35 @@ class _TopTracksList extends riverpod.ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              track.getLocalizedTitle(Localizations.localeOf(context).languageCode),
+                              track.getLocalizedTitle(
+                                Localizations.localeOf(context).languageCode,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.getTitleMedium(context).copyWith(
-                                color: isCurrentTrack ? orange : cs.onSurface,
-                                fontWeight: FontWeight.w700,
-                              ),
+                              style: AppTextStyles.getTitleMedium(context)
+                                  .copyWith(
+                                    color: isCurrentTrack
+                                        ? orange
+                                        : cs.onSurface,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                             ),
                             SizedBox(height: 4.h),
                             Text(
-                              track.getLocalizedSpeaker(Localizations.localeOf(context).languageCode) ?? AppLocalizations.of(context)!.unknownSpeaker,
+                              track.getLocalizedSpeaker(
+                                    Localizations.localeOf(
+                                      context,
+                                    ).languageCode,
+                                  ) ??
+                                  AppLocalizations.of(context)!.unknownSpeaker,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.getBodyMedium(context).copyWith(
-                                color: isCurrentTrack ? orange.withValues(alpha: 0.7) : cs.onSurface.withValues(alpha: 0.6),
-                              ),
+                              style: AppTextStyles.getBodyMedium(context)
+                                  .copyWith(
+                                    color: isCurrentTrack
+                                        ? orange.withValues(alpha: 0.7)
+                                        : cs.onSurface.withValues(alpha: 0.6),
+                                  ),
                             ),
                           ],
                         ),
@@ -714,9 +791,14 @@ class _TopTracksList extends riverpod.ConsumerWidget {
                       // Actions
                       riverpod.Consumer(
                         builder: (context, ref, child) {
-                          final isFavorite = ref.watch(favoritesProvider).tracks.any((t) => t.id == track.id);
+                          final isFavorite = ref
+                              .watch(favoritesProvider)
+                              .tracks
+                              .any((t) => t.id == track.id);
                           final downloads = ref.watch(downloadsProvider);
-                          final isDownloaded = downloads.downloadedTracks.any((t) => t.id == track.id);
+                          final isDownloaded = downloads.downloadedTracks.any(
+                            (t) => t.id == track.id,
+                          );
                           final progress = downloads.downloadProgress[track.id];
 
                           return Row(
@@ -726,11 +808,17 @@ class _TopTracksList extends riverpod.ConsumerWidget {
                                 padding: EdgeInsets.zero,
                                 constraints: const BoxConstraints(),
                                 icon: Icon(
-                                  isFavorite ? Icons.favorite : Icons.favorite_border,
-                                  color: isFavorite ? orange : cs.onSurface.withValues(alpha: 0.3),
+                                  isFavorite
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: isFavorite
+                                      ? orange
+                                      : cs.onSurface.withValues(alpha: 0.3),
                                   size: 20.w,
                                 ),
-                                onPressed: () => ref.read(favoritesProvider.notifier).toggleFavorite(track),
+                                onPressed: () => ref
+                                    .read(favoritesProvider.notifier)
+                                    .toggleFavorite(track),
                               ),
                               SizedBox(width: 2.w),
                               progress != null
@@ -747,15 +835,25 @@ class _TopTracksList extends riverpod.ConsumerWidget {
                                       padding: EdgeInsets.zero,
                                       constraints: const BoxConstraints(),
                                       icon: Icon(
-                                        isDownloaded ? Icons.download_done_rounded : Icons.download_outlined,
-                                        color: isDownloaded ? orange : cs.onSurface.withValues(alpha: 0.3),
+                                        isDownloaded
+                                            ? Icons.download_done_rounded
+                                            : Icons.download_outlined,
+                                        color: isDownloaded
+                                            ? orange
+                                            : cs.onSurface.withValues(
+                                                alpha: 0.3,
+                                              ),
                                         size: 20.w,
                                       ),
                                       onPressed: () {
                                         if (isDownloaded) {
-                                          ref.read(downloadsProvider.notifier).removeDownload(track.id);
+                                          ref
+                                              .read(downloadsProvider.notifier)
+                                              .removeDownload(track.id);
                                         } else {
-                                          ref.read(downloadsProvider.notifier).downloadTrack(track);
+                                          ref
+                                              .read(downloadsProvider.notifier)
+                                              .downloadTrack(track);
                                         }
                                       },
                                     ),
@@ -763,7 +861,9 @@ class _TopTracksList extends riverpod.ConsumerWidget {
                               Container(
                                 padding: EdgeInsets.all(8.w),
                                 decoration: BoxDecoration(
-                                  color: isCurrentTrack ? orange : cs.surfaceVariant,
+                                  color: isCurrentTrack
+                                      ? orange
+                                      : cs.surfaceVariant,
                                   borderRadius: BorderRadius.circular(12.r),
                                   boxShadow: isCurrentTrack
                                       ? [
@@ -771,13 +871,17 @@ class _TopTracksList extends riverpod.ConsumerWidget {
                                             color: orange.withOpacity(0.35),
                                             blurRadius: 10,
                                             offset: const Offset(0, 4),
-                                          )
+                                          ),
                                         ]
                                       : null,
                                 ),
                                 child: Icon(
-                                  isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                                  color: isCurrentTrack ? Colors.white : cs.onSurface.withValues(alpha: 0.4),
+                                  isPlaying
+                                      ? Icons.pause_rounded
+                                      : Icons.play_arrow_rounded,
+                                  color: isCurrentTrack
+                                      ? Colors.white
+                                      : cs.onSurface.withValues(alpha: 0.4),
                                   size: 24.w,
                                 ),
                               ),
@@ -825,19 +929,20 @@ class _ErrorView extends StatelessWidget {
             SizedBox(height: 16.h),
             Text(
               'Something went wrong',
-              style: AppTextStyles.getHeadlineMedium(context).copyWith(color: cs.onSurface),
+              style: AppTextStyles.getHeadlineMedium(
+                context,
+              ).copyWith(color: cs.onSurface),
             ),
             SizedBox(height: 8.h),
             Text(
               message,
-              style: AppTextStyles.getBodyMedium(context).copyWith(color: cs.onSurface.withValues(alpha: 0.7)),
+              style: AppTextStyles.getBodyMedium(
+                context,
+              ).copyWith(color: cs.onSurface.withValues(alpha: 0.7)),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 16.h),
-            ElevatedButton(
-              onPressed: () {},
-              child: Text('Try Again'),
-            ),
+            ElevatedButton(onPressed: () {}, child: Text('Try Again')),
           ],
         ),
       ),

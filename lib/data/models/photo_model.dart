@@ -47,16 +47,16 @@ class PhotoModel {
   Map<String, dynamic> toJson() => _$PhotoModelToJson(this);
 
   Photo toEntity() => Photo(
-        id: id,
-        albumId: albumId,
-        imageUrl: imageUrl,
-        titleAr: titleAr,
-        titleEn: titleEn,
-        captionAr: captionAr,
-        captionEn: captionEn,
-        sortOrder: sortOrder,
-        isActive: isActive,
-        createdAt: createdAt,
-        updatedAt: updatedAt,
-      );
+    id: id,
+    albumId: albumId,
+    imageUrl: imageUrl,
+    titleAr: titleAr,
+    titleEn: titleEn,
+    captionAr: captionAr,
+    captionEn: captionEn,
+    sortOrder: sortOrder,
+    isActive: isActive,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+  );
 }

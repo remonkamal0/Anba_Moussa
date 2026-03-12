@@ -88,18 +88,20 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         ref.read(audioProvider.notifier).loadPlaylist(_searchResults, index);
       } else {
         // Fallback for recents or other cases
-        ref.read(audioProvider.notifier).loadAndPlay(
-          track.audioUrl,
-          MiniPlayerTrack(
-            id: track.id,
-            titleAr: track.titleAr,
-            titleEn: track.titleEn,
-            speakerAr: track.speakerAr ?? '',
-            speakerEn: track.speakerEn ?? '',
-            coverImageUrl: track.imageUrl ?? '',
-            audioUrl: track.audioUrl,
-          ),
-        );
+        ref
+            .read(audioProvider.notifier)
+            .loadAndPlay(
+              track.audioUrl,
+              MiniPlayerTrack(
+                id: track.id,
+                titleAr: track.titleAr,
+                titleEn: track.titleEn,
+                speakerAr: track.speakerAr ?? '',
+                speakerEn: track.speakerEn ?? '',
+                coverImageUrl: track.imageUrl ?? '',
+                audioUrl: track.audioUrl,
+              ),
+            );
       }
     }
   }
@@ -117,7 +119,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         title: Container(
           decoration: BoxDecoration(
             color: cs.onSurface.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
+            borderRadius: BorderRadius.circular(
+              AppConstants.mediumBorderRadius.r,
+            ),
           ),
           child: TextField(
             controller: _searchController,
@@ -127,10 +131,16 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             decoration: InputDecoration(
               hintText: AppLocalizations.of(context)!.searchHint,
               hintStyle: TextStyle(color: cs.onSurface.withValues(alpha: 0.4)),
-              prefixIcon: Icon(Icons.search, color: cs.onSurface.withValues(alpha: 0.4)),
+              prefixIcon: Icon(
+                Icons.search,
+                color: cs.onSurface.withValues(alpha: 0.4),
+              ),
               suffixIcon: _searchQuery.isNotEmpty
                   ? IconButton(
-                      icon: Icon(Icons.clear, color: cs.onSurface.withValues(alpha: 0.4)),
+                      icon: Icon(
+                        Icons.clear,
+                        color: cs.onSurface.withValues(alpha: 0.4),
+                      ),
                       onPressed: _onClearSearch,
                     )
                   : null,
@@ -152,10 +162,18 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.search, size: 64.w, color: cs.onSurface.withValues(alpha: 0.1)),
+                      Icon(
+                        Icons.search,
+                        size: 64.w,
+                        color: cs.onSurface.withValues(alpha: 0.1),
+                      ),
                       SizedBox(height: 16.h),
-                      Text(AppLocalizations.of(context)!.searchTracksSubtitle, 
-                        style: AppTextStyles.getBodyLarge(context).copyWith(color: cs.onSurface.withValues(alpha: 0.5))),
+                      Text(
+                        AppLocalizations.of(context)!.searchTracksSubtitle,
+                        style: AppTextStyles.getBodyLarge(
+                          context,
+                        ).copyWith(color: cs.onSurface.withValues(alpha: 0.5)),
+                      ),
                     ],
                   ),
                 ),
@@ -166,10 +184,18 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.search_off, size: 64.w, color: cs.onSurface.withValues(alpha: 0.1)),
+                      Icon(
+                        Icons.search_off,
+                        size: 64.w,
+                        color: cs.onSurface.withValues(alpha: 0.1),
+                      ),
                       SizedBox(height: 16.h),
-                      Text('No results found for "$_searchQuery"',
-                        style: AppTextStyles.getBodyLarge(context).copyWith(color: cs.onSurface.withValues(alpha: 0.5))),
+                      Text(
+                        'No results found for "$_searchQuery"',
+                        style: AppTextStyles.getBodyLarge(
+                          context,
+                        ).copyWith(color: cs.onSurface.withValues(alpha: 0.5)),
+                      ),
                     ],
                   ),
                 ),
@@ -178,13 +204,20 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               Expanded(
                 child: ListView.builder(
                   padding: EdgeInsets.all(16.w),
-                  itemCount: _searchQuery.isEmpty ? _recentTracks.length : _searchResults.length,
+                  itemCount: _searchQuery.isEmpty
+                      ? _recentTracks.length
+                      : _searchResults.length,
                   itemBuilder: (context, index) {
-                    final track = _searchQuery.isEmpty ? _recentTracks[index] : _searchResults[index];
+                    final track = _searchQuery.isEmpty
+                        ? _recentTracks[index]
+                        : _searchResults[index];
                     return SearchResultTile(
-                      track: track,
-                      onTap: () => _onTrackTapped(track),
-                    ).animate().fadeIn(delay: Duration(milliseconds: index * 50)).slideX(begin: -0.05);
+                          track: track,
+                          onTap: () => _onTrackTapped(track),
+                        )
+                        .animate()
+                        .fadeIn(delay: Duration(milliseconds: index * 50))
+                        .slideX(begin: -0.05);
                   },
                 ),
               ),
@@ -199,19 +232,20 @@ class SearchResultTile extends ConsumerWidget {
   final Track track;
   final VoidCallback onTap;
 
-  const SearchResultTile({
-    super.key,
-    required this.track,
-    required this.onTap,
-  });
+  const SearchResultTile({super.key, required this.track, required this.onTap});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final locale = Localizations.localeOf(context).languageCode;
-    final isFavorite = ref.watch(favoritesProvider).tracks.any((t) => t.id == track.id);
+    final isFavorite = ref
+        .watch(favoritesProvider)
+        .tracks
+        .any((t) => t.id == track.id);
     final downloads = ref.watch(downloadsProvider);
-    final isDownloaded = downloads.downloadedTracks.any((t) => t.id == track.id);
+    final isDownloaded = downloads.downloadedTracks.any(
+      (t) => t.id == track.id,
+    );
     final progress = downloads.downloadProgress[track.id];
 
     return ListTile(
@@ -229,20 +263,26 @@ class SearchResultTile extends ConsumerWidget {
               ? CachedNetworkImage(
                   imageUrl: track.imageUrl!,
                   fit: BoxFit.cover,
-                  errorWidget: (context, url, error) => Icon(Icons.music_note, color: cs.primary, size: 24.w),
+                  errorWidget: (context, url, error) =>
+                      Icon(Icons.music_note, color: cs.primary, size: 24.w),
                 )
               : Icon(Icons.music_note, color: cs.primary, size: 24.w),
         ),
       ),
       title: Text(
         track.getLocalizedTitle(locale),
-        style: AppTextStyles.getBodyLarge(context).copyWith(fontWeight: FontWeight.w700, color: cs.onSurface),
+        style: AppTextStyles.getBodyLarge(
+          context,
+        ).copyWith(fontWeight: FontWeight.w700, color: cs.onSurface),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(
-        track.getLocalizedSpeaker(locale) ?? AppLocalizations.of(context)!.unknownSpeaker,
-        style: AppTextStyles.getBodySmall(context).copyWith(color: cs.onSurface.withValues(alpha: 0.5)),
+        track.getLocalizedSpeaker(locale) ??
+            AppLocalizations.of(context)!.unknownSpeaker,
+        style: AppTextStyles.getBodySmall(
+          context,
+        ).copyWith(color: cs.onSurface.withValues(alpha: 0.5)),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
@@ -251,27 +291,42 @@ class SearchResultTile extends ConsumerWidget {
         children: [
           IconButton(
             icon: Icon(
-              isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-              color: isFavorite ? cs.primary : cs.onSurface.withValues(alpha: 0.3),
+              isFavorite
+                  ? Icons.favorite_rounded
+                  : Icons.favorite_border_rounded,
+              color: isFavorite
+                  ? cs.primary
+                  : cs.onSurface.withValues(alpha: 0.3),
               size: 22.sp,
             ),
-            onPressed: () => ref.read(favoritesProvider.notifier).toggleFavorite(track),
+            onPressed: () =>
+                ref.read(favoritesProvider.notifier).toggleFavorite(track),
           ),
           progress != null
               ? SizedBox(
                   width: 22.w,
                   height: 22.w,
-                  child: CircularProgressIndicator(value: progress, strokeWidth: 2, color: cs.primary),
+                  child: CircularProgressIndicator(
+                    value: progress,
+                    strokeWidth: 2,
+                    color: cs.primary,
+                  ),
                 )
               : IconButton(
                   icon: Icon(
-                    isDownloaded ? Icons.download_done_rounded : Icons.download_outlined,
-                    color: isDownloaded ? cs.primary : cs.onSurface.withValues(alpha: 0.3),
+                    isDownloaded
+                        ? Icons.download_done_rounded
+                        : Icons.download_outlined,
+                    color: isDownloaded
+                        ? cs.primary
+                        : cs.onSurface.withValues(alpha: 0.3),
                     size: 22.sp,
                   ),
                   onPressed: () {
                     if (isDownloaded) {
-                      ref.read(downloadsProvider.notifier).removeDownload(track.id);
+                      ref
+                          .read(downloadsProvider.notifier)
+                          .removeDownload(track.id);
                     } else {
                       ref.read(downloadsProvider.notifier).downloadTrack(track);
                     }
@@ -294,7 +349,10 @@ class SearchResultTile extends ConsumerWidget {
                 },
                 child: Container(
                   padding: EdgeInsets.all(8.w),
-                  decoration: BoxDecoration(color: cs.primary.withValues(alpha: 0.1), shape: BoxShape.circle),
+                  decoration: BoxDecoration(
+                    color: cs.primary.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
                   child: Icon(
                     isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
                     color: cs.primary,

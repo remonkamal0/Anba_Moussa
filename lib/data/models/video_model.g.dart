@@ -7,25 +7,25 @@ part of 'video_model.dart';
 // **************************************************************************
 
 VideoModel _$VideoModelFromJson(Map<String, dynamic> json) => VideoModel(
-      id: json['id'] as String,
-      albumId: json['album_id'] as String,
-      titleAr: json['title_ar'] as String,
-      titleEn: json['title_en'] as String,
-      subtitleAr: json['subtitle_ar'] as String?,
-      subtitleEn: json['subtitle_en'] as String?,
-      descriptionAr: json['description_ar'] as String?,
-      descriptionEn: json['description_en'] as String?,
-      videoUrl: json['video_url'] as String,
-      thumbnailUrl: json['thumbnail_url'] as String?,
-      durationSeconds: (json['duration_seconds'] as num?)?.toInt(),
-      publishedAt: json['published_at'] == null
-          ? null
-          : DateTime.parse(json['published_at'] as String),
-      sortOrder: (json['sort_order'] as num).toInt(),
-      isActive: json['is_active'] as bool,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-    );
+  id: json['id'] as String,
+  albumId: json['album_id'] as String,
+  titleAr: json['title_ar'] as String,
+  titleEn: json['title_en'] as String,
+  subtitleAr: json['subtitle_ar'] as String?,
+  subtitleEn: json['subtitle_en'] as String?,
+  descriptionAr: json['description_ar'] as String?,
+  descriptionEn: json['description_en'] as String?,
+  videoUrl: json['video_url'] as String,
+  thumbnailUrl: json['thumbnail_url'] as String?,
+  durationSeconds: (json['duration_seconds'] as num?)?.toInt(),
+  publishedAt: json['published_at'] == null
+      ? null
+      : DateTime.parse(json['published_at'] as String),
+  sortOrder: (json['sort_order'] as num).toInt(),
+  isActive: json['is_active'] as bool,
+  createdAt: DateTime.parse(json['created_at'] as String),
+  updatedAt: DateTime.parse(json['updated_at'] as String),
+);
 
 Map<String, dynamic> _$VideoModelToJson(VideoModel instance) =>
     <String, dynamic>{

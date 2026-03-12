@@ -112,9 +112,7 @@ class _SignupScreenState extends State<_SignupScreen> {
       if (response.user != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.signupSuccess,
-            ),
+            content: Text(AppLocalizations.of(context)!.signupSuccess),
             backgroundColor: Colors.green,
           ),
         );
@@ -145,10 +143,7 @@ class _SignupScreenState extends State<_SignupScreen> {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorMessage),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -260,7 +255,9 @@ class _SignupScreenState extends State<_SignupScreen> {
           child: Checkbox(
             value: _agree,
             onChanged: (v) => setState(() => _agree = v ?? false),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.r)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(6.r),
+            ),
             side: BorderSide(color: _border, width: 1.2),
             activeColor: _orange,
           ),
@@ -297,7 +294,7 @@ class _SignupScreenState extends State<_SignupScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Scaffold(
       backgroundColor: _bg,
       body: SafeArea(
@@ -320,7 +317,11 @@ class _SignupScreenState extends State<_SignupScreen> {
                       color: Color(0xFFF3F5F7),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(Icons.arrow_back_ios_new, size: 18.sp, color: _navy),
+                    child: Icon(
+                      Icons.arrow_back_ios_new,
+                      size: 18.sp,
+                      color: _navy,
+                    ),
                   ),
                 ).animate().fadeIn(duration: 250.ms),
 
@@ -363,7 +364,8 @@ class _SignupScreenState extends State<_SignupScreen> {
                           prefix: Icons.person_outline,
                         ),
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) return l10n.emptyName;
+                          if (v == null || v.trim().isEmpty)
+                            return l10n.emptyName;
                           return null;
                         },
                       ),
@@ -380,7 +382,9 @@ class _SignupScreenState extends State<_SignupScreen> {
                         ),
                         validator: (v) {
                           if (v == null || v.isEmpty) return l10n.emptyEmail;
-                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(v)) {
+                          if (!RegExp(
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          ).hasMatch(v)) {
                             return l10n.invalidEmail;
                           }
                           return null;
@@ -398,7 +402,8 @@ class _SignupScreenState extends State<_SignupScreen> {
                           prefix: Icons.call_outlined,
                         ),
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) return l10n.required;
+                          if (v == null || v.trim().isEmpty)
+                            return l10n.required;
                           return null;
                         },
                       ),
@@ -413,7 +418,8 @@ class _SignupScreenState extends State<_SignupScreen> {
                           prefix: Icons.church_outlined,
                         ),
                         validator: (v) {
-                          if (v == null || v.trim().isEmpty) return l10n.required;
+                          if (v == null || v.trim().isEmpty)
+                            return l10n.required;
                           return null;
                         },
                       ),
@@ -430,17 +436,25 @@ class _SignupScreenState extends State<_SignupScreen> {
                                 DropdownButtonFormField<String>(
                                   value: _selectedGender,
                                   items: ['male', 'female']
-                                      .map((g) => DropdownMenuItem(
-                                            value: g,
-                                            child: Text(g == 'male' ? l10n.genderMale : l10n.genderFemale),
-                                          ))
+                                      .map(
+                                        (g) => DropdownMenuItem(
+                                          value: g,
+                                          child: Text(
+                                            g == 'male'
+                                                ? l10n.genderMale
+                                                : l10n.genderFemale,
+                                          ),
+                                        ),
+                                      )
                                       .toList(),
-                                  onChanged: (v) => setState(() => _selectedGender = v),
+                                  onChanged: (v) =>
+                                      setState(() => _selectedGender = v),
                                   decoration: _pillDecoration(
                                     hint: l10n.select,
                                     prefix: Icons.transgender,
                                   ),
-                                  validator: (v) => v == null ? l10n.required : null,
+                                  validator: (v) =>
+                                      v == null ? l10n.required : null,
                                 ),
                               ],
                             ),
@@ -455,31 +469,42 @@ class _SignupScreenState extends State<_SignupScreen> {
                                   onTap: () async {
                                     final picked = await showDatePicker(
                                       context: context,
-                                      initialDate: _selectedBirthDate ?? DateTime(2000),
+                                      initialDate:
+                                          _selectedBirthDate ?? DateTime(2000),
                                       firstDate: DateTime(1900),
                                       lastDate: DateTime.now(),
                                     );
                                     if (picked != null) {
-                                      setState(() => _selectedBirthDate = picked);
+                                      setState(
+                                        () => _selectedBirthDate = picked,
+                                      );
                                     }
                                   },
                                   child: Container(
                                     height: 50.h,
-                                    padding: EdgeInsets.symmetric(horizontal: 14.w),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 14.w,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: _fieldFill,
                                       borderRadius: BorderRadius.circular(22.r),
                                     ),
                                     child: Row(
                                       children: [
-                                        Icon(Icons.calendar_today, color: const Color(0xFFA7B0C0), size: 20.sp),
+                                        Icon(
+                                          Icons.calendar_today,
+                                          color: const Color(0xFFA7B0C0),
+                                          size: 20.sp,
+                                        ),
                                         SizedBox(width: 10.w),
                                         Text(
                                           _selectedBirthDate == null
                                               ? l10n.pickDate
                                               : '${_selectedBirthDate!.day}/${_selectedBirthDate!.month}/${_selectedBirthDate!.year}',
                                           style: TextStyle(
-                                            color: _selectedBirthDate == null ? const Color(0xFFB6BECB) : _navy,
+                                            color: _selectedBirthDate == null
+                                                ? const Color(0xFFB6BECB)
+                                                : _navy,
                                             fontSize: 14.sp,
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -504,9 +529,13 @@ class _SignupScreenState extends State<_SignupScreen> {
                           hint: l10n.passwordHint,
                           prefix: Icons.lock_outline,
                           suffix: IconButton(
-                            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                            onPressed: () => setState(
+                              () => _obscurePassword = !_obscurePassword,
+                            ),
                             icon: Icon(
-                              _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                              _obscurePassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
                               color: const Color(0xFFA7B0C0),
                             ),
                           ),
@@ -528,16 +557,22 @@ class _SignupScreenState extends State<_SignupScreen> {
                           hint: l10n.passwordHint,
                           prefix: Icons.lock_reset_outlined,
                           suffix: IconButton(
-                            onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+                            onPressed: () => setState(
+                              () => _obscureConfirmPassword =
+                                  !_obscureConfirmPassword,
+                            ),
                             icon: Icon(
-                              _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                              _obscureConfirmPassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
                               color: const Color(0xFFA7B0C0),
                             ),
                           ),
                         ),
                         validator: (v) {
                           if (v == null || v.isEmpty) return l10n.emptyPassword;
-                          if (v != _passwordController.text) return l10n.passwordsNotMatch;
+                          if (v != _passwordController.text)
+                            return l10n.passwordsNotMatch;
                           return null;
                         },
                       ),
@@ -553,33 +588,40 @@ class _SignupScreenState extends State<_SignupScreen> {
                         height: 50.h,
                         child: ElevatedButton(
                           onPressed: _isLoading ? null : _signUp,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: _orange,
-                            disabledBackgroundColor: _orange.withOpacity(0.7),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.r),
-                            ),
-                          ).copyWith(
-                            shadowColor: WidgetStatePropertyAll(Colors.black.withOpacity(0.12)),
-                          ),
+                          style:
+                              ElevatedButton.styleFrom(
+                                backgroundColor: _orange,
+                                disabledBackgroundColor: _orange.withOpacity(
+                                  0.7,
+                                ),
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.r),
+                                ),
+                              ).copyWith(
+                                shadowColor: WidgetStatePropertyAll(
+                                  Colors.black.withOpacity(0.12),
+                                ),
+                              ),
                           child: _isLoading
                               ? SizedBox(
-                            width: 22.w,
-                            height: 22.w,
-                            child: const CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                            ),
-                          )
+                                  width: 22.w,
+                                  height: 22.w,
+                                  child: const CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                  ),
+                                )
                               : Text(
-                            l10n.signUp,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
+                                  l10n.signUp,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
                         ),
                       ),
 
@@ -588,7 +630,9 @@ class _SignupScreenState extends State<_SignupScreen> {
                       // Divider
                       Row(
                         children: [
-                          Expanded(child: Container(height: 1.h, color: _border)),
+                          Expanded(
+                            child: Container(height: 1.h, color: _border),
+                          ),
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 14.w),
                             child: Text(
@@ -601,7 +645,9 @@ class _SignupScreenState extends State<_SignupScreen> {
                               ),
                             ),
                           ),
-                          Expanded(child: Container(height: 1.h, color: _border)),
+                          Expanded(
+                            child: Container(height: 1.h, color: _border),
+                          ),
                         ],
                       ),
 
@@ -616,8 +662,11 @@ class _SignupScreenState extends State<_SignupScreen> {
                                 'assets/images/google-color-svgrepo-com.png',
                                 width: 22.w,
                                 height: 22.w,
-                                errorBuilder: (_, __, ___) =>
-                                    Icon(Icons.g_mobiledata, size: 26.sp, color: _navy),
+                                errorBuilder: (_, __, ___) => Icon(
+                                  Icons.g_mobiledata,
+                                  size: 26.sp,
+                                  color: _navy,
+                                ),
                               ),
                               text: l10n.google,
                             ),
@@ -630,8 +679,11 @@ class _SignupScreenState extends State<_SignupScreen> {
                                 'assets/images/apple-svgrepo-com.png',
                                 width: 22.w,
                                 height: 22.w,
-                                errorBuilder: (_, __, ___) =>
-                                    Icon(Icons.apple, color: Colors.black, size: 22.sp),
+                                errorBuilder: (_, __, ___) => Icon(
+                                  Icons.apple,
+                                  color: Colors.black,
+                                  size: 22.sp,
+                                ),
                               ),
                               text: l10n.apple,
                             ),
@@ -656,7 +708,10 @@ class _SignupScreenState extends State<_SignupScreen> {
                             onTap: _onLogin,
                             borderRadius: BorderRadius.circular(8.r),
                             child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 4.w,
+                                vertical: 2.h,
+                              ),
                               child: Text(
                                 l10n.login,
                                 style: TextStyle(

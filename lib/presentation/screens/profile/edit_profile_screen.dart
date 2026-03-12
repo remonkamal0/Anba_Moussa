@@ -34,7 +34,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   Color get _navy => Theme.of(context).colorScheme.onSurface;
   Color get _orange => Theme.of(context).colorScheme.primary;
   Color get _fieldFill => Theme.of(context).colorScheme.surface;
-  Color get _border => Theme.of(context).colorScheme.outline.withValues(alpha: 0.3);
+  Color get _border =>
+      Theme.of(context).colorScheme.outline.withValues(alpha: 0.3);
 
   @override
   void initState() {
@@ -67,7 +68,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     _emailController.text = profileState.email;
     _phoneController.text = data?['phone'] as String? ?? '';
     _churchController.text = data?['church'] as String? ?? '';
-    
+
     final gender = data?['gender'] as String?;
     if (gender == 'male' || gender == 'female') {
       _selectedGender = gender;
@@ -83,9 +84,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   Future<void> _saveChanges() async {
     if (!_formKey.currentState!.validate()) return;
-    
+
     final newPassword = _passwordController.text;
-    if (newPassword.isNotEmpty && newPassword != _confirmPasswordController.text) {
+    if (newPassword.isNotEmpty &&
+        newPassword != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context)!.passwordsNotMatch),
@@ -101,7 +103,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       if (newPassword.isNotEmpty) {
         await SupabaseService.instance.updateUserPassword(newPassword);
       }
-      
+
       await SupabaseService.instance.updateMyProfile(
         fullName: _fullNameController.text.trim(),
         phone: _phoneController.text.trim(),
@@ -119,7 +121,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             content: Text(
               newPassword.isNotEmpty
                   ? AppLocalizations.of(context)!.profileAndPasswordUpdated
-                  : AppLocalizations.of(context)!.profileUpdated
+                  : AppLocalizations.of(context)!.profileUpdated,
             ),
             backgroundColor: Colors.green,
           ),
@@ -130,7 +132,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${AppLocalizations.of(context)!.profileUpdateError}: $e'),
+            content: Text(
+              '${AppLocalizations.of(context)!.profileUpdateError}: $e',
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -220,8 +224,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-
-
                   _fieldLabel(AppLocalizations.of(context)!.fullName),
                   TextFormField(
                     controller: _fullNameController,
@@ -230,14 +232,17 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       prefix: Icons.person_outline,
                     ),
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty) return AppLocalizations.of(context)!.emptyName;
+                      if (v == null || v.trim().isEmpty)
+                        return AppLocalizations.of(context)!.emptyName;
                       return null;
                     },
                   ),
 
                   SizedBox(height: 14.h),
 
-                  _fieldLabel(AppLocalizations.of(context)!.emailCannotBeChanged),
+                  _fieldLabel(
+                    AppLocalizations.of(context)!.emailCannotBeChanged,
+                  ),
                   TextFormField(
                     controller: _emailController,
                     enabled: false,
@@ -259,7 +264,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       prefix: Icons.call_outlined,
                     ),
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty) return AppLocalizations.of(context)!.required;
+                      if (v == null || v.trim().isEmpty)
+                        return AppLocalizations.of(context)!.required;
                       return null;
                     },
                   ),
@@ -274,7 +280,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       prefix: Icons.church_outlined,
                     ),
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty) return AppLocalizations.of(context)!.required;
+                      if (v == null || v.trim().isEmpty)
+                        return AppLocalizations.of(context)!.required;
                       return null;
                     },
                   ),
@@ -291,12 +298,23 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                             DropdownButtonFormField<String>(
                               value: _selectedGender,
                               items: ['male', 'female']
-                                  .map((g) => DropdownMenuItem(
-                                        value: g,
-                                        child: Text(g == 'male' ? AppLocalizations.of(context)!.genderMale : AppLocalizations.of(context)!.genderFemale),
-                                      ))
+                                  .map(
+                                    (g) => DropdownMenuItem(
+                                      value: g,
+                                      child: Text(
+                                        g == 'male'
+                                            ? AppLocalizations.of(
+                                                context,
+                                              )!.genderMale
+                                            : AppLocalizations.of(
+                                                context,
+                                              )!.genderFemale,
+                                      ),
+                                    ),
+                                  )
                                   .toList(),
-                              onChanged: (v) => setState(() => _selectedGender = v),
+                              onChanged: (v) =>
+                                  setState(() => _selectedGender = v),
                               decoration: _pillDecoration(
                                 hint: AppLocalizations.of(context)!.select,
                                 prefix: Icons.transgender,
@@ -310,12 +328,15 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _fieldLabel(AppLocalizations.of(context)!.birthDate),
+                            _fieldLabel(
+                              AppLocalizations.of(context)!.birthDate,
+                            ),
                             InkWell(
                               onTap: () async {
                                 final picked = await showDatePicker(
                                   context: context,
-                                  initialDate: _selectedBirthDate ?? DateTime(2000),
+                                  initialDate:
+                                      _selectedBirthDate ?? DateTime(2000),
                                   firstDate: DateTime(1900),
                                   lastDate: DateTime.now(),
                                 );
@@ -332,14 +353,22 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.calendar_today, color: const Color(0xFFA7B0C0), size: 20.sp),
+                                    Icon(
+                                      Icons.calendar_today,
+                                      color: const Color(0xFFA7B0C0),
+                                      size: 20.sp,
+                                    ),
                                     SizedBox(width: 10.w),
                                     Text(
                                       _selectedBirthDate == null
-                                          ? AppLocalizations.of(context)!.pickDate
+                                          ? AppLocalizations.of(
+                                              context,
+                                            )!.pickDate
                                           : '${_selectedBirthDate!.day}/${_selectedBirthDate!.month}/${_selectedBirthDate!.year}',
                                       style: TextStyle(
-                                        color: _selectedBirthDate == null ? const Color(0xFFB6BECB) : _navy,
+                                        color: _selectedBirthDate == null
+                                            ? const Color(0xFFB6BECB)
+                                            : _navy,
                                         fontSize: 14.sp,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -359,7 +388,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   // Optional Password Change Section
                   Divider(color: _border),
                   SizedBox(height: 8.h),
-                  
+
                   Text(
                     AppLocalizations.of(context)!.changePasswordOptional,
                     style: TextStyle(
@@ -379,7 +408,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       prefix: Icons.lock_outline,
                     ),
                     validator: (v) {
-                      if (v != null && v.isNotEmpty && v.length < 6) return AppLocalizations.of(context)!.signupPasswordLength;
+                      if (v != null && v.isNotEmpty && v.length < 6)
+                        return AppLocalizations.of(
+                          context,
+                        )!.signupPasswordLength;
                       return null;
                     },
                   ),
@@ -391,7 +423,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     controller: _confirmPasswordController,
                     obscureText: true,
                     decoration: _pillDecoration(
-                      hint: AppLocalizations.of(context)!.confirmNewPasswordHint,
+                      hint: AppLocalizations.of(
+                        context,
+                      )!.confirmNewPasswordHint,
                       prefix: Icons.lock_reset_outlined,
                     ),
                   ),
@@ -403,23 +437,30 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     height: 50.h,
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _saveChanges,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: _orange,
-                        disabledBackgroundColor: _orange.withValues(alpha: 0.7),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.r),
-                        ),
-                      ).copyWith(
-                        shadowColor: WidgetStatePropertyAll(Colors.black.withValues(alpha: 0.12)),
-                      ),
+                      style:
+                          ElevatedButton.styleFrom(
+                            backgroundColor: _orange,
+                            disabledBackgroundColor: _orange.withValues(
+                              alpha: 0.7,
+                            ),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.r),
+                            ),
+                          ).copyWith(
+                            shadowColor: WidgetStatePropertyAll(
+                              Colors.black.withValues(alpha: 0.12),
+                            ),
+                          ),
                       child: _isLoading
                           ? SizedBox(
                               width: 22.w,
                               height: 22.w,
                               child: const CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
                               ),
                             )
                           : Text(
@@ -432,7 +473,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                             ),
                     ),
                   ),
-                  
+
                   SizedBox(height: 20.h),
                 ],
               ),

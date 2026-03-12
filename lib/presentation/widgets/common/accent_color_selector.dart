@@ -35,11 +35,13 @@ class AccentColorSelector extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: accentColors.map((accentColor) {
-            final isSelected = currentAccentColor.value == accentColor.color.value;
+            final isSelected =
+                currentAccentColor.value == accentColor.color.value;
             return Padding(
               padding: EdgeInsets.symmetric(horizontal: 6.w),
               child: GestureDetector(
-                onTap: () => accentColorNotifier.changeAccentColor(accentColor.name),
+                onTap: () =>
+                    accentColorNotifier.changeAccentColor(accentColor.name),
                 child: AnimatedContainer(
                   duration: AppConstants.defaultAnimationDuration,
                   width: isSelected ? 36.w : 28.w,
@@ -48,7 +50,9 @@ class AccentColorSelector extends ConsumerWidget {
                     color: accentColor.color,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isSelected ? Theme.of(context).colorScheme.surface : Colors.transparent,
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.surface
+                          : Colors.transparent,
                       width: isSelected ? 3.w : 0,
                     ),
                     boxShadow: isSelected

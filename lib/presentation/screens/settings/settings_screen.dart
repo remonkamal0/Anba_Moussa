@@ -52,7 +52,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       body: Stack(
         children: [
           // Background completely handled by Scaffold
-
           SafeArea(
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 18.w),
@@ -105,8 +104,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   SizedBox(height: 18.h),
 
                   // Avatar + edit icon
-
-
                   SizedBox(height: 14.h),
 
                   Text(
@@ -146,12 +143,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     rightText: AppLocalizations.of(context)!.seeAll,
                     accent: accent,
                     onAdd: () async {
-                      final newPlaylist = await Navigator.of(context, rootNavigator: true).push(
-                        MaterialPageRoute(
-                          builder: (context) => const CreatePlaylistScreen(),
-                        ),
-                      );
-                      
+                      final newPlaylist =
+                          await Navigator.of(context, rootNavigator: true).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const CreatePlaylistScreen(),
+                            ),
+                          );
+
                       if (newPlaylist != null) {
                         // TODO: Implement actual playlist creation logic
                       }
@@ -165,22 +164,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                   SizedBox(
                     height: 120.h,
-                    child: playlists.isEmpty 
-                      ? Center(
-                          child: Text(
-                            AppLocalizations.of(context)!.noPlaylistsYet,
-                            style: TextStyle(color: cs.onSurface.withValues(alpha: 0.4), fontSize: 13.sp),
+                    child: playlists.isEmpty
+                        ? Center(
+                            child: Text(
+                              AppLocalizations.of(context)!.noPlaylistsYet,
+                              style: TextStyle(
+                                color: cs.onSurface.withValues(alpha: 0.4),
+                                fontSize: 13.sp,
+                              ),
+                            ),
+                          )
+                        : ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: playlists.length,
+                            separatorBuilder: (_, __) => SizedBox(width: 12.w),
+                            itemBuilder: (context, index) {
+                              final p = playlists[index];
+                              return _PlaylistCard(playlist: p, locale: locale);
+                            },
                           ),
-                        )
-                      : ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: playlists.length,
-                        separatorBuilder: (_, __) => SizedBox(width: 12.w),
-                        itemBuilder: (context, index) {
-                          final p = playlists[index];
-                          return _PlaylistCard(playlist: p, locale: locale);
-                        },
-                      ),
                   ),
 
                   SizedBox(height: 18.h),
@@ -195,14 +197,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           icon: Icons.translate,
                           iconBg: accent.withValues(alpha: .12),
                           iconColor: accent,
-                          title: AppLocalizations.of(context)?.drawerLanguage ?? "Language",
-                          trailingText: ref.watch(localeProvider).languageCode == 'ar' 
-                              ? AppLocalizations.of(context)?.drawerArabic 
+                          title:
+                              AppLocalizations.of(context)?.drawerLanguage ??
+                              "Language",
+                          trailingText:
+                              ref.watch(localeProvider).languageCode == 'ar'
+                              ? AppLocalizations.of(context)?.drawerArabic
                               : AppLocalizations.of(context)?.drawerEnglish,
                           onTap: () {
-                            final currentCode = ref.read(localeProvider).languageCode;
+                            final currentCode = ref
+                                .read(localeProvider)
+                                .languageCode;
                             final newLocale = currentCode == 'ar' ? 'en' : 'ar';
-                            ref.read(localeProvider.notifier).changeLocale(newLocale);
+                            ref
+                                .read(localeProvider.notifier)
+                                .changeLocale(newLocale);
                           },
                         ),
                         _DividerIndent(),
@@ -213,10 +222,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           title: AppLocalizations.of(context)!.drawerDarkMode,
                           trailing: Switch(
                             value: darkMode,
-                            onChanged: (v) => ref.read(themeProvider.notifier).toggleTheme(),
+                            onChanged: (v) =>
+                                ref.read(themeProvider.notifier).toggleTheme(),
                             activeColor: accent,
                           ),
-                          onTap: () => ref.read(themeProvider.notifier).toggleTheme(),
+                          onTap: () =>
+                              ref.read(themeProvider.notifier).toggleTheme(),
                         ),
                         _DividerIndent(),
                         Padding(
@@ -234,7 +245,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               SizedBox(width: 12.w),
                               Expanded(
                                 child: Text(
-                                  AppLocalizations.of(context)!.themeCustomization,
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.themeCustomization,
                                   style: TextStyle(
                                     fontSize: 14.sp,
                                     fontWeight: FontWeight.w700,
@@ -265,7 +278,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               final c = AppTheme.accentColors[key]!;
                               final selected = currentAccent.value == c.value;
                               return GestureDetector(
-                                onTap: () => ref.read(accentColorProvider.notifier).changeAccentColor(key),
+                                onTap: () => ref
+                                    .read(accentColorProvider.notifier)
+                                    .changeAccentColor(key),
                                 child: Container(
                                   margin: EdgeInsets.only(right: 10.w),
                                   width: 26.w,
@@ -274,7 +289,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                     color: c,
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: selected ? Colors.white : Colors.transparent,
+                                      color: selected
+                                          ? Colors.white
+                                          : Colors.transparent,
                                       width: 2,
                                     ),
                                     boxShadow: [
@@ -289,12 +306,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                           color: Colors.black.withOpacity(.05),
                                           blurRadius: 6,
                                           offset: const Offset(0, 2),
-                                        )
+                                        ),
                                     ],
                                   ),
-                                  child: selected 
-                                    ? Icon(Icons.check, color: Colors.white, size: 16.w) 
-                                    : null,
+                                  child: selected
+                                      ? Icon(
+                                          Icons.check,
+                                          color: Colors.white,
+                                          size: 16.w,
+                                        )
+                                      : null,
                                 ),
                               );
                             }),
@@ -347,7 +368,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           icon: Icons.notifications_none,
                           iconBg: accent.withValues(alpha: .12),
                           iconColor: accent,
-                          title: AppLocalizations.of(context)?.drawerNotifications ?? "Notifications",
+                          title:
+                              AppLocalizations.of(
+                                context,
+                              )?.drawerNotifications ??
+                              "Notifications",
                           onTap: () {
                             context.push('/notifications');
                           },
@@ -377,27 +402,57 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     SizedBox(height: 10.h),
 
                     _CardContainer(
-                      child: _RowTile(
-                        icon: Icons.notifications_active_rounded,
-                        iconBg: accent.withOpacity(.12),
-                        iconColor: accent,
-                        title: AppLocalizations.of(context)!.adminSendNotification,
-                        trailing: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
-                          decoration: BoxDecoration(
-                            color: accent.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          child: Text(
-                            AppLocalizations.of(context)!.adminLabel,
-                            style: TextStyle(
-                              fontSize: 10.sp,
-                              fontWeight: FontWeight.w700,
-                              color: accent,
+                      child: Column(
+                        children: [
+                          _RowTile(
+                            icon: Icons.dashboard_customize_rounded,
+                            iconBg: accent.withOpacity(.12),
+                            iconColor: accent,
+                            title: 'Admin Dashboard',
+                            trailing: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8.w,
+                                vertical: 3.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: accent.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              child: Text(
+                                AppLocalizations.of(context)!.adminLabel,
+                                style: TextStyle(
+                                  fontSize: 10.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: accent,
+                                ),
+                              ),
                             ),
+                            onTap: () => context.push('/admin/dashboard'),
                           ),
-                        ),
-                        onTap: () => context.push('/admin/send-notification'),
+                          _DividerIndent(),
+                          //     _RowTile(
+                          //       icon: Icons.notifications_active_rounded,
+                          //   iconBg: accent.withOpacity(.12),
+                          //   iconColor: accent,
+                          //   title: AppLocalizations.of(context)!.adminSendNotification,
+                          //   trailing: Container(
+                          //     padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                          //     decoration: BoxDecoration(
+                          //       color: accent.withOpacity(0.1),
+                          //       borderRadius: BorderRadius.circular(8.r),
+                          //     ),
+                          //     child: Text(
+                          //       AppLocalizations.of(context)!.adminLabel,
+                          //       style: TextStyle(
+                          //         fontSize: 10.sp,
+                          //         fontWeight: FontWeight.w700,
+                          //         color: accent,
+                          //       ),
+                          //     ),
+                          //   ),
+                          //   onTap: () => context.push('/admin/send-notification'),
+                          // ),
+                        ],
                       ),
                     ),
 
@@ -457,9 +512,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           context.go('/login');
                         }
                       },
-                      icon: const Icon(Icons.delete_outline, color: Color(0xFFEB5757)),
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        color: Color(0xFFEB5757),
+                      ),
                       label: Text(
-                        AppLocalizations.of(context)?.drawerDeleteAccount ?? "Delete Account",
+                        AppLocalizations.of(context)?.drawerDeleteAccount ??
+                            "Delete Account",
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w800,
@@ -475,7 +534,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18.r),
                         ),
-                        backgroundColor: const Color(0xFFEB5757).withValues(alpha: 0.1),
+                        backgroundColor: const Color(
+                          0xFFEB5757,
+                        ).withValues(alpha: 0.1),
                       ),
                     ),
                   ),
@@ -489,7 +550,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       ),
     );
   }
-
 
   void _showAboutDeveloper(BuildContext context, Color accent) {
     showDialog(
@@ -523,7 +583,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(28.r),
+                  ),
                 ),
                 child: Column(
                   children: [
@@ -534,23 +596,39 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         color: Colors.white.withValues(alpha: 0.25),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(Icons.headphones_rounded, color: Colors.white, size: 32.sp),
+                      child: Icon(
+                        Icons.headphones_rounded,
+                        color: Colors.white,
+                        size: 32.sp,
+                      ),
                     ),
                     SizedBox(height: 10.h),
                     Text(
                       AppLocalizations.of(context)!.appTitle,
-                      style: TextStyle(color: Colors.white, fontSize: 20.sp, fontWeight: FontWeight.w900),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
                     SizedBox(height: 4.h),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 4.h,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.20),
                         borderRadius: BorderRadius.circular(20.r),
                       ),
                       child: Text(
                         AppLocalizations.of(context)!.aboutTeam,
-                        style: TextStyle(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.w600, letterSpacing: 0.8),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.8,
+                        ),
                       ),
                     ),
                   ],
@@ -591,11 +669,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   child: TextButton(
                     onPressed: () => Navigator.of(ctx).pop(),
                     style: TextButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.r)),
+                      backgroundColor: Theme.of(context)
+                          .colorScheme
+                          .surfaceContainerHighest
+                          .withValues(alpha: 0.5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18.r),
+                      ),
                       padding: EdgeInsets.symmetric(vertical: 14.h),
                     ),
-                    child: Text(AppLocalizations.of(context)!.close, style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 14.sp, fontWeight: FontWeight.w700)),
+                    child: Text(
+                      AppLocalizations.of(context)!.close,
+                      style: TextStyle(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -617,19 +709,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        color: Theme.of(
+          context,
+        ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(18.r),
-        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5), width: 1),
+        border: Border.all(
+          color: Theme.of(
+            context,
+          ).colorScheme.outlineVariant.withValues(alpha: 0.5),
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
           Container(
             width: 46.w,
             height: 46.w,
-            decoration: BoxDecoration(
-              color: roleBg,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: roleBg, shape: BoxShape.circle),
             child: Icon(icon, color: roleColor, size: 22.sp),
           ),
           SizedBox(width: 14.w),
@@ -643,10 +739,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     color: roleBg,
                     borderRadius: BorderRadius.circular(8.r),
                   ),
-                  child: Text(role, style: TextStyle(color: roleColor, fontSize: 10.sp, fontWeight: FontWeight.w800, letterSpacing: 0.5)),
+                  child: Text(
+                    role,
+                    style: TextStyle(
+                      color: roleColor,
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
                 ),
                 SizedBox(height: 5.h),
-                Text(name, style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w800, color: Theme.of(context).colorScheme.onSurface)),
+                Text(
+                  name,
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w800,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
               ],
             ),
           ),
@@ -663,9 +774,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
     return "Custom";
   }
-
 }
-
 
 class _AvatarWithEdit extends StatelessWidget {
   final Color accent;
@@ -695,7 +804,7 @@ class _AvatarWithEdit extends StatelessWidget {
                 color: Colors.black.withValues(alpha: .08),
                 blurRadius: 16,
                 offset: const Offset(0, 6),
-              )
+              ),
             ],
           ),
           child: ClipOval(
@@ -722,7 +831,10 @@ class _AvatarWithEdit extends StatelessWidget {
               decoration: BoxDecoration(
                 color: accent,
                 shape: BoxShape.circle,
-                border: Border.all(color: Theme.of(context).colorScheme.surface, width: 3),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.surface,
+                  width: 3,
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(.12),
@@ -758,7 +870,9 @@ class _PrimarySoftButton extends StatelessWidget {
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(999),
-            side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.outlineVariant,
+            ),
           ),
         ),
         child: Text(
@@ -799,7 +913,9 @@ class _SectionHeaderRow extends StatelessWidget {
             letterSpacing: 1.2,
             fontSize: 12.sp,
             fontWeight: FontWeight.w900,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.4),
           ),
         ),
         SizedBox(width: 10.w),
@@ -930,12 +1046,20 @@ class _RowTile extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 13.sp,
                   fontWeight: FontWeight.w700,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             if (trailing != null) trailing!,
             if (trailing == null)
-              Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3), size: 22.w),
+              Icon(
+                Icons.chevron_right,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.3),
+                size: 22.w,
+              ),
           ],
         ),
       ),
@@ -948,11 +1072,7 @@ class _IconBadge extends StatelessWidget {
   final Color bg;
   final Color color;
 
-  const _IconBadge({
-    required this.icon,
-    required this.bg,
-    required this.color,
-  });
+  const _IconBadge({required this.icon, required this.bg, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -974,7 +1094,9 @@ class _DividerIndent extends StatelessWidget {
     return Divider(
       height: 1,
       thickness: 1,
-      color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
+      color: Theme.of(
+        context,
+      ).colorScheme.outlineVariant.withValues(alpha: 0.5),
       indent: 66.w,
       endIndent: 0,
     );
@@ -1031,8 +1153,12 @@ class _PlaylistCard extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Theme.of(context).colorScheme.primary.withValues(alpha: 0.9),
-                      Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
+                      Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.9),
+                      Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.6),
                     ],
                   ),
                 ),
@@ -1056,13 +1182,17 @@ class _PlaylistCard extends StatelessWidget {
             ),
             SizedBox(height: 2.h),
             Text(
-              AppLocalizations.of(context)!.playlistTracksCount(playlist.trackCount),
+              AppLocalizations.of(
+                context,
+              )!.playlistTracksCount(playlist.trackCount),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 11.sp,
                 fontWeight: FontWeight.w700,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.5),
               ),
             ),
           ],

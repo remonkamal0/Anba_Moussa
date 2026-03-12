@@ -7,29 +7,29 @@ part of 'track_model.dart';
 // **************************************************************************
 
 TrackModel _$TrackModelFromJson(Map<String, dynamic> json) => TrackModel(
-      id: json['id'] as String,
-      categoryId: json['category_id'] as String,
-      titleAr: json['title_ar'] as String?,
-      titleEn: json['title_en'] as String?,
-      subtitleAr: json['subtitle_ar'] as String?,
-      subtitleEn: json['subtitle_en'] as String?,
-      descriptionAr: json['description_ar'] as String?,
-      descriptionEn: json['description_en'] as String?,
-      speakerAr: json['speaker_ar'] as String?,
-      speakerEn: json['speaker_en'] as String?,
-      coverImageUrl: json['cover_image_url'] as String?,
-      audioUrl: json['audio_url'] as String?,
-      durationSeconds: (json['duration_seconds'] as num?)?.toInt(),
-      publishedAt: json['published_at'] == null
-          ? null
-          : DateTime.parse(json['published_at'] as String),
-      isActive: json['is_active'] as bool,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-      tags: (json['tags'] as List<dynamic>?)
-          ?.map((e) => TagModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+  id: json['id'] as String,
+  categoryId: json['category_id'] as String,
+  titleAr: json['title_ar'] as String?,
+  titleEn: json['title_en'] as String?,
+  subtitleAr: json['subtitle_ar'] as String?,
+  subtitleEn: json['subtitle_en'] as String?,
+  descriptionAr: json['description_ar'] as String?,
+  descriptionEn: json['description_en'] as String?,
+  speakerAr: json['speaker_ar'] as String?,
+  speakerEn: json['speaker_en'] as String?,
+  coverImageUrl: json['cover_image_url'] as String?,
+  audioUrl: json['audio_url'] as String?,
+  durationSeconds: (json['duration_seconds'] as num?)?.toInt(),
+  publishedAt: json['published_at'] == null
+      ? null
+      : DateTime.parse(json['published_at'] as String),
+  isActive: json['is_active'] as bool,
+  createdAt: DateTime.parse(json['created_at'] as String),
+  updatedAt: DateTime.parse(json['updated_at'] as String),
+  tags: (json['tags'] as List<dynamic>?)
+      ?.map((e) => TagModel.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
 
 Map<String, dynamic> _$TrackModelToJson(TrackModel instance) =>
     <String, dynamic>{

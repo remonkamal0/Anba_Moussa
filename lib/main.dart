@@ -7,7 +7,6 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:audio_session/audio_session.dart';
 import 'core/di/service_locator.dart';
 import 'l10n/app_localizations.dart';
-
 import 'core/theme/app_theme.dart';
 import 'core/constants/app_constants.dart';
 import 'core/network/supabase_service.dart';
@@ -56,11 +55,7 @@ void main() async {
     notificationColor: const Color(0xFF1E88E5),
   );
 
-  runApp(
-    ProviderScope(
-      child: const MelodixApp(),
-    ),
-  );
+  runApp(ProviderScope(child: const MelodixApp()));
 }
 
 class MelodixApp extends ConsumerStatefulWidget {
@@ -87,7 +82,7 @@ class _MelodixAppState extends ConsumerState<MelodixApp> {
   void _handleNavigation(GoRouter router, Map<String, dynamic> data) {
     final String? route = data['internal_route'];
     final String? id = data['internal_id'] ?? data['id'];
-    
+
     if (route == null) return;
 
     if (route.contains('/:')) {

@@ -84,13 +84,12 @@ class TrackModel {
     return locale == 'ar' ? speakerAr : speakerEn;
   }
 
-  Duration? get duration => durationSeconds != null 
-      ? Duration(seconds: durationSeconds!) 
-      : null;
+  Duration? get duration =>
+      durationSeconds != null ? Duration(seconds: durationSeconds!) : null;
 
   String get formattedDuration {
     if (durationSeconds == null) return '--:--';
-    
+
     final duration = Duration(seconds: durationSeconds!);
     final minutes = duration.inMinutes;
     final seconds = duration.inSeconds % 60;

@@ -103,7 +103,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
                 decoration: BoxDecoration(
                   color: cs.onSurface.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
+                  borderRadius: BorderRadius.circular(
+                    AppConstants.mediumBorderRadius.r,
+                  ),
                 ),
                 child: Column(
                   children: [
@@ -129,10 +131,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     // User name
                     Text(
                       _user.name,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: cs.onSurface,
-                      ),
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: cs.onSurface,
+                          ),
                     ).animate().fadeIn(
                       duration: AppConstants.defaultAnimationDuration,
                       delay: const Duration(milliseconds: 200),
@@ -218,20 +221,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(vertical: AppConstants.mediumSpacing.h),
+                    padding: EdgeInsets.symmetric(
+                      vertical: AppConstants.mediumSpacing.h,
+                    ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
+                      borderRadius: BorderRadius.circular(
+                        AppConstants.mediumBorderRadius.r,
+                      ),
                     ),
                   ),
-                  child: Text(
-                    l10n.profileLogOut,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ).animate().fadeIn(
-                    duration: AppConstants.defaultAnimationDuration,
-                    delay: const Duration(milliseconds: 2000),
-                  ),
+                  child:
+                      Text(
+                        l10n.profileLogOut,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ).animate().fadeIn(
+                        duration: AppConstants.defaultAnimationDuration,
+                        delay: const Duration(milliseconds: 2000),
+                      ),
                 ),
               ),
             ],
@@ -251,44 +259,57 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }) {
     return Padding(
       padding: EdgeInsets.only(bottom: AppConstants.smallSpacing.h),
-      child: ListTile(
-        contentPadding: EdgeInsets.all(AppConstants.mediumSpacing.r),
-        leading: Container(
-          width: 40.w,
-          height: 40.w,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(AppConstants.smallBorderRadius.r),
-          ),
-          child: Icon(
-            icon,
-            color: Theme.of(context).colorScheme.onSurface,
-            size: 20.w,
-          ),
-        ),
-        title: Text(
-          title,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
-        subtitle: subtitle != null
-            ? Text(
-                subtitle!,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+      child:
+          ListTile(
+            contentPadding: EdgeInsets.all(AppConstants.mediumSpacing.r),
+            leading: Container(
+              width: 40.w,
+              height: 40.w,
+              decoration: BoxDecoration(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(
+                  AppConstants.smallBorderRadius.r,
                 ),
-              )
-            : customWidget,
-        trailing: Icon(Icons.arrow_forward_ios, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3), size: 16.w),
-        onTap: onTap,
-      ).animate().slideX(
-        duration: AppConstants.defaultAnimationDuration,
-        delay: delay ?? Duration.zero,
-        begin: 0.2,
-        curve: Curves.easeOut,
-      ),
+              ),
+              child: Icon(
+                icon,
+                color: Theme.of(context).colorScheme.onSurface,
+                size: 20.w,
+              ),
+            ),
+            title: Text(
+              title,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            subtitle: subtitle != null
+                ? Text(
+                    subtitle!,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                  )
+                : customWidget,
+            trailing: Icon(
+              Icons.arrow_forward_ios,
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.3),
+              size: 16.w,
+            ),
+            onTap: onTap,
+          ).animate().slideX(
+            duration: AppConstants.defaultAnimationDuration,
+            delay: delay ?? Duration.zero,
+            begin: 0.2,
+            curve: Curves.easeOut,
+          ),
     );
   }
 
@@ -315,7 +336,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               color: color,
               shape: BoxShape.circle,
               border: isSelected
-                  ? Border.all(color: Theme.of(context).colorScheme.onSurface, width: 2.w)
+                  ? Border.all(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      width: 2.w,
+                    )
                   : null,
             ),
           ),
@@ -329,8 +353,5 @@ class UserProfile {
   final String name;
   final String email;
 
-  UserProfile({
-    required this.name,
-    required this.email,
-  });
+  UserProfile({required this.name, required this.email});
 }

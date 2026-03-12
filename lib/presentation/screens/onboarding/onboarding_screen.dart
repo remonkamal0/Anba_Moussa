@@ -45,7 +45,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     ),
   ];
 
-
   @override
   void dispose() {
     _pageController.dispose();
@@ -87,13 +86,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final l10n = AppLocalizations.of(context)!;
     final isRtl = Directionality.of(context) == TextDirection.rtl;
     final locale = ref.watch(localeProvider); // Force rebuild on locale change
-    final accentColor = ref.watch(accentColorProvider); // Force rebuild on accent color change
+    final accentColor = ref.watch(
+      accentColorProvider,
+    ); // Force rebuild on accent color change
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: PageView.builder(
-          key: ValueKey('${locale.languageCode}_${accentColor.value}'), // Force rebuild
+          key: ValueKey(
+            '${locale.languageCode}_${accentColor.value}',
+          ), // Force rebuild
           controller: _pageController,
           onPageChanged: (index) {
             setState(() {

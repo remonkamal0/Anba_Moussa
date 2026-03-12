@@ -34,23 +34,29 @@ class OnboardingPage extends ConsumerWidget {
     final locale = ref.watch(localeProvider);
 
     return Directionality(
-      textDirection: locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr,
+      textDirection: locale.languageCode == 'ar'
+          ? TextDirection.rtl
+          : TextDirection.ltr,
       child: LayoutBuilder(
         builder: (context, constraints) {
           // Responsive adjustments based on screen size
           final isSmallScreen = constraints.maxWidth < 360;
           final isLargeScreen = constraints.maxWidth > 600;
-          
+
           return Padding(
             padding: EdgeInsets.all(
-              isSmallScreen ? AppConstants.smallSpacing.r : AppConstants.mediumSpacing.r
+              isSmallScreen
+                  ? AppConstants.smallSpacing.r
+                  : AppConstants.mediumSpacing.r,
             ),
             child: Column(
               children: [
                 // Skip button
                 if (!isLastPage)
                   Align(
-                    alignment: locale.languageCode == 'ar' ? Alignment.topLeft : Alignment.topRight,
+                    alignment: locale.languageCode == 'ar'
+                        ? Alignment.topLeft
+                        : Alignment.topRight,
                     child: Padding(
                       padding: EdgeInsets.all(AppConstants.mediumSpacing.r),
                       child: TextButton(
@@ -60,183 +66,207 @@ class OnboardingPage extends ConsumerWidget {
                         },
                         child: Text(
                           l10n.onboardingSkip,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                         ),
                       ),
                     ),
                   ),
-          SizedBox(height: isSmallScreen ? 24.h : 48.h),
-          Expanded(
-            flex: 3,
-            child: Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 48.w),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: isLargeScreen ? 600.h : 450.h,
-                    maxWidth:  isLargeScreen ? 600.h : 450.h,
-                  ),
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(28.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 20,
-                            spreadRadius: 5,
-                          ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(28.r),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                          ),
-                          child: pageData.imagePath.startsWith('http')
-                              ? CachedNetworkImage(
-                                  imageUrl: pageData.imagePath,
-                                  fit: BoxFit.contain,
-                                  alignment: Alignment.center,
-                                  placeholder: (context, url) => Center(
-                                    child: CircularProgressIndicator(
-                                      color: Theme.of(context).colorScheme.primary,
+                SizedBox(height: isSmallScreen ? 24.h : 48.h),
+                Expanded(
+                  flex: 3,
+                  child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 48.w),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: isLargeScreen ? 600.h : 450.h,
+                          maxWidth: isLargeScreen ? 600.h : 450.h,
+                        ),
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child:
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(28.r),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 20,
+                                      spreadRadius: 5,
                                     ),
-                                  ),
-                                  errorWidget: (context, url, error) => Icon(
-                                    Icons.image,
-                                    size: 80.w,
-                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-                                  ),
-                                )
-                              : Image.asset(
-                                  pageData.imagePath,
-                                  fit: BoxFit.contain,
-                                  alignment: Alignment.center,
-                                  errorBuilder: (context, error, stackTrace) => Icon(
-                                    Icons.image,
-                                    size: 80.w,
-                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                                  ],
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(28.r),
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                    ),
+                                    child: pageData.imagePath.startsWith('http')
+                                        ? CachedNetworkImage(
+                                            imageUrl: pageData.imagePath,
+                                            fit: BoxFit.contain,
+                                            alignment: Alignment.center,
+                                            placeholder: (context, url) =>
+                                                Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                        color: Theme.of(
+                                                          context,
+                                                        ).colorScheme.primary,
+                                                      ),
+                                                ),
+                                            errorWidget:
+                                                (context, url, error) => Icon(
+                                                  Icons.image,
+                                                  size: 80.w,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface
+                                                      .withOpacity(0.3),
+                                                ),
+                                          )
+                                        : Image.asset(
+                                            pageData.imagePath,
+                                            fit: BoxFit.contain,
+                                            alignment: Alignment.center,
+                                            errorBuilder:
+                                                (context, error, stackTrace) =>
+                                                    Icon(
+                                                      Icons.image,
+                                                      size: 80.w,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onSurface
+                                                          .withOpacity(0.3),
+                                                    ),
+                                          ),
                                   ),
                                 ),
+                              ).animate().scale(
+                                duration: AppConstants.defaultAnimationDuration,
+                                curve: Curves.easeOut,
+                              ),
                         ),
                       ),
-                    ).animate().scale(
-                      duration: AppConstants.defaultAnimationDuration,
-                      curve: Curves.easeOut,
                     ),
                   ),
                 ),
-              ),
-            ),
-          ),
 
-          SizedBox(height: AppConstants.largeSpacing.h),
+                SizedBox(height: AppConstants.largeSpacing.h),
 
-          // Title and subtitle
-          Expanded(
-            flex: 4,
-            child: Column(
-                children: [
-                  Text(
-                    _getLocalizedText(l10n, pageData.titleKey, locale),
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                    textAlign: TextAlign.center,
-                    textDirection: locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr,
-                  ).animate().fadeIn(
-                    duration: AppConstants.defaultAnimationDuration,
-                    delay: const Duration(milliseconds: 200),
-                  ),
-
-                  SizedBox(height: 8.h),
-
-                  Text(
-                    _getLocalizedText(l10n, pageData.subtitleKey, locale),
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                    ),
-                    textAlign: TextAlign.center,
-                    textDirection: locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr,
-                  ).animate().fadeIn(
-                    duration: AppConstants.defaultAnimationDuration,
-                    delay: const Duration(milliseconds: 400),
-                  ),
-
-                  // Custom selectors for first page
-                  if (pageData.showLanguageSelector) ...[
-                    SizedBox(height: 12.h),
-                    const LanguageSelector().animate().fadeIn(
-                      duration: AppConstants.defaultAnimationDuration,
-                      delay: const Duration(milliseconds: 600),
-                    ),
-                  ],
-
-                  if (pageData.showThemeSelector || pageData.showAccentColorSelector) ...[
-                    SizedBox(height: 12.h),
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (pageData.showThemeSelector)
-                            const ThemeSelector(),
-                          if (pageData.showThemeSelector && pageData.showAccentColorSelector)
-                            SizedBox(width: 16.w),
-                          if (pageData.showAccentColorSelector)
-                            const AccentColorSelector(),
-                        ],
+                // Title and subtitle
+                Expanded(
+                  flex: 4,
+                  child: Column(
+                    children: [
+                      Text(
+                        _getLocalizedText(l10n, pageData.titleKey, locale),
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                        textAlign: TextAlign.center,
+                        textDirection: locale.languageCode == 'ar'
+                            ? TextDirection.rtl
+                            : TextDirection.ltr,
+                      ).animate().fadeIn(
+                        duration: AppConstants.defaultAnimationDuration,
+                        delay: const Duration(milliseconds: 200),
                       ),
-                    ).animate().fadeIn(
-                      duration: AppConstants.defaultAnimationDuration,
-                      delay: const Duration(milliseconds: 800),
+
+                      SizedBox(height: 8.h),
+
+                      Text(
+                        _getLocalizedText(l10n, pageData.subtitleKey, locale),
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.7),
+                        ),
+                        textAlign: TextAlign.center,
+                        textDirection: locale.languageCode == 'ar'
+                            ? TextDirection.rtl
+                            : TextDirection.ltr,
+                      ).animate().fadeIn(
+                        duration: AppConstants.defaultAnimationDuration,
+                        delay: const Duration(milliseconds: 400),
+                      ),
+
+                      // Custom selectors for first page
+                      if (pageData.showLanguageSelector) ...[
+                        SizedBox(height: 12.h),
+                        const LanguageSelector().animate().fadeIn(
+                          duration: AppConstants.defaultAnimationDuration,
+                          delay: const Duration(milliseconds: 600),
+                        ),
+                      ],
+
+                      if (pageData.showThemeSelector ||
+                          pageData.showAccentColorSelector) ...[
+                        SizedBox(height: 12.h),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (pageData.showThemeSelector)
+                                const ThemeSelector(),
+                              if (pageData.showThemeSelector &&
+                                  pageData.showAccentColorSelector)
+                                SizedBox(width: 16.w),
+                              if (pageData.showAccentColorSelector)
+                                const AccentColorSelector(),
+                            ],
+                          ),
+                        ).animate().fadeIn(
+                          duration: AppConstants.defaultAnimationDuration,
+                          delay: const Duration(milliseconds: 800),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+
+                // Action buttons
+                SizedBox(
+                  width: double.infinity,
+                  height: 56.h,
+                  child: ElevatedButton(
+                    onPressed: onNext,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28.r),
+                      ),
                     ),
-                  ],
-                ],
-              ),
-            ),
-
-          // Action buttons
-          SizedBox(
-            width: double.infinity,
-            height: 56.h,
-            child: ElevatedButton(
-              onPressed: onNext,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(28.r),
+                    child: Text(
+                      isLastPage
+                          ? l10n.onboardingGetStarted
+                          : l10n.onboardingNext,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              child: Text(
-                isLastPage 
-                    ? l10n.onboardingGetStarted
-                    : l10n.onboardingNext,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                ),
-              ),
+
+                SizedBox(height: 16.h),
+
+                // Footer text completely removed
+              ],
             ),
-          ),
-
-          SizedBox(height: 16.h),
-
-          // Footer text completely removed
-        ],
-          ),
-        );
-      },
-    ),
+          );
+        },
+      ),
     );
   }
 
@@ -259,9 +289,11 @@ class OnboardingPage extends ConsumerWidget {
       case 'onboarding.listenSubtitle':
         return l10n.onboardingListenSubtitle;
       case 'onboarding.simpleWelcome':
-        return locale.languageCode == 'ar' ? 'استمع إلى موسيقاك المفضلة' : 'Listen to your favorite music';
+        return locale.languageCode == 'ar'
+            ? 'استمع إلى موسيقاك المفضلة'
+            : 'Listen to your favorite music';
       case 'onboarding.simpleSubtitle':
-        return locale.languageCode == 'ar' 
+        return locale.languageCode == 'ar'
             ? 'اكتشف أحدث المسارات والألبومات والفنانين من حول العالم. رحلتك الموسيقية تبدأ هنا.'
             : 'Discover the latest tracks, albums, and artists from around the world. Your music journey starts here.';
       default:

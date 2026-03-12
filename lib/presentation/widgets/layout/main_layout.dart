@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -63,7 +62,6 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     final isRtl = locale.languageCode == 'ar';
     final String location = GoRouterState.of(context).uri.path;
 
-
     final navItems = [
       _NavItemData(
         icon: Icons.home_outlined,
@@ -102,9 +100,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
         extendBody: false,
         body: Column(
           children: [
-            Expanded(
-              child: widget.child,
-            ),
+            Expanded(child: widget.child),
             Consumer(
               builder: (context, ref, _) {
                 final miniState = ref.watch(miniPlayerProvider);
@@ -131,7 +127,8 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       borderRadius: 24.0,
       showShadow: true,
       angle: -12.0,
-      drawerShadowsBackgroundColor: Theme.of(context).brightness == Brightness.dark
+      drawerShadowsBackgroundColor:
+          Theme.of(context).brightness == Brightness.dark
           ? Colors.black26
           : Colors.grey[300]!,
       slideWidth: MediaQuery.of(context).size.width * 0.65,
@@ -146,7 +143,11 @@ class _NavItemData {
   final IconData icon;
   final IconData activeIcon;
   final String label;
-  const _NavItemData({required this.icon, required this.activeIcon, required this.label});
+  const _NavItemData({
+    required this.icon,
+    required this.activeIcon,
+    required this.label,
+  });
 }
 
 class _CustomBottomNav extends StatelessWidget {
@@ -173,7 +174,11 @@ class _CustomBottomNav extends StatelessWidget {
             borderRadius: BorderRadius.circular(32.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.4 : 0.10),
+                color: Colors.black.withValues(
+                  alpha: Theme.of(context).brightness == Brightness.dark
+                      ? 0.4
+                      : 0.10,
+                ),
                 blurRadius: 20,
                 spreadRadius: 0,
                 offset: const Offset(0, 4),
@@ -247,4 +252,3 @@ class _NavTile extends StatelessWidget {
     );
   }
 }
-

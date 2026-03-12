@@ -36,7 +36,7 @@ class AppDrawer extends ConsumerWidget {
     final bg = cs.surface;
     final surface = cs.surface;
     final divider = cs.outlineVariant;
-    
+
     final userProfile = ref.watch(userProfileProvider);
 
     return Scaffold(
@@ -51,7 +51,6 @@ class AppDrawer extends ConsumerWidget {
               padding: EdgeInsetsDirectional.fromSTEB(22.w, 22.h, 22.w, 16.h),
               child: Row(
                 children: [
-
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,7 +97,8 @@ class AppDrawer extends ConsumerWidget {
                       accentColor: accentColor,
                       icon: Icons.queue_music,
                       title: l10n.drawerMyPlaylists,
-                      onTap: () => _onNavigationItemTapped(context, '/all-playlists'),
+                      onTap: () =>
+                          _onNavigationItemTapped(context, '/all-playlists'),
                     ),
 
                     _settingsTile(
@@ -110,9 +110,12 @@ class AppDrawer extends ConsumerWidget {
                           ? l10n.drawerArabic
                           : l10n.drawerEnglish,
                       onTap: () {
-                        final newLocale =
-                            locale.languageCode == 'ar' ? 'en' : 'ar';
-                        ref.read(localeProvider.notifier).changeLocale(newLocale);
+                        final newLocale = locale.languageCode == 'ar'
+                            ? 'en'
+                            : 'ar';
+                        ref
+                            .read(localeProvider.notifier)
+                            .changeLocale(newLocale);
                       },
                     ),
 
@@ -123,10 +126,12 @@ class AppDrawer extends ConsumerWidget {
                       title: l10n.drawerDarkMode,
                       trailing: Switch(
                         value: isDark,
-                        onChanged: (_) => ref.read(themeProvider.notifier).toggleTheme(),
+                        onChanged: (_) =>
+                            ref.read(themeProvider.notifier).toggleTheme(),
                         activeColor: accentColor,
                       ),
-                      onTap: () => ref.read(themeProvider.notifier).toggleTheme(),
+                      onTap: () =>
+                          ref.read(themeProvider.notifier).toggleTheme(),
                     ),
 
                     // Theme section - Colors below title
@@ -147,7 +152,8 @@ class AppDrawer extends ConsumerWidget {
                       accentColor: accentColor,
                       icon: Icons.favorite_border_rounded,
                       title: l10n.drawerFavorites,
-                      onTap: () => _onNavigationItemTapped(context, '/favorites'),
+                      onTap: () =>
+                          _onNavigationItemTapped(context, '/favorites'),
                     ),
 
                     _settingsTile(
@@ -155,7 +161,8 @@ class AppDrawer extends ConsumerWidget {
                       accentColor: accentColor,
                       icon: Icons.download_rounded,
                       title: l10n.drawerDownloads,
-                      onTap: () => _onNavigationItemTapped(context, '/downloads'),
+                      onTap: () =>
+                          _onNavigationItemTapped(context, '/downloads'),
                     ),
 
                     _settingsTile(
@@ -163,11 +170,14 @@ class AppDrawer extends ConsumerWidget {
                       accentColor: accentColor,
                       icon: Icons.notifications_none_rounded,
                       title: l10n.drawerNotifications,
-                      onTap: () => _onNavigationItemTapped(context, '/notifications'),
+                      onTap: () =>
+                          _onNavigationItemTapped(context, '/notifications'),
                     ),
 
                     Padding(
-                      padding: EdgeInsetsDirectional.symmetric(horizontal: 22.w),
+                      padding: EdgeInsetsDirectional.symmetric(
+                        horizontal: 22.w,
+                      ),
                       child: Container(height: 1, color: divider),
                     ),
 
@@ -294,7 +304,9 @@ class AppDrawer extends ConsumerWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(28.r),
+                  ),
                 ),
                 child: Column(
                   children: [
@@ -305,7 +317,11 @@ class AppDrawer extends ConsumerWidget {
                         color: Colors.white.withValues(alpha: 0.25),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(Icons.headphones_rounded, color: Colors.white, size: 32.sp),
+                      child: Icon(
+                        Icons.headphones_rounded,
+                        color: Colors.white,
+                        size: 32.sp,
+                      ),
                     ),
                     SizedBox(height: 10.h),
                     Text(
@@ -318,7 +334,10 @@ class AppDrawer extends ConsumerWidget {
                     ),
                     SizedBox(height: 4.h),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 4.h,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.20),
                         borderRadius: BorderRadius.circular(20.r),
@@ -470,7 +489,10 @@ class AppDrawer extends ConsumerWidget {
 
     return ListTile(
       onTap: onTap,
-      contentPadding: EdgeInsetsDirectional.symmetric(horizontal: 14.w, vertical: 2.h),
+      contentPadding: EdgeInsetsDirectional.symmetric(
+        horizontal: 14.w,
+        vertical: 2.h,
+      ),
 
       leading: Container(
         width: 36.r,
@@ -493,39 +515,37 @@ class AppDrawer extends ConsumerWidget {
         ),
       ),
 
-      trailing: trailing ?? (trailingText != null
-          ? ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 90.w),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Flexible(
-                    child: Text(
-                      trailingText,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        color: subColor,
-                        fontWeight: FontWeight.w600,
+      trailing:
+          trailing ??
+          (trailingText != null
+              ? ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 90.w),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          trailingText,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            color: subColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
-                    ),
+                      SizedBox(width: 6.w),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: subColor,
+                        size: 22.r,
+                      ),
+                    ],
                   ),
-                  SizedBox(width: 6.w),
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    color: subColor,
-                    size: 22.r,
-                  ),
-                ],
-              ),
-            )
-          : Icon(
-              Icons.chevron_right_rounded,
-              color: subColor,
-              size: 22.r,
-            )),
+                )
+              : Icon(Icons.chevron_right_rounded, color: subColor, size: 22.r)),
     );
   }
 
@@ -553,7 +573,11 @@ class AppDrawer extends ConsumerWidget {
                   color: accentColor.withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.palette_outlined, color: accentColor, size: 18.r),
+                child: Icon(
+                  Icons.palette_outlined,
+                  color: accentColor,
+                  size: 18.r,
+                ),
               ),
               SizedBox(width: 12.w),
               Expanded(
@@ -593,7 +617,8 @@ class AppDrawer extends ConsumerWidget {
         final isSelected = currentAccent == color;
 
         return GestureDetector(
-          onTap: () => ref.read(accentColorProvider.notifier).changeAccentColor(name),
+          onTap: () =>
+              ref.read(accentColorProvider.notifier).changeAccentColor(name),
           child: Container(
             width: 22.r,
             height: 22.r,

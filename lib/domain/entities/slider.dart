@@ -36,7 +36,8 @@ class Slider {
   }
 
   String getLocalizedTitle(String locale) => locale == 'ar' ? titleAr : titleEn;
-  String? getLocalizedSubtitle(String locale) => locale == 'ar' ? subtitleAr : subtitleEn;
+  String? getLocalizedSubtitle(String locale) =>
+      locale == 'ar' ? subtitleAr : subtitleEn;
 
   Map<String, dynamic> toMap() {
     return {

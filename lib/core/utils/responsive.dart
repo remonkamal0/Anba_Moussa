@@ -28,7 +28,7 @@ class Responsive {
   }) {
     final w = MediaQuery.sizeOf(context).width;
     if (w >= 1024) return desktop ?? tablet ?? mobile;
-    if (w >= 600)  return tablet ?? mobile;
+    if (w >= 600) return tablet ?? mobile;
     return mobile;
   }
 

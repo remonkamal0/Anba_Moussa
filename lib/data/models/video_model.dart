@@ -62,21 +62,21 @@ class VideoModel {
   Map<String, dynamic> toJson() => _$VideoModelToJson(this);
 
   Video toEntity() => Video(
-        id: id,
-        albumId: albumId,
-        titleAr: titleAr,
-        titleEn: titleEn,
-        subtitleAr: subtitleAr,
-        subtitleEn: subtitleEn,
-        descriptionAr: descriptionAr,
-        descriptionEn: descriptionEn,
-        videoUrl: videoUrl,
-        thumbnailUrl: thumbnailUrl,
-        durationSeconds: durationSeconds,
-        publishedAt: publishedAt,
-        sortOrder: sortOrder,
-        isActive: isActive,
-        createdAt: createdAt,
-        updatedAt: updatedAt,
-      );
+    id: id,
+    albumId: albumId,
+    titleAr: titleAr,
+    titleEn: titleEn,
+    subtitleAr: subtitleAr,
+    subtitleEn: subtitleEn,
+    descriptionAr: descriptionAr,
+    descriptionEn: descriptionEn,
+    videoUrl: videoUrl,
+    thumbnailUrl: thumbnailUrl,
+    durationSeconds: durationSeconds,
+    publishedAt: publishedAt,
+    sortOrder: sortOrder,
+    isActive: isActive,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+  );
 }

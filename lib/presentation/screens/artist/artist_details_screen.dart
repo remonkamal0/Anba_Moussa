@@ -8,11 +8,8 @@ import '../../../core/constants/app_constants.dart';
 
 class ArtistDetailsScreen extends StatefulWidget {
   final String artistId;
-  
-  const ArtistDetailsScreen({
-    super.key,
-    required this.artistId,
-  });
+
+  const ArtistDetailsScreen({super.key, required this.artistId});
 
   @override
   State<ArtistDetailsScreen> createState() => _ArtistDetailsScreenState();
@@ -29,7 +26,8 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
     followers: '12.5M',
     monthlyListeners: '45.2M',
     verified: true,
-    description: 'Abel Tesfaye, known professionally as The Weeknd, is a Canadian singer, songwriter, and record producer. Known for his dark R&B music and distinctive vocal style.',
+    description:
+        'Abel Tesfaye, known professionally as The Weeknd, is a Canadian singer, songwriter, and record producer. Known for his dark R&B music and distinctive vocal style.',
     genres: ['R&B', 'Pop', 'Alternative'],
   );
 
@@ -201,10 +199,11 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                     children: [
                       Text(
                         _artist.name,
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: cs.onSurface,
-                        ),
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: cs.onSurface,
+                            ),
                       ).animate().fadeIn(
                         duration: AppConstants.defaultAnimationDuration,
                         delay: const Duration(milliseconds: 200),
@@ -261,14 +260,17 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                         ),
                         decoration: BoxDecoration(
                           color: cs.primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
+                          borderRadius: BorderRadius.circular(
+                            AppConstants.mediumBorderRadius.r,
+                          ),
                         ),
                         child: Text(
                           genre,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: cs.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: cs.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
                         ),
                       );
                     }).toList(),
@@ -298,66 +300,78 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                       // Play button
                       Expanded(
                         flex: 2,
-                        child: ElevatedButton(
-                          onPressed: _onPlay,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: cs.primary,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
-                            ),
-                            padding: EdgeInsets.symmetric(vertical: AppConstants.mediumSpacing.h),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                _isPlaying ? Icons.pause : Icons.play_arrow,
-                                size: 24.w,
-                              ),
-                              SizedBox(width: AppConstants.smallSpacing.w),
-                              Text(
-                                _isPlaying ? 'Pause' : 'Play',
-                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
+                        child:
+                            ElevatedButton(
+                              onPressed: _onPlay,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: cs.primary,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    AppConstants.mediumBorderRadius.r,
+                                  ),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: AppConstants.mediumSpacing.h,
                                 ),
                               ),
-                            ],
-                          ),
-                        ).animate().scale(
-                          duration: AppConstants.defaultAnimationDuration,
-                          delay: const Duration(milliseconds: 1200),
-                          curve: Curves.easeOut,
-                        ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    _isPlaying ? Icons.pause : Icons.play_arrow,
+                                    size: 24.w,
+                                  ),
+                                  SizedBox(width: AppConstants.smallSpacing.w),
+                                  Text(
+                                    _isPlaying ? 'Pause' : 'Play',
+                                    style: Theme.of(context).textTheme.bodyLarge
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ).animate().scale(
+                              duration: AppConstants.defaultAnimationDuration,
+                              delay: const Duration(milliseconds: 1200),
+                              curve: Curves.easeOut,
+                            ),
                       ),
 
                       SizedBox(width: AppConstants.mediumSpacing.w),
 
                       // Follow button
                       Expanded(
-                        child: OutlinedButton(
-                          onPressed: _onFollow,
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: cs.primary),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
+                        child:
+                            OutlinedButton(
+                              onPressed: _onFollow,
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(color: cs.primary),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    AppConstants.mediumBorderRadius.r,
+                                  ),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: AppConstants.mediumSpacing.h,
+                                ),
+                              ),
+                              child: Text(
+                                _isFollowing ? 'Following' : 'Follow',
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(
+                                      color: cs.primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                            ).animate().scale(
+                              duration: AppConstants.defaultAnimationDuration,
+                              delay: const Duration(milliseconds: 1400),
+                              curve: Curves.easeOut,
                             ),
-                            padding: EdgeInsets.symmetric(vertical: AppConstants.mediumSpacing.h),
-                          ),
-                          child: Text(
-                            _isFollowing ? 'Following' : 'Follow',
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: cs.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ).animate().scale(
-                          duration: AppConstants.defaultAnimationDuration,
-                          delay: const Duration(milliseconds: 1400),
-                          curve: Curves.easeOut,
-                        ),
                       ),
                     ],
                   ),
@@ -382,22 +396,19 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
 
           // Popular songs list
           SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final song = _popularSongs[index];
-                return PopularSongTile(
-                  song: song,
-                  onTap: () => _onSongTapped(song),
-                  index: index + 1,
-                ).animate().slideX(
-                  duration: AppConstants.defaultAnimationDuration,
-                  delay: Duration(milliseconds: 1800 + (index * 100)),
-                  begin: -0.2,
-                  curve: Curves.easeOut,
-                );
-              },
-              childCount: _popularSongs.length,
-            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final song = _popularSongs[index];
+              return PopularSongTile(
+                song: song,
+                onTap: () => _onSongTapped(song),
+                index: index + 1,
+              ).animate().slideX(
+                duration: AppConstants.defaultAnimationDuration,
+                delay: Duration(milliseconds: 1800 + (index * 100)),
+                begin: -0.2,
+                curve: Curves.easeOut,
+              );
+            }, childCount: _popularSongs.length),
           ),
 
           // Albums section
@@ -426,7 +437,9 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
 
           // Albums grid
           SliverPadding(
-            padding: EdgeInsets.symmetric(horizontal: AppConstants.mediumSpacing.r),
+            padding: EdgeInsets.symmetric(
+              horizontal: AppConstants.mediumSpacing.r,
+            ),
             sliver: SliverGrid(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
@@ -434,20 +447,17 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                 mainAxisSpacing: AppConstants.mediumSpacing.h,
                 childAspectRatio: 0.8,
               ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final album = _albums[index];
-                  return AlbumCard(
-                    album: album,
-                    onTap: () => _onAlbumTapped(album),
-                  ).animate().scale(
-                    duration: AppConstants.defaultAnimationDuration,
-                    delay: Duration(milliseconds: 2400 + (index * 100)),
-                    curve: Curves.easeOut,
-                  );
-                },
-                childCount: _albums.length,
-              ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final album = _albums[index];
+                return AlbumCard(
+                  album: album,
+                  onTap: () => _onAlbumTapped(album),
+                ).animate().scale(
+                  duration: AppConstants.defaultAnimationDuration,
+                  delay: Duration(milliseconds: 2400 + (index * 100)),
+                  curve: Curves.easeOut,
+                );
+              }, childCount: _albums.length),
             ),
           ),
         ],
@@ -560,10 +570,7 @@ class PopularSongTile extends StatelessWidget {
       trailing: Container(
         width: 24.w,
         height: 24.w,
-        decoration: BoxDecoration(
-          color: cs.primary,
-          shape: BoxShape.circle,
-        ),
+        decoration: BoxDecoration(color: cs.primary, shape: BoxShape.circle),
         child: Center(
           child: Text(
             '$index',
@@ -584,11 +591,7 @@ class AlbumCard extends StatelessWidget {
   final Album album;
   final VoidCallback onTap;
 
-  const AlbumCard({
-    super.key,
-    required this.album,
-    required this.onTap,
-  });
+  const AlbumCard({super.key, required this.album, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -596,7 +599,9 @@ class AlbumCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
+          borderRadius: BorderRadius.circular(
+            AppConstants.mediumBorderRadius.r,
+          ),
           color: Theme.of(context).colorScheme.surface,
           boxShadow: [
             BoxShadow(
@@ -652,7 +657,9 @@ class AlbumCard extends StatelessWidget {
                     Text(
                       '${album.year} • ${album.songCount} songs',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                   ],

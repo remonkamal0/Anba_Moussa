@@ -4,11 +4,13 @@ import '../../core/network/supabase_service.dart';
 class UserProfileState {
   final bool isLoading;
   final Map<String, dynamic>? profile;
-  
+
   const UserProfileState({this.isLoading = false, this.profile});
-  
+
   String get fullName => profile?['full_name'] as String? ?? 'Guest';
-  String get email => SupabaseService.instance.client.auth.currentUser?.email ?? 'Not Logged In';
+  String get email =>
+      SupabaseService.instance.client.auth.currentUser?.email ??
+      'Not Logged In';
 
   /// The user's role — 'admin', 'user', etc. Defaults to 'user'.
   String get role => profile?['role'] as String? ?? 'user';
@@ -46,11 +48,14 @@ class UserProfileNotifier extends StateNotifier<UserProfileState> {
         // If profile doesn't exist, try to use metadata if available
         final user = SupabaseService.instance.client.auth.currentUser;
         if (user != null) {
-           final meta = user.userMetadata ?? {};
-           final name = meta['full_name'] ?? meta['name'] ?? 'Guest';
-           state = UserProfileState(isLoading: false, profile: {'full_name': name});
+          final meta = user.userMetadata ?? {};
+          final name = meta['full_name'] ?? meta['name'] ?? 'Guest';
+          state = UserProfileState(
+            isLoading: false,
+            profile: {'full_name': name},
+          );
         } else {
-           state = const UserProfileState(isLoading: false, profile: null);
+          state = const UserProfileState(isLoading: false, profile: null);
         }
       }
     } catch (e) {
@@ -59,6 +64,7 @@ class UserProfileNotifier extends StateNotifier<UserProfileState> {
   }
 }
 
-final userProfileProvider = StateNotifierProvider<UserProfileNotifier, UserProfileState>((ref) {
-  return UserProfileNotifier();
-});
+final userProfileProvider =
+    StateNotifierProvider<UserProfileNotifier, UserProfileState>((ref) {
+      return UserProfileNotifier();
+    });

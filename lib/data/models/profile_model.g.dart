@@ -7,17 +7,17 @@ part of 'profile_model.dart';
 // **************************************************************************
 
 ProfileModel _$ProfileModelFromJson(Map<String, dynamic> json) => ProfileModel(
-      id: json['id'] as String,
-      fullName: json['fullName'] as String,
-      phone: json['phone'] as String?,
-      church: json['church'] as String?,
-      birthDate: json['birthDate'] == null
-          ? null
-          : DateTime.parse(json['birthDate'] as String),
-      gender: json['gender'] as String?,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-    );
+  id: json['id'] as String,
+  fullName: json['fullName'] as String,
+  phone: json['phone'] as String?,
+  church: json['church'] as String?,
+  birthDate: json['birthDate'] == null
+      ? null
+      : DateTime.parse(json['birthDate'] as String),
+  gender: json['gender'] as String?,
+  createdAt: DateTime.parse(json['createdAt'] as String),
+  updatedAt: DateTime.parse(json['updatedAt'] as String),
+);
 
 Map<String, dynamic> _$ProfileModelToJson(ProfileModel instance) =>
     <String, dynamic>{

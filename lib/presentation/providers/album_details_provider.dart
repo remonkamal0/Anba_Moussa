@@ -36,7 +36,9 @@ class AlbumDetailsState {
       allTracks: allTracks ?? this.allTracks,
       filteredTracks: filteredTracks ?? this.filteredTracks,
       tags: tags ?? this.tags,
-      selectedTagId: selectedTagId != null ? (selectedTagId == 'all' ? null : selectedTagId) : this.selectedTagId,
+      selectedTagId: selectedTagId != null
+          ? (selectedTagId == 'all' ? null : selectedTagId)
+          : this.selectedTagId,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage,
       downloadedTrackIds: downloadedTrackIds ?? this.downloadedTrackIds,
@@ -59,19 +61,21 @@ class AlbumDetailsState {
 
 class AlbumDetailsNotifier extends StateNotifier<AlbumDetailsState> {
   AlbumDetailsNotifier()
-      : super(AlbumDetailsState(
+    : super(
+        AlbumDetailsState(
           allTracks: [],
           filteredTracks: [],
           tags: [],
           isLoading: true,
           downloadedTrackIds: {},
-        ));
+        ),
+      );
 
   Future<void> loadAlbum(String albumId) async {
     state = state.copyWith(isLoading: true);
     try {
       final tracks = await sl.getTracksByCategoryUseCase.execute(albumId);
-      
+
       // Calculate unique tags from all fetched tracks
       final tagsSet = <Tag>{};
       for (var track in tracks) {
@@ -87,10 +91,7 @@ class AlbumDetailsNotifier extends StateNotifier<AlbumDetailsState> {
         isLoading: false,
       );
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, errorMessage: e.toString());
     }
   }
 
@@ -104,28 +105,29 @@ class AlbumDetailsNotifier extends StateNotifier<AlbumDetailsState> {
       return track.tags.any((tag) => tag.id == tagId);
     }).toList();
 
-    state = state.copyWith(
-      filteredTracks: filtered,
-      selectedTagId: tagId,
-    );
+    state = state.copyWith(filteredTracks: filtered, selectedTagId: tagId);
   }
 
   void markAsDownloaded(String trackId) {
-    final newDownloadedIds = Set<String>.from(state.downloadedTrackIds)..add(trackId);
+    final newDownloadedIds = Set<String>.from(state.downloadedTrackIds)
+      ..add(trackId);
     state = state.copyWith(downloadedTrackIds: newDownloadedIds);
   }
 
   void removeDownload(String trackId) {
-    final newDownloadedIds = Set<String>.from(state.downloadedTrackIds)..remove(trackId);
+    final newDownloadedIds = Set<String>.from(state.downloadedTrackIds)
+      ..remove(trackId);
     state = state.copyWith(downloadedTrackIds: newDownloadedIds);
   }
 }
 
 final albumDetailsProvider =
-    StateNotifierProvider.family<AlbumDetailsNotifier, AlbumDetailsState, String>(
-  (ref, albumId) {
-    final notifier = AlbumDetailsNotifier();
-    notifier.loadAlbum(albumId);
-    return notifier;
-  },
-);
+    StateNotifierProvider.family<
+      AlbumDetailsNotifier,
+      AlbumDetailsState,
+      String
+    >((ref, albumId) {
+      final notifier = AlbumDetailsNotifier();
+      notifier.loadAlbum(albumId);
+      return notifier;
+    });

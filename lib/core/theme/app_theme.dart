@@ -68,7 +68,9 @@ class AppTheme {
           foregroundColor: Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius),
+            borderRadius: BorderRadius.circular(
+              AppConstants.mediumBorderRadius,
+            ),
           ),
           padding: EdgeInsets.symmetric(
             horizontal: AppConstants.mediumSpacing,
@@ -81,7 +83,9 @@ class AppTheme {
           foregroundColor: onSurface,
           side: const BorderSide(color: Color(0xFFE0E0E0)),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius),
+            borderRadius: BorderRadius.circular(
+              AppConstants.mediumBorderRadius,
+            ),
           ),
         ),
       ),
@@ -165,7 +169,9 @@ class AppTheme {
           foregroundColor: Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius),
+            borderRadius: BorderRadius.circular(
+              AppConstants.mediumBorderRadius,
+            ),
           ),
           padding: EdgeInsets.symmetric(
             horizontal: AppConstants.mediumSpacing,
@@ -178,7 +184,9 @@ class AppTheme {
           foregroundColor: onSurface,
           side: const BorderSide(color: Color(0xFF555555)),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius),
+            borderRadius: BorderRadius.circular(
+              AppConstants.mediumBorderRadius,
+            ),
           ),
         ),
       ),
@@ -195,34 +203,36 @@ class AppTheme {
   }
 
   // ── Shared text theme builder ──────────────────────────────────────────────
-  static TextTheme _buildTextTheme(String primaryFont, String fallbackFont, Color onSurface) {
-    TextStyle ts({
-      required double size,
-      required FontWeight weight,
-    }) => TextStyle(
-      fontFamily: primaryFont,
-      fontFamilyFallback: [fallbackFont],
-      fontSize: size,
-      fontWeight: weight,
-      color: onSurface,
-    );
+  static TextTheme _buildTextTheme(
+    String primaryFont,
+    String fallbackFont,
+    Color onSurface,
+  ) {
+    TextStyle ts({required double size, required FontWeight weight}) =>
+        TextStyle(
+          fontFamily: primaryFont,
+          fontFamilyFallback: [fallbackFont],
+          fontSize: size,
+          fontWeight: weight,
+          color: onSurface,
+        );
 
     return TextTheme(
-      displayLarge:  ts(size: 32, weight: FontWeight.w900),
+      displayLarge: ts(size: 32, weight: FontWeight.w900),
       displayMedium: ts(size: 28, weight: FontWeight.w900),
-      displaySmall:  ts(size: 24, weight: FontWeight.w900),
-      headlineLarge:  ts(size: 22, weight: FontWeight.w900),
+      displaySmall: ts(size: 24, weight: FontWeight.w900),
+      headlineLarge: ts(size: 22, weight: FontWeight.w900),
       headlineMedium: ts(size: 20, weight: FontWeight.w800),
-      headlineSmall:  ts(size: 18, weight: FontWeight.w700),
-      titleLarge:  ts(size: 16, weight: FontWeight.w900),
+      headlineSmall: ts(size: 18, weight: FontWeight.w700),
+      titleLarge: ts(size: 16, weight: FontWeight.w900),
       titleMedium: ts(size: 14, weight: FontWeight.w800),
-      titleSmall:  ts(size: 12, weight: FontWeight.w700),
-      bodyLarge:  ts(size: 16, weight: FontWeight.w600),
+      titleSmall: ts(size: 12, weight: FontWeight.w700),
+      bodyLarge: ts(size: 16, weight: FontWeight.w600),
       bodyMedium: ts(size: 14, weight: FontWeight.w500),
-      bodySmall:  ts(size: 12, weight: FontWeight.w400),
-      labelLarge:  ts(size: 14, weight: FontWeight.w700),
+      bodySmall: ts(size: 12, weight: FontWeight.w400),
+      labelLarge: ts(size: 14, weight: FontWeight.w700),
       labelMedium: ts(size: 12, weight: FontWeight.w600),
-      labelSmall:  ts(size: 10, weight: FontWeight.w500),
+      labelSmall: ts(size: 10, weight: FontWeight.w500),
     );
   }
 

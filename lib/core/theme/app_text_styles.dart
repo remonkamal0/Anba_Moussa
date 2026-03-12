@@ -191,7 +191,9 @@ class AppTextStyles {
 
   static TextStyle getDisplayMedium(BuildContext context) {
     final locale = Localizations.localeOf(context);
-    return locale.languageCode == 'ar' ? cairoDisplayMedium : interDisplayMedium;
+    return locale.languageCode == 'ar'
+        ? cairoDisplayMedium
+        : interDisplayMedium;
   }
 
   static TextStyle getDisplaySmall(BuildContext context) {
@@ -201,17 +203,23 @@ class AppTextStyles {
 
   static TextStyle getHeadlineLarge(BuildContext context) {
     final locale = Localizations.localeOf(context);
-    return locale.languageCode == 'ar' ? cairoHeadlineLarge : interHeadlineLarge;
+    return locale.languageCode == 'ar'
+        ? cairoHeadlineLarge
+        : interHeadlineLarge;
   }
 
   static TextStyle getHeadlineMedium(BuildContext context) {
     final locale = Localizations.localeOf(context);
-    return locale.languageCode == 'ar' ? cairoHeadlineMedium : interHeadlineMedium;
+    return locale.languageCode == 'ar'
+        ? cairoHeadlineMedium
+        : interHeadlineMedium;
   }
 
   static TextStyle getHeadlineSmall(BuildContext context) {
     final locale = Localizations.localeOf(context);
-    return locale.languageCode == 'ar' ? cairoHeadlineSmall : interHeadlineSmall;
+    return locale.languageCode == 'ar'
+        ? cairoHeadlineSmall
+        : interHeadlineSmall;
   }
 
   static TextStyle getTitleLarge(BuildContext context) {

@@ -70,7 +70,9 @@ class _ThemeOption extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.r),
-          color: isSelected ? cs.primary.withOpacity(0.1) : cs.surface.withOpacity(0.5),
+          color: isSelected
+              ? cs.primary.withOpacity(0.1)
+              : cs.surface.withOpacity(0.5),
           border: Border.all(
             color: isSelected ? cs.primary : cs.outline.withOpacity(0.3),
             width: 1.2,
@@ -81,7 +83,7 @@ class _ThemeOption extends StatelessWidget {
                     color: cs.primary.withOpacity(0.1),
                     blurRadius: 6,
                     spreadRadius: 1,
-                  )
+                  ),
                 ]
               : null,
         ),

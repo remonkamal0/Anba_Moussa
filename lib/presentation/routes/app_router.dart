@@ -27,13 +27,34 @@ import '../../core/constants/app_constants.dart';
 import '../../core/network/supabase_service.dart';
 import '../screens/gallery/photo_album_details_screen.dart';
 import '../screens/gallery/video_album_details_screen.dart';
+import '../screens/admin/admin_dashboard_screen.dart';
+import '../screens/admin/admin_categories_screen.dart';
+import '../screens/admin/admin_category_form_screen.dart';
+import '../screens/admin/admin_tracks_screen.dart';
+import '../screens/admin/admin_track_form_screen.dart';
+import '../screens/admin/admin_tags_screen.dart';
+import '../screens/admin/admin_tag_form_screen.dart';
+import '../screens/admin/admin_tag_tracks_screen.dart';
+import '../screens/admin/admin_photo_albums_screen.dart';
+import '../screens/admin/admin_photo_album_form_screen.dart';
+import '../screens/admin/admin_photos_screen.dart';
+import '../screens/admin/admin_photo_form_screen.dart';
+import '../screens/admin/admin_video_albums_screen.dart';
+import '../screens/admin/admin_video_album_form_screen.dart';
+import '../screens/admin/admin_videos_screen.dart';
+import '../screens/admin/admin_video_form_screen.dart';
+import '../../domain/entities/category.dart';
+import '../../domain/entities/track.dart';
+import '../../domain/entities/tag.dart';
+import '../../domain/entities/photo.dart';
 import '../../domain/entities/photo_album.dart';
 import '../../domain/entities/video_album.dart';
 import '../../domain/entities/video.dart';
 import '../widgets/layout/main_layout.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
-final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> _shellNavigatorKey =
+    GlobalKey<NavigatorState>();
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -48,10 +69,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppConstants.onboardingRoute,
         builder: (context, state) => const OnboardingScreen(),
       ),
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const LoginScreen(),
-      ),
+      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
         path: '/signup',
         builder: (context, state) => const SignupScreen(),
@@ -65,15 +83,135 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const SearchScreen(),
       ),
       GoRoute(
-        path: '/admin/send-notification',
+        path: '/admin',
         redirect: (context, state) async {
           // Guard: only allow users with role = 'admin'
           final profile = await SupabaseService.instance.getMyProfile();
           final role = profile?['role'] as String? ?? 'user';
-          if (role != 'admin') return '/home';
+          if (role != 'admin') return AppConstants.homeRoute;
+          if (state.uri.path == '/admin') return '/admin/dashboard';
           return null; // allow
         },
-        builder: (context, state) => const SendNotificationScreen(),
+        routes: [
+          GoRoute(
+            path: 'dashboard',
+            builder: (context, state) => const AdminDashboardScreen(),
+          ),
+          GoRoute(
+            path: 'send-notification',
+            builder: (context, state) => const SendNotificationScreen(),
+          ),
+          GoRoute(
+            path: 'categories',
+            builder: (context, state) => const AdminCategoriesScreen(),
+          ),
+          GoRoute(
+            path: 'categories/new',
+            builder: (context, state) => const AdminCategoryFormScreen(),
+          ),
+          GoRoute(
+            path: 'categories/edit',
+            builder: (context, state) =>
+                AdminCategoryFormScreen(category: state.extra as Category),
+          ),
+          GoRoute(
+            path: 'tracks',
+            builder: (context, state) => const AdminTracksScreen(),
+          ),
+          GoRoute(
+            path: 'tracks/new',
+            builder: (context, state) => const AdminTrackFormScreen(),
+          ),
+          GoRoute(
+            path: 'tracks/edit',
+            builder: (context, state) =>
+                AdminTrackFormScreen(track: state.extra as Track),
+          ),
+          GoRoute(
+            path: 'tags',
+            builder: (context, state) => const AdminTagsScreen(),
+          ),
+          GoRoute(
+            path: 'tags/new',
+            builder: (context, state) => const AdminTagFormScreen(),
+          ),
+          GoRoute(
+            path: 'tags/edit',
+            builder: (context, state) =>
+                AdminTagFormScreen(tag: state.extra as Tag),
+          ),
+          GoRoute(
+            path: 'tags/link',
+            builder: (context, state) =>
+                AdminTagTracksScreen(tag: state.extra as Tag),
+          ),
+          GoRoute(
+            path: 'photo-albums',
+            builder: (context, state) => const AdminPhotoAlbumsScreen(),
+          ),
+          GoRoute(
+            path: 'photo-albums/new',
+            builder: (context, state) => const AdminPhotoAlbumFormScreen(),
+          ),
+          GoRoute(
+            path: 'photo-albums/edit',
+            builder: (context, state) =>
+                AdminPhotoAlbumFormScreen(album: state.extra as PhotoAlbum),
+          ),
+          GoRoute(
+            path: 'photos',
+            builder: (context, state) => const AdminPhotosScreen(),
+          ),
+          GoRoute(
+            path: 'photos/new',
+            builder: (context, state) => AdminPhotoFormScreen(
+              albumId: state.uri.queryParameters['albumId']!,
+            ),
+          ),
+          GoRoute(
+            path: 'photos/edit',
+            builder: (context, state) {
+              final map = state.extra as Map<String, dynamic>;
+              return AdminPhotoFormScreen(
+                photo: map['photo'] as Photo,
+                albumId: map['albumId'] as String,
+              );
+            },
+          ),
+          GoRoute(
+            path: 'video-albums',
+            builder: (context, state) => const AdminVideoAlbumsScreen(),
+          ),
+          GoRoute(
+            path: 'video-albums/new',
+            builder: (context, state) => const AdminVideoAlbumFormScreen(),
+          ),
+          GoRoute(
+            path: 'video-albums/edit',
+            builder: (context, state) =>
+                AdminVideoAlbumFormScreen(album: state.extra as VideoAlbum),
+          ),
+          GoRoute(
+            path: 'videos',
+            builder: (context, state) => const AdminVideosScreen(),
+          ),
+          GoRoute(
+            path: 'videos/new',
+            builder: (context, state) => AdminVideoFormScreen(
+              albumId: state.uri.queryParameters['albumId']!,
+            ),
+          ),
+          GoRoute(
+            path: 'videos/edit',
+            builder: (context, state) {
+              final map = state.extra as Map<String, dynamic>;
+              return AdminVideoFormScreen(
+                video: map['video'] as Video,
+                albumId: map['albumId'] as String,
+              );
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: '/artist/:artistId',
@@ -194,9 +332,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
-      body: Center(
-        child: Text('Page not found: ${state.uri.path}'),
-      ),
+      body: Center(child: Text('Page not found: ${state.uri.path}')),
     ),
   );
 });
@@ -210,7 +346,8 @@ class _PhotoAlbumDeepLinkScreen extends StatefulWidget {
   const _PhotoAlbumDeepLinkScreen({required this.albumId});
 
   @override
-  State<_PhotoAlbumDeepLinkScreen> createState() => _PhotoAlbumDeepLinkScreenState();
+  State<_PhotoAlbumDeepLinkScreen> createState() =>
+      _PhotoAlbumDeepLinkScreenState();
 }
 
 class _PhotoAlbumDeepLinkScreenState extends State<_PhotoAlbumDeepLinkScreen> {
@@ -265,8 +402,10 @@ class _PhotoAlbumDeepLinkScreenState extends State<_PhotoAlbumDeepLinkScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    if (_error != null || _album == null) return Scaffold(body: Center(child: Text(_error ?? 'Not found')));
+    if (_isLoading)
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (_error != null || _album == null)
+      return Scaffold(body: Center(child: Text(_error ?? 'Not found')));
     return PhotoAlbumDetailsScreen(album: _album);
   }
 }
@@ -276,7 +415,8 @@ class _VideoAlbumDeepLinkScreen extends StatefulWidget {
   const _VideoAlbumDeepLinkScreen({required this.albumId});
 
   @override
-  State<_VideoAlbumDeepLinkScreen> createState() => _VideoAlbumDeepLinkScreenState();
+  State<_VideoAlbumDeepLinkScreen> createState() =>
+      _VideoAlbumDeepLinkScreenState();
 }
 
 class _VideoAlbumDeepLinkScreenState extends State<_VideoAlbumDeepLinkScreen> {
@@ -329,8 +469,10 @@ class _VideoAlbumDeepLinkScreenState extends State<_VideoAlbumDeepLinkScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    if (_error != null || _album == null) return Scaffold(body: Center(child: Text(_error ?? 'Not found')));
+    if (_isLoading)
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (_error != null || _album == null)
+      return Scaffold(body: Center(child: Text(_error ?? 'Not found')));
     return VideoAlbumDetailsScreen(album: _album);
   }
 }
@@ -387,7 +529,9 @@ class _VideoDeepLinkScreenState extends State<_VideoDeepLinkScreen> {
       videoUrl: json['video_url'] ?? '',
       thumbnailUrl: json['thumbnail_url'],
       durationSeconds: json['duration_seconds'],
-      publishedAt: json['published_at'] != null ? DateTime.parse(json['published_at']) : null,
+      publishedAt: json['published_at'] != null
+          ? DateTime.parse(json['published_at'])
+          : null,
       sortOrder: json['sort_order'] ?? 0,
       isActive: json['is_active'] ?? true,
       createdAt: DateTime.parse(json['created_at']),
@@ -397,8 +541,10 @@ class _VideoDeepLinkScreenState extends State<_VideoDeepLinkScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    if (_error != null || _video == null) return Scaffold(body: Center(child: Text(_error ?? 'Not found')));
+    if (_isLoading)
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (_error != null || _video == null)
+      return Scaffold(body: Center(child: Text(_error ?? 'Not found')));
     return VideoPlaybackMockScreen(video: _video);
   }
 }

@@ -42,17 +42,19 @@ class Track {
   });
 
   String getLocalizedTitle(String locale) => locale == 'ar' ? titleAr : titleEn;
-  String? getLocalizedSubtitle(String locale) => locale == 'ar' ? subtitleAr : subtitleEn;
-  String? getLocalizedDescription(String locale) => locale == 'ar' ? descriptionAr : descriptionEn;
-  String? getLocalizedSpeaker(String locale) => locale == 'ar' ? speakerAr : speakerEn;
+  String? getLocalizedSubtitle(String locale) =>
+      locale == 'ar' ? subtitleAr : subtitleEn;
+  String? getLocalizedDescription(String locale) =>
+      locale == 'ar' ? descriptionAr : descriptionEn;
+  String? getLocalizedSpeaker(String locale) =>
+      locale == 'ar' ? speakerAr : speakerEn;
 
-  Duration? get duration => durationSeconds != null 
-      ? Duration(seconds: durationSeconds!) 
-      : null;
+  Duration? get duration =>
+      durationSeconds != null ? Duration(seconds: durationSeconds!) : null;
 
   String get formattedDuration {
     if (durationSeconds == null) return '--:--';
-    
+
     final duration = Duration(seconds: durationSeconds!);
     final minutes = duration.inMinutes;
     final seconds = duration.inSeconds % 60;
@@ -62,9 +64,7 @@ class Track {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Track &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
+      other is Track && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode => id.hashCode;

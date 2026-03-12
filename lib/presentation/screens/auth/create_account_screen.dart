@@ -20,7 +20,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _churchController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  
+
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _agreeToTerms = false;
@@ -43,7 +43,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     if (!_agreeToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Please agree to Terms of Service and Privacy Policy'),
+          content: const Text(
+            'Please agree to Terms of Service and Privacy Policy',
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -57,7 +59,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     try {
       // TODO: Implement account creation with Supabase
       await Future.delayed(const Duration(seconds: 2)); // Simulate API call
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -136,10 +138,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   children: [
                     Text(
                       'Create Account',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                     ).animate().fadeIn(
                       duration: AppConstants.defaultAnimationDuration,
                       delay: const Duration(milliseconds: 200),
@@ -149,9 +152,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
                     Text(
                       'Join our religious community of music lovers',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
                     ).animate().fadeIn(
                       duration: AppConstants.defaultAnimationDuration,
                       delay: const Duration(milliseconds: 400),
@@ -187,7 +190,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email address';
                     }
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                    if (!RegExp(
+                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                    ).hasMatch(value)) {
                       return 'Please enter a valid email address';
                     }
                     return null;
@@ -244,7 +249,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   },
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                      _obscurePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                       color: Colors.grey[600],
                     ),
                     onPressed: () {
@@ -274,7 +281,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   },
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                      _obscureConfirmPassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                       color: Colors.grey[600],
                     ),
                     onPressed: () {
@@ -309,9 +318,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         },
                         child: Text(
                           'I agree to Terms of Service and Privacy Policy',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: _agreeToTerms ? Colors.black : Colors.grey[600],
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: _agreeToTerms
+                                    ? Colors.black
+                                    : Colors.grey[600],
+                              ),
                         ),
                       ),
                     ),
@@ -327,36 +339,42 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 SizedBox(
                   width: double.infinity,
                   height: 56.h,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : _createAccount,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: cs.primary,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
-                      ),
-                    ),
-                    child: _isLoading
-                        ? SizedBox(
-                            width: 24.w,
-                            height: 24.w,
-                            child: const CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                            ),
-                          )
-                        : Text(
-                            'Sign Up',
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
+                  child:
+                      ElevatedButton(
+                        onPressed: _isLoading ? null : _createAccount,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: cs.primary,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppConstants.mediumBorderRadius.r,
                             ),
                           ),
-                  ).animate().fadeIn(
-                    duration: AppConstants.defaultAnimationDuration,
-                    delay: const Duration(milliseconds: 2000),
-                  ),
+                        ),
+                        child: _isLoading
+                            ? SizedBox(
+                                width: 24.w,
+                                height: 24.w,
+                                child: const CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              )
+                            : Text(
+                                'Sign Up',
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                              ),
+                      ).animate().fadeIn(
+                        duration: AppConstants.defaultAnimationDuration,
+                        delay: const Duration(milliseconds: 2000),
+                      ),
                 ),
 
                 SizedBox(height: AppConstants.largeSpacing.h),
@@ -365,13 +383,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 Row(
                   children: [
                     Expanded(
-                      child: Container(
-                        height: 1.h,
-                        color: Colors.grey[300],
-                      ),
+                      child: Container(height: 1.h, color: Colors.grey[300]),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: AppConstants.mediumSpacing.w),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppConstants.mediumSpacing.w,
+                      ),
                       child: Text(
                         'OR SIGN UP WITH',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -380,10 +397,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       ),
                     ),
                     Expanded(
-                      child: Container(
-                        height: 1.h,
-                        color: Colors.grey[300],
-                      ),
+                      child: Container(height: 1.h, color: Colors.grey[300]),
                     ),
                   ],
                 ).animate().fadeIn(
@@ -398,93 +412,105 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   children: [
                     // Google Sign-Up
                     Expanded(
-                      child: OutlinedButton(
-                        onPressed: _signInWithGoogle,
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.grey[300]!),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
-                          ),
-                          padding: EdgeInsets.symmetric(vertical: AppConstants.mediumSpacing.h),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // Google logo placeholder
-                            Container(
-                              width: 20.w,
-                              height: 20.w,
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(4.r),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'G',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                      child:
+                          OutlinedButton(
+                            onPressed: _signInWithGoogle,
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: Colors.grey[300]!),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  AppConstants.mediumBorderRadius.r,
                                 ),
                               ),
-                            ),
-                            SizedBox(width: AppConstants.smallSpacing.w),
-                            Text(
-                              'Google',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.black87,
-                                fontWeight: FontWeight.w500,
+                              padding: EdgeInsets.symmetric(
+                                vertical: AppConstants.mediumSpacing.h,
                               ),
                             ),
-                          ],
-                        ),
-                      ).animate().slideX(
-                        duration: AppConstants.defaultAnimationDuration,
-                        delay: const Duration(milliseconds: 2400),
-                        begin: -0.2,
-                        curve: Curves.easeOut,
-                      ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Google logo placeholder
+                                Container(
+                                  width: 20.w,
+                                  height: 20.w,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(4.r),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      'G',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: AppConstants.smallSpacing.w),
+                                Text(
+                                  'Google',
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        color: Colors.black87,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ).animate().slideX(
+                            duration: AppConstants.defaultAnimationDuration,
+                            delay: const Duration(milliseconds: 2400),
+                            begin: -0.2,
+                            curve: Curves.easeOut,
+                          ),
                     ),
 
                     SizedBox(width: AppConstants.mediumSpacing.w),
 
                     // Apple Sign-Up
                     Expanded(
-                      child: OutlinedButton(
-                        onPressed: _signInWithApple,
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: Colors.grey[300]!),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
-                          ),
-                          padding: EdgeInsets.symmetric(vertical: AppConstants.mediumSpacing.h),
-                          backgroundColor: Colors.black,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.apple,
-                              color: Colors.white,
-                              size: 20.w,
-                            ),
-                            SizedBox(width: AppConstants.smallSpacing.w),
-                            Text(
-                              'Apple',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
+                      child:
+                          OutlinedButton(
+                            onPressed: _signInWithApple,
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: Colors.grey[300]!),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  AppConstants.mediumBorderRadius.r,
+                                ),
                               ),
+                              padding: EdgeInsets.symmetric(
+                                vertical: AppConstants.mediumSpacing.h,
+                              ),
+                              backgroundColor: Colors.black,
                             ),
-                          ],
-                        ),
-                      ).animate().slideX(
-                        duration: AppConstants.defaultAnimationDuration,
-                        delay: const Duration(milliseconds: 2600),
-                        begin: 0.2,
-                        curve: Curves.easeOut,
-                      ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.apple,
+                                  color: Colors.white,
+                                  size: 20.w,
+                                ),
+                                SizedBox(width: AppConstants.smallSpacing.w),
+                                Text(
+                                  'Apple',
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ).animate().slideX(
+                            duration: AppConstants.defaultAnimationDuration,
+                            delay: const Duration(milliseconds: 2600),
+                            begin: 0.2,
+                            curve: Curves.easeOut,
+                          ),
                     ),
                   ],
                 ),
@@ -497,9 +523,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   children: [
                     Text(
                       "Already have an account? ",
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
                     ),
                     GestureDetector(
                       onTap: _onLogin,
@@ -553,25 +579,33 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           validator: validator,
           autofocus: autofocus,
           decoration: InputDecoration(
-            prefixIcon: Icon(
-              icon,
-              color: Colors.grey[600],
-            ),
+            prefixIcon: Icon(icon, color: Colors.grey[600]),
             suffixIcon: suffixIcon,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
+              borderRadius: BorderRadius.circular(
+                AppConstants.mediumBorderRadius.r,
+              ),
               borderSide: BorderSide(color: Colors.grey[300]!),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
+              borderRadius: BorderRadius.circular(
+                AppConstants.mediumBorderRadius.r,
+              ),
               borderSide: BorderSide(color: Colors.grey[300]!),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
-              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
+              borderRadius: BorderRadius.circular(
+                AppConstants.mediumBorderRadius.r,
+              ),
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.primary,
+                width: 2,
+              ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppConstants.mediumBorderRadius.r),
+              borderRadius: BorderRadius.circular(
+                AppConstants.mediumBorderRadius.r,
+              ),
               borderSide: const BorderSide(color: Colors.red, width: 2),
             ),
             filled: true,

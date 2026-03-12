@@ -26,14 +26,13 @@ class Category {
   });
 
   String getLocalizedTitle(String locale) => locale == 'ar' ? titleAr : titleEn;
-  String? getLocalizedSubtitle(String locale) => locale == 'ar' ? subtitleAr : subtitleEn;
+  String? getLocalizedSubtitle(String locale) =>
+      locale == 'ar' ? subtitleAr : subtitleEn;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Category &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
+      other is Category && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode => id.hashCode;

@@ -17,17 +17,17 @@ class LibraryState {
   });
 
   const LibraryState.loading()
-      : status = LibraryStatus.loading,
-        categories = const [],
-        error = null;
+    : status = LibraryStatus.loading,
+      categories = const [],
+      error = null;
 
   const LibraryState.loaded(this.categories)
-      : status = LibraryStatus.loaded,
-        error = null;
+    : status = LibraryStatus.loaded,
+      error = null;
 
   const LibraryState.error(this.error)
-      : status = LibraryStatus.error,
-        categories = const [];
+    : status = LibraryStatus.error,
+      categories = const [];
 }
 
 class LibraryProvider extends ChangeNotifier {
@@ -40,8 +40,8 @@ class LibraryProvider extends ChangeNotifier {
   LibraryProvider({
     required GetCategoriesUseCase getCategoriesUseCase,
     required Logger logger,
-  })  : _getCategoriesUseCase = getCategoriesUseCase,
-        _logger = logger;
+  }) : _getCategoriesUseCase = getCategoriesUseCase,
+       _logger = logger;
 
   Future<void> initialize() async {
     await fetchCategories();

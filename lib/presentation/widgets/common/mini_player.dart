@@ -76,10 +76,7 @@ class MiniPlayer extends ConsumerWidget {
                     SizedBox(height: 2.h),
                     Text(
                       track.getLocalizedSpeaker(locale),
-                      style: TextStyle(
-                        color: Colors.white54,
-                        fontSize: 11.sp,
-                      ),
+                      style: TextStyle(color: Colors.white54, fontSize: 11.sp),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -96,7 +93,8 @@ class MiniPlayer extends ConsumerWidget {
                     // Previous
                     _ControlBtn(
                       icon: Icons.skip_previous_rounded,
-                      onTap: () => ref.read(audioProvider.notifier).skipBackward(),
+                      onTap: () =>
+                          ref.read(audioProvider.notifier).skipBackward(),
                     ),
                     // Play / Pause — wired to audio provider
                     GestureDetector(
@@ -122,7 +120,8 @@ class MiniPlayer extends ConsumerWidget {
                     // Next
                     _ControlBtn(
                       icon: Icons.skip_next_rounded,
-                      onTap: () => ref.read(audioProvider.notifier).skipForward(),
+                      onTap: () =>
+                          ref.read(audioProvider.notifier).skipForward(),
                     ),
                   ],
                 ),
@@ -132,8 +131,7 @@ class MiniPlayer extends ConsumerWidget {
 
               // ✕ Dismiss button
               GestureDetector(
-                onTap: () =>
-                    ref.read(audioProvider.notifier).stop(),
+                onTap: () => ref.read(audioProvider.notifier).stop(),
                 child: Container(
                   width: 28.w,
                   height: 28.w,
@@ -156,11 +154,11 @@ class MiniPlayer extends ConsumerWidget {
   }
 
   Widget _placeholder() => Container(
-        width: 40.w,
-        height: 40.w,
-        color: Colors.white12,
-        child: const Icon(Icons.music_note, color: Colors.white54),
-      );
+    width: 40.w,
+    height: 40.w,
+    color: Colors.white12,
+    child: const Icon(Icons.music_note, color: Colors.white54),
+  );
 }
 
 class _ControlBtn extends StatelessWidget {
@@ -174,7 +172,11 @@ class _ControlBtn extends StatelessWidget {
       onTap: onTap,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 6.w),
-        child: Icon(icon, color: Colors.white.withValues(alpha: 0.9), size: 28.w),
+        child: Icon(
+          icon,
+          color: Colors.white.withValues(alpha: 0.9),
+          size: 28.w,
+        ),
       ),
     );
   }
